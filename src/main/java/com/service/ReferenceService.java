@@ -10,4 +10,5 @@ public interface ReferenceService {
     void insertReference(Reference reference);
     List<Reference> getAll();
     Reference selectReference(Reference reference);
+    void update(String id,List<String> referIds);
 }

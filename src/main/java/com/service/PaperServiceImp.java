@@ -72,6 +72,7 @@ public class PaperServiceImp implements PaperService{
         }
     }
 
+
     @Override
     public Paper_Basic_info selectPaperById(String id) {
         return paperMapper.selectPaperById(id);
@@ -165,6 +166,13 @@ public class PaperServiceImp implements PaperService{
     public Integer likePaper(String paperId) {
         paperMapper.likePaper(paperId);
         return paperMapper.selectLike(paperId);
+    }
+
+    @Override
+    public void update(Paper_Basic_info paper_basic_info) {
+        paper_basic_info.setThesisDate(new Date());
+        paper_basic_info.setLike(0);
+        paperMapper.updateById(paper_basic_info);
     }
 
 }

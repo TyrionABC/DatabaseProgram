@@ -359,5 +359,24 @@ public class PaperController {
         }
         return "true";
     }
+    //修改论文,传入id,传入子方向，基本信息，发布信息，索引，作者信息
+    @CrossOrigin
+    @PostMapping("/updatePaper/{id}")
+    @ResponseBody
+    public String update(@RequestBody AllInfo allInfo){
+        //修改基本信息
+        String id=allInfo.getId();
+        paperService.update(new Paper_Basic_info(id,allInfo.getTitle(),allInfo.getThesisType(),
+                allInfo.getLiteratureLink(),allInfo.getPublisherId(),allInfo.getFlag(),allInfo.getText()));
+        System.out.println(allInfo+" "+id);
+        //修改方向信息
+        belongService.update(id,allInfo.getDirections());
+        //修改发布信息
+        publishService.update(new Paper_publish(id,allInfo.getPublishMeeting(),
+                allInfo.getPublishTime(),allInfo.getPublisherId(),allInfo.getPublisher()));
+        //修改索引信息
+        referenceService.update(id,allInfo.getReferIds());
+        return "true";
+    }
 
 }

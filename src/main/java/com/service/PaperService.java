@@ -24,4 +24,5 @@ public interface PaperService {
     List<Integer> getPaperOfMonth();
     List<Integer> getPaperOfDay(String userId);
     Integer likePaper(String paperId);
+    void update(Paper_Basic_info paper_basic_info);
 }

@@ -41,4 +41,12 @@ public class ReferenceServiceImp implements ReferenceService{
         return referenceMapper.selectReference(reference.getId(),reference.getReferPaperId());
     }
 
+    @Override
+    public void update(String id,List<String> referIds) {
+        referenceMapper.deleteReferenceById(id);
+        for (String referId : referIds) {
+            referenceMapper.insert(new Reference(id, referId));
+        }
+    }
+
 }

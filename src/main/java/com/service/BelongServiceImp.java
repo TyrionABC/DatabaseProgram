@@ -3,6 +3,7 @@ package com.service;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dao.BelongMapper;
 import com.domain.Belong;
+import com.domain.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,5 +50,15 @@ public class BelongServiceImp implements BelongService{
     @Override
     public Belong selectBelong(Belong belong) {
         return belongMapper.selectOne(belong.getId(),belong.getDirectionName());
+    }
+
+    @Override
+    public void update(String id,List<String> directions) {
+        //先删除所有
+        belongMapper.deleteById(id);
+        //添加
+        for(String direction:directions){
+            belongMapper.insert(new Belong(direction,id));
+        }
     }
 }

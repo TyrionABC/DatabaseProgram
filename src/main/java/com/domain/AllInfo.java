@@ -14,14 +14,7 @@ public class AllInfo {
     int flag;
     String text;
     String publishMeeting;
-
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    Date publishTime;
-
-    String publisher;
-    //引用的论文的id
-    List<String> referIds;
-    List<String> writers;
+    String id;
 
     @Override
     public String toString() {
@@ -34,12 +27,29 @@ public class AllInfo {
                 ", flag=" + flag +
                 ", text='" + text + '\'' +
                 ", publishMeeting='" + publishMeeting + '\'' +
-                ", publishTime='" + publishTime + '\'' +
+                ", id='" + id + '\'' +
+                ", publishTime=" + publishTime +
                 ", publisher='" + publisher + '\'' +
                 ", referIds=" + referIds +
                 ", writers=" + writers +
                 '}';
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    Date publishTime;
+
+    String publisher;
+    //引用的论文的id
+    List<String> referIds;
+    List<String> writers;
 
     public List<String> getDirections() {
         return directions;

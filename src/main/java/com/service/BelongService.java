@@ -1,6 +1,7 @@
 package com.service;
 
 import com.domain.Belong;
+import com.domain.Direction;
 import com.domain.Reference;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface BelongService {
     void insertBelong(Belong belong);
     List<Belong> getAll();
     Belong selectBelong(Belong belong);
+    void update(String id, List<String> directions);
 }

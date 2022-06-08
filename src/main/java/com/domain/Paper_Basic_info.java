@@ -33,6 +33,17 @@ public class Paper_Basic_info {
         this.text = text;
     }
 
+    public Paper_Basic_info(String id, String title, String thesisType,
+                            String literatureLink, String publisherId, Integer flag, String text) {
+        this.id = id;
+        this.title = title;
+        this.thesisType = thesisType;
+        this.literatureLink = literatureLink;
+        this.publisherId = publisherId;
+        this.flag = flag;
+        this.text = text;
+    }
+
     @TableField("likes")
     private Integer likes;
     @TableField("flag")
