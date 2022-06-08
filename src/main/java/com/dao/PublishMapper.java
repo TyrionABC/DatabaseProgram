@@ -24,6 +24,9 @@ public interface PublishMapper extends BaseMapper<Paper_publish> {
             "</script>"})
     List<Paper_Basic_info> selectPaperByPublishInfo(@Param("publish") Paper_publish publish);
 
+    @Select("select * from paper_publish where id=#{paperId}")
+    Paper_publish selectByPaperId(String paperId);
+
     @Delete("delete from paper_publish where id=#{id}")
     void deleteByPaperId(String id);
 //    @Select({"<script>"+

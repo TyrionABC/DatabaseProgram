@@ -191,15 +191,15 @@ public class PaperController {
     @PostMapping("/deletePaper")
     @ResponseBody
     public String paper(@RequestBody Paper paper){
+        System.out.println(paper);
         boolean flag=paperService.deletePaperById(paper.getId());
         if(flag){
-            return "false";
-        }
-        else{
             return "true";
         }
+        else{
+            return "false";
+        }
     }
-    //修改论文
     @CrossOrigin
     @PostMapping("/update")
     @ResponseBody
@@ -287,6 +287,47 @@ public class PaperController {
         jsonObject.put("text",paper.getText());
         return jsonObject;
     }
+//    //通过id，获取论文全部信息
+    @CrossOrigin
+    @GetMapping("getAllInfo/{paperId}")
+    @ResponseBody
+    public JSONObject getAllInfo(@PathVariable String paperId){
+        JSONObject jsonObject=new JSONObject();
+        Paper_Basic_info paper=paperService.selectPaperById(paperId);
+        Paper_publish publish=publishService.selectByPaperId(paperId);
+        List<Direction> directions=directionService.getPaperDirection(paperId);
+        String[] str=new String[directions.size()];
+        int i=0;
+        for (Direction direction:directions){
+            str[i++]=direction.getDirectionName();
+        }
+
+        jsonObject.put("directions",str);
+        jsonObject.put("title",paper.getTitle());
+        jsonObject.put("thesisType",paper.getThesisType());
+        jsonObject.put("literatureLink",paper.getLiteratureLink());
+        jsonObject.put("publisherId",paper.getPublisherId());
+        jsonObject.put("text",paper.getText());
+        jsonObject.put("publishMeeting",publish.getPublishMeeting());
+        jsonObject.put("publishTime",publish.getPublishTime().toString());
+        List<Reference> references=referenceService.getAllById(paperId);
+        JSONArray jsonArray=new JSONArray();
+        for (Reference reference:references){
+            JSONObject jsonObject1=new JSONObject();
+            jsonObject1.put("referenceId",reference.getReferPaperId());
+            jsonObject1.put("title",paperService.selectPaperById(reference.getId()).getTitle());
+            jsonArray.add(jsonObject1);
+        }
+        jsonObject.put("refers",jsonArray);
+        List<Writer> writers=writerService.selectWriters(paperId);
+        str=new String[writers.size()];
+        i=0;
+        for (Writer writer:writers){
+            str[i++]=writer.getWriterName();
+        }
+        jsonObject.put("writers",str);
+        return jsonObject;
+    }
     //插入论文,传入子方向，基本信息，发布信息，索引，作者信息
     @CrossOrigin
     @PostMapping("/insertPaper")
@@ -314,7 +355,7 @@ public class PaperController {
             System.out.println(writer);
             writerService.insert(new Writer(id,writer,i++));
         }
-        return "hello";
+        return "true";
     }
 
 }

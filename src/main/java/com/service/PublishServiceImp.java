@@ -41,4 +41,8 @@ public class PublishServiceImp implements PublishService{
         queryWrapper.eq("id",id);
         return publishMapper.selectList(queryWrapper);
     }
+    @Override
+    public Paper_publish selectByPaperId(String paperId) {
+        return publishMapper.selectByPaperId(paperId);
+    }
 }

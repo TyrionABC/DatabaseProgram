@@ -14,4 +14,5 @@ public interface PublishService {
     List<Paper_Basic_info> selectByPublishInfo(Paper_publish publishInfo);
     //根据论文id查找发布信息
     List<Paper_publish> selectById(String id);
+    Paper_publish selectByPaperId(String paperId);
 }
