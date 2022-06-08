@@ -9,7 +9,6 @@ import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined
 import { useLocation } from "react-router";
 import './Thesis.css';
 
-
 const {Option}=Select;
 const { Column, ColumnGroup } = Table;
 
