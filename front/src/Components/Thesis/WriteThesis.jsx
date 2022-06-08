@@ -8,12 +8,12 @@ import axios from "axios";
 import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useLocation } from "react-router";
 import './Thesis.css';
+import TextArea from 'antd/lib/input/TextArea';
 
 const {Option}=Select;
 const { Column, ColumnGroup } = Table;
 
 export class WriteThesis extends React.Component {
-
     state = {
         title:'',
         editorState: BraftEditor.createEditorState(null),
@@ -48,19 +48,22 @@ export class WriteThesis extends React.Component {
             flag:0,
         });
     }
-    handleTitleChange=(value)=>{
+    handleTitleChange=(event)=>{
         this.setState({
-            title:value,
+            title:event.target.value,
         });
-        console.log(value);
+        console.log(this.state.title);
     }
     onFinish=(value)=>{
-        const htmlContent=this.state.editorState.toHTML();
+        let directions=[];
+        for(var i=0;i<value.direction.length;i++){
+            directions=directions.concat(value.direction[i]);
+        }
         let submitData = {
             title:this.state.title,
-            text:htmlContent,
+            text:this.state.outputHTML,
             thesisType:value.thesisType,
-            direction:value.direction,
+            directions:directions,
             writers:value.writer,
             publishMeeting:value.publishMeeting,
             publishTime:value.publishTime,
@@ -70,15 +73,15 @@ export class WriteThesis extends React.Component {
             publisher:this.state.publisher
         };
         console.log(submitData);
-        /*axios({
+        axios({
             method: 'post',
-            url: 'http://localhost:8080/admin/input',
+            url: 'http://localhost:8080/admin/insertPaper',
             data: submitData,
         }).then(function(res) {
             console.log(res.data);
-            if(res.data)alert("success");
-            else alert("fail");
-        });*/
+            if(res.data){alert("success");window.location.href="./app";}
+            else {alert("fail");}
+        });
     }
     submitForm =(value)=>{
         if(!value['title'] && !value['path'] && !value['thesisType']
@@ -133,7 +136,6 @@ export class WriteThesis extends React.Component {
     }
 
     handleEditorChange = (editorState) => {
-        console.log(editorState.toHTML());
         this.setState({ editorState: editorState, outputHTML: editorState.toHTML() });
     }
 
@@ -178,6 +180,7 @@ export class WriteThesis extends React.Component {
                 <Form.Item
                     label="论文类型"
                     name="thesisType"
+                    rules={[{required:true},]}
                 >
                     <Select allowClear >
                         <Option value="理论证明型">理论证明型</Option>
@@ -189,10 +192,11 @@ export class WriteThesis extends React.Component {
                 </Form.Item>
                 <Form.Item
                     label="研究方向"
-                    name="direction">
+                    name="direction"
+                    rules={[{required:true},]}>
                     <Cascader allowClear options={this.state.direction} multiple />
                 </Form.Item>
-                <Form.List name="writer">
+                <Form.List name="writer" >
                     {(fields,{add, remove})=>(
                         <>
                             {fields.map(({key, name,...restField})=>(
@@ -211,7 +215,7 @@ export class WriteThesis extends React.Component {
                                     <MinusCircleOutlined onClick={()=>remove(name)} />
                                 </Space>
                             ))}
-                            <Form.Item label={"添加作者"}>
+                            <Form.Item label={"添加作者"} rules={[{required:true},]}>
                                 <Button type="dashed" onClick={()=>add()} block icon={<PlusOutlined/>}/>
                             </Form.Item>
                         </>
@@ -219,16 +223,18 @@ export class WriteThesis extends React.Component {
                 </Form.List>
                 <Form.Item
                     label="会议"
-                    name="publishMeeting">
+                    name="publishMeeting"
+                    rules={[{required:true},]}>
                     <Input/>
                 </Form.Item>
                 <Form.Item
                     label="发表日期"
                     name="publishTime"
+                    rules={[{required:true},]}
                 >
                     <DatePicker/>
                 </Form.Item>
-                <Form.Item label={"添加引用"}>
+                <Form.Item label={"添加引用"} rules={[{required:true},]}>
                     <Button type="dashed" onClick={this.addReference} block icon={<PlusOutlined/>}/>
                 </Form.Item>
                 {
@@ -241,6 +247,11 @@ export class WriteThesis extends React.Component {
                         </Space>
                     ))
                 }
+                <Form.Item 
+                label="摘要"
+                name="overview">
+                    <TextArea allowClear showCount style={{width:300}}></TextArea>
+                </Form.Item>
                 <Modal
                     title="引用查询"
                     centered
@@ -259,7 +270,6 @@ export class WriteThesis extends React.Component {
                                 preserve={false}
                                 onFinish={this.submitForm}
                                 style={{margin: 5}}
-                                //onFinishFailed={}
                                 autoComplete="off"
                             >
                                 <Form.Item
@@ -369,7 +379,7 @@ export class WriteThesis extends React.Component {
             <div className="site-layout-content">
                 <Space direction='vertical' size="middle">
                 <div style={{marginTop:20}}>
-                    <Input placeholder='标题' size={"large"} bordered={false} onChange={this.handleTitleChange}/>
+                    <Input placeholder='标题' size={"large"}  bordered={false} onChange={this.handleTitleChange}/>
                 </div>
                     <div className="editor-wrapper" style={{backgroundColor:'white' }}>
                         <BraftEditor
