@@ -154,7 +154,7 @@ public class PaperController {
         jo.put("like",paper.getLike());
         jo.put("writer",paper.getWriterName());
         jo.put("publisher",paper.getPublisher());
-        jo.put("path",paper.getPath());
+        jo.put("path",paper.getPaths());
         jo.put("publishMeeting",paper.getPublishMeeting());
     }
 
@@ -166,7 +166,7 @@ public class PaperController {
     public JSONArray select(@RequestBody Query query){
         System.out.println(query.getTitle());
         List<Paper> papers=paperService.selectPapersByConditions(query);
-        System.out.println(papers);
+        //System.out.println(papers);
         JSONArray json = new JSONArray();
         for(Paper paper : papers){
             if(paper.getFlag()==1)
@@ -175,17 +175,19 @@ public class PaperController {
             jo.put("id", paper.getId());
             jo.put("literatureLink", paper.getLiteratureLink());
             jo.put("overview",paper.getOverview());
-            jo.put("path",paper.getPath());
+            jo.put("path",paper.getPaths());
             jo.put("publisher",paper.getPublisher());
             jo.put("publisherId",paper.getPublisherId());
             jo.put("publishMeeting",paper.getPublishMeeting());
             jo.put("thesisDate",paper.getThesisDate());
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
-            jo.put("writerName",paper.getWriterName());
+            //此处改成数组
+            jo.put("writerName",paper.getWriters());
             jo.put("like",paper.getLike());
             json.add(jo);
         }
+        System.out.println(json);
         return json;
     }
     //删除论文

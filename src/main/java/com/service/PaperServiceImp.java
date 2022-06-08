@@ -27,6 +27,12 @@ public class PaperServiceImp implements PaperService{
     private PublishMapper publishMapper;
     @Autowired
     private ReferenceMapper referenceMapper;
+    @Autowired
+    private BelongService belongService;
+    @Autowired
+    private DirectionService directionService;
+    @Autowired
+    private WriterService writerService;
     @Override
     public String insertPaper(Paper_Basic_info paper) {
         String id = UUID.randomUUID().toString().substring(0,10);
@@ -98,15 +104,77 @@ public class PaperServiceImp implements PaperService{
         pageMap.put("current_data",paperIPage.getRecords());
         return pageMap;
     }
-
+    //去重
+    private void method(List<Paper> papers) {
+        for( int  i  =   0 ; i  <  papers.size()  -   1 ; i ++ )  {
+            for  ( int  j  =  papers.size()  -   1 ; j  >  i; j -- )  {
+                // 这里是对象的比较，如果去重条件不一样，在这里修改即可
+                if  (papers.get(j).getId().equals(papers.get(i).getId()))  {
+                    papers.remove(j);
+                }
+            }
+        }
+    }
     @Override
     public List<Paper> selectPapersByConditions(Query query) {
-        return paperMapper.getPapersByConditions(query);
+        List<Paper> papers=paperMapper.getPapersByConditions(query);
+        method(papers);
+        for (Paper paper:papers){
+            List<String> list1=new ArrayList<>();
+            List<String> list=new ArrayList<>();
+            paper.setWriters(list1);
+            paper.setPaths(list);
+            List<Belong> belongs=belongService.getAllById(paper.getId());
+            for(Belong belong:belongs){
+                String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                int flag=1;
+                for (Belong belong1:belongs){
+                    if (parent.equals(belong1.getDirectionName())){
+                        flag=0;
+                        break;
+                    }
+                }
+                if (flag==1)
+                    paper.getPaths().add(parent);
+                paper.getPaths().add(belong.getDirectionName());
+            }
+            List<Writer> writers=writerService.selectWriters(paper.getId());
+            for (int i = 1; i <= writers.size(); i++) {
+                for (Writer writer: writers) {
+                    if (writer.getLevel()==i){
+                        paper.getWriters().add(writer.getWriterName());
+                    }
+                }
+            }
+        }
+        return papers;
     }
+
 
     @Override
     public List<Paper> selectMyPapers(String userId) {
-        return paperMapper.getMyPapers(userId);
+        List<Paper> papers=paperMapper.getMyPapers(userId);
+        method(papers);
+        for (Paper paper:papers){
+                List<String> list=new ArrayList<>();
+                paper.setPaths(list);
+                List<Belong> belongs=belongService.getAllById(paper.getId());
+                for(Belong belong:belongs){
+                    String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                    int flag=1;
+                    for (Belong belong1:belongs){
+                        if (parent.equals(belong1.getDirectionName())){
+                            flag=0;
+                            break;
+                        }
+                    }
+                    if (flag==1)
+                        paper.getPaths().add(parent);
+                    paper.getPaths().add(belong.getDirectionName());
+                }
+            }
+
+        return papers;
     }
 
     @Override

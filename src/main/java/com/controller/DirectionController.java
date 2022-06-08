@@ -25,7 +25,7 @@ import java.util.Map;
 public class DirectionController {
     @Autowired
     private DirectionService directionService;
-    //查看所有方向
+    //查看所有方向,children中存入父方向
     @CrossOrigin
     @GetMapping("/getAllDirections")
     @ResponseBody
@@ -37,6 +37,7 @@ public class DirectionController {
             jsonObject.put("label",parent.getDirectionName());
             jsonObject.put("value",parent.getDirectionName());
             JSONArray children=new JSONArray();
+            children.add(jsonObject);
             for (Direction direction:directionService.getDirectionsByParent(parent.getDirectionName())){
                 if (direction.getLevel()==1)
                     continue;

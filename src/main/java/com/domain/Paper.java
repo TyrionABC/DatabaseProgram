@@ -3,6 +3,9 @@ package com.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 
+import java.util.Arrays;
+import java.util.List;
+
 //        研究方向
 //        论文摘要
 //        作者
@@ -20,6 +23,46 @@ public class Paper {
     String writerName;
     String publishMeeting;
     String text;
+    List<String> paths;
+    List<String> writers;
+
+    @Override
+    public String toString() {
+        return "Paper{" +
+                "id='" + id + '\'' +
+                ", literatureLink='" + literatureLink + '\'' +
+                ", publisherId='" + publisherId + '\'' +
+                ", thesisDate='" + thesisDate + '\'' +
+                ", thesisType='" + thesisType + '\'' +
+                ", title='" + title + '\'' +
+                ", path='" + path + '\'' +
+                ", overview='" + overview + '\'' +
+                ", writerName='" + writerName + '\'' +
+                ", publishMeeting='" + publishMeeting + '\'' +
+                ", text='" + text + '\'' +
+                ", paths=" + paths +
+                ", writers=" + writers +
+                ", publisher='" + publisher + '\'' +
+                ", flag=" + flag +
+                ", like=" + like +
+                '}';
+    }
+
+    public List<String> getWriters() {
+        return writers;
+    }
+
+    public void setWriters(List<String> writers) {
+        this.writers = writers;
+    }
+
+    public List<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(List<String> paths) {
+        this.paths = paths;
+    }
 
     public String getText() {
         return text;
@@ -138,23 +181,4 @@ public class Paper {
         this.like = like;
     }
 
-    @Override
-    public String toString() {
-        return "Paper{" +
-                "id='" + id + '\'' +
-                ", literatureLink='" + literatureLink + '\'' +
-                ", publisherId='" + publisherId + '\'' +
-                ", thesisDate='" + thesisDate + '\'' +
-                ", thesisType='" + thesisType + '\'' +
-                ", title='" + title + '\'' +
-                ", path='" + path + '\'' +
-                ", overview='" + overview + '\'' +
-                ", writerName='" + writerName + '\'' +
-                ", publishMeeting='" + publishMeeting + '\'' +
-                ", text='" + text + '\'' +
-                ", publisher='" + publisher + '\'' +
-                ", flag=" + flag +
-                ", like=" + like +
-                '}';
-    }
 }

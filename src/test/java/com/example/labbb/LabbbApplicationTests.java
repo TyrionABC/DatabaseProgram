@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,10 @@ class LabbbApplicationTests {
     private CommentMapper commentMapper;
     @Autowired
     private WriterMapper writerMapper;
+    @Autowired
+    private BelongMapper belongMapper;
+    @Autowired
+    private BelongService belongService;
     @Test
     void contextLoads() {
         List<User> users=userMapper.selectList(null);
@@ -251,8 +256,16 @@ class LabbbApplicationTests {
     }
     @Test
     void tt(){
-        System.out.println(paperService.getPaperOfMonth());
+        //System.out.println(paperService.getPaperOfMonth());
+        //paperService.update(new Paper_Basic_info("0c28414e-2","spring and springboot","理论证明型",null,"1216776075@qq.com",1,"111"));
+        //System.out.println(paperMapper.getNums());
+        Query query = new Query();
+        query.setTitle("英语讨论");
+        System.out.println(paperService.selectPapersByConditions(query));
+
+        //publishService.update(new Paper_publish("22","延吉会议",new Date(),"1216776075@qq.com","mbt"));
     }
+
 
 
 }

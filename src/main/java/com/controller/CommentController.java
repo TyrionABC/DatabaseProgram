@@ -20,7 +20,7 @@ public class CommentController {
     private UserMapper userMapper;
     @Autowired
     private CommentMapper commentMapper;
-    //获取该文章所有评论
+    //获取该文章所有评论,根评论的父亲评论也要传
     @CrossOrigin
     @ResponseBody
     @GetMapping("/selectAllComments/{paperId}")
@@ -45,11 +45,16 @@ public class CommentController {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("commentId",comment1.getCommentId());
         jsonObject.put("content",comment1.getContent());
-        jsonObject.put("date",comment1.getDate());
-        jsonObject.put("parentCommentId",comment1.getParentCommentId());
+        jsonObject.put("date",comment1.getDate().toString());
+        if (comment1.getParentCommentId()==null)
+            jsonObject.put("parentCommentId","");
+        else
+            jsonObject.put("parentCommentId",comment1.getParentCommentId());
         jsonObject.put("userName",userMapper.selectUserById(comment1.getUserId()).getName());
-        if(comment1.getParentCommentId()!=null)
-        jsonObject.put("parentUserName",userMapper.selectUserById(commentMapper.selectComment(comment1.getParentCommentId()).getUserId()).getName());
+        if (comment1.getParentCommentId()==null)
+            jsonObject.put("parentUserName","");
+        else
+            jsonObject.put("parentUserName",userMapper.selectUserById(commentMapper.selectComment(comment1.getParentCommentId()).getUserId()).getName());
         jsonArray.add(jsonObject);
     }
 
