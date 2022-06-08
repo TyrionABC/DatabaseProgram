@@ -95,6 +95,8 @@ public class PaperController {
         JSONArray json = new JSONArray();
         // 需要添加作者、发布人姓名、研究方向、发布会议
         for(Paper paper : allPapers){
+            if (paper.getFlag()==1)
+                continue;
             JSONObject jo = new JSONObject();
             putIn(paper, jo);
             json.add(jo);
