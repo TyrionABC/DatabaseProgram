@@ -81,6 +81,12 @@ export class WriteThesis extends React.Component {
         });*/
     }
     submitForm =(value)=>{
+        if(!value['title'] && !value['path'] && !value['thesisType']
+            && !value['overview'] && !value['writerName'] && !value['publisher']
+            && !value['publishMeeting']) {
+            alert("搜索条件不能全为空!");
+            return;
+        }
         console.log(value);
         let that=this;
         axios({
@@ -423,12 +429,12 @@ export class UpdateThesis extends React.Component {
     }
 
     handleEditorChange = (editorState) => {
-        this.setState({ editorState })
+        this.setState({ editorState })
     }
 
     render () {
 
-        const { editorState } = this.state
+        const { editorState } = this.state
         return (
             <div className="my-component">
                 <BraftEditor
