@@ -38,6 +38,8 @@ public class DirectionController {
             jsonObject.put("value",parent.getDirectionName());
             JSONArray children=new JSONArray();
             for (Direction direction:directionService.getDirectionsByParent(parent.getDirectionName())){
+                if (direction.getLevel()==1)
+                    continue;
                 JSONObject jsonObject1=new JSONObject();
                 jsonObject1.put("label",direction.getDirectionName());
                 jsonObject1.put("value",direction.getDirectionName());
