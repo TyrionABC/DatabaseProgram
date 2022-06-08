@@ -14,7 +14,6 @@ const {Option}=Select;
 const { Column, ColumnGroup } = Table;
 
 export class WriteThesis extends React.Component {
-
     state = {
         title:'',
         editorState: BraftEditor.createEditorState(null),
