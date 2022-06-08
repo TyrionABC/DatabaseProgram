@@ -1,18 +1,25 @@
 import React from 'react'
 import axios from "axios";
 import {Col, Row, Comment} from 'antd'
-export default class SeeThesis extends React.Component{
+import {useParams} from "react-router-dom";
+
+export default function SeeThesis() {
+    const params = useParams();
+    console.log(params);
+    return <Detail id={params.id}/>
+}
+
+class Detail extends React.Component{
     state={
         text:'',
         parentComment:[],
     }
     componentDidMount () {
-        console.log(this.props);
         // 假设此处从服务端获取html格式的编辑器内容
         let that=this;
         axios({
             method: 'get',
-            url: 'http://localhost:8080/admin/getText/'+that.props.params.id,
+            url: 'http://localhost:8080/admin/getText/'+that.props.id,
         }).then(function(res) {
             console.log(res.data);
             that.setState({
