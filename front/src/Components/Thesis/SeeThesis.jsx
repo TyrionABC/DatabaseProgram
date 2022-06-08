@@ -12,6 +12,7 @@ export default function SeeThesis() {
 class Detail extends React.Component{
     state={
         text:'',
+        title:'',
         parentComment:[],
     }
     componentDidMount () {
@@ -24,6 +25,7 @@ class Detail extends React.Component{
             console.log(res.data);
             that.setState({
                 text:res.data.text,
+                title:res.data.title,
                 //parentComment:res.data.parentComment,
             })
         });
@@ -33,9 +35,10 @@ class Detail extends React.Component{
             <>
                 <Row>
                     <Col span={16}>
-                        <div>
-                            {this.state.text}
+                        <div style={{textAlign:'center'}}>
+                            <h1>{this.state.title}</h1>
                         </div>
+                        <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,marginRight:100}} />
                     </Col>
                     <Col span={8}>
                         <div style={{border:'dashed'}}>
