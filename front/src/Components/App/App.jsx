@@ -131,9 +131,9 @@ function SearchResult(props) {
       <Column
           title="操作"
           key="action"
-          render={() => (
+          render={(value, record, index) => (
               <Space size="middle">
-                <a>查看</a>
+                <Button type="link" onClick={()=>{ window.location.href="/detail/"+record.id}}>查看</Button>
               </Space>
           )}
       />

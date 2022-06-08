@@ -6,6 +6,7 @@ import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import './Thesis.css';
 import axios from 'axios';
+import SeeThesis from "./SeeThesis";
 
 export class Latest extends React.Component {
   state = {
@@ -123,6 +124,9 @@ export class Latest extends React.Component {
         key: 'title',
         width: '10%',
         ...this.getColumnSearchProps('title'),
+        render: (_, record) => (
+          <Button type="link" onClick={() => { window.location.href = "/detail/" + record.id }}>{ record.title }</Button>
+        )
       },
       {
         title: '作者',
