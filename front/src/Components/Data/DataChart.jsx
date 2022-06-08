@@ -130,8 +130,16 @@ class Counting extends React.Component {
     return list;
   }
 
+  reverseData = (array) => {
+    let list = [];
+    for(let i = 4; i >= 0; i--) {
+      list.push(array[i]);
+    }
+    return list;
+  }
+
   render() {
-    let data = this.state.data;
+    let data = this.reverseData(this.state.data);
     let day = this.setDay();
     if(day.length === 0) day[0] = '论文为空'
     const options = {

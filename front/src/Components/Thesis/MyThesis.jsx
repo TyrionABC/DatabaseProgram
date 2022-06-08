@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Descriptions, PageHeader, Table, Tabs} from "antd";
+import {Button, Descriptions, PageHeader, Table, Tabs} from "antd";
 import React from "react";
 
 export default class MyThesis extends React.Component {
@@ -7,6 +7,7 @@ export default class MyThesis extends React.Component {
         data_1: [],
         data_2: [],
         id: '',
+        location: 1,
     }
 
     constructor(props) {
@@ -39,11 +40,13 @@ export default class MyThesis extends React.Component {
         });
     }
 
+    callback = (key) => {
+        this.setState({ location: key });
+        console.log(key);
+    }
+
     render() {
         const {TabPane} = Tabs;
-        function callback(key) {
-            console.log(key);
-        }
         console.log(this.state);
         const routes = [
             {
@@ -65,6 +68,15 @@ export default class MyThesis extends React.Component {
                 dataIndex: 'title',
                 key: 'title',
                 width: '10%',
+                render: (_, record) => (
+                    this.state.location === '2' ?
+                        <Button type="link" onClick={()=>{ window.location.href="/detail/" + record.id }}>
+                            { record.title }
+                        </Button> :
+                        <Button type="link" onClick={()=>{ window.location.href="/edit/" + record.id }}>
+                            { record.title }
+                        </Button>
+                )
             },
             {
                 title: '作者',
@@ -124,7 +136,7 @@ export default class MyThesis extends React.Component {
                 </Descriptions>
             </PageHeader>
             <div className="site-layout-content">
-                <Tabs defaultActiveKey="1" onChange={callback} centered>
+                <Tabs defaultActiveKey="1" onChange={this.callback} centered>
                     <TabPane tab="草稿箱" key="1">
                         <Table className="site-layout-content" columns={columns} dataSource={this.state.data_2}/>
                     </TabPane>
