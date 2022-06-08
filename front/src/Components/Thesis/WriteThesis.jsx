@@ -1,11 +1,11 @@
 import React from 'react'
 // 引入编辑器组件
-import {Input, Space, Form, Select, Col, Row, Cascader, Button, DatePicker, Modal, Table, Tag, Drawer} from 'antd';
+import {Input, Space, Form, Select, Col, Row, Cascader, Button, DatePicker, Modal, Table, Tag, Drawer, Upload} from 'antd';
 import BraftEditor from 'braft-editor'
 // 引入编辑器样式
 import 'braft-editor/dist/index.css'
 import axios from "axios";
-import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useLocation } from "react-router";
 import './Thesis.css';
 import TextArea from 'antd/lib/input/TextArea';
@@ -123,6 +123,9 @@ export class WriteThesis extends React.Component {
             ref:a,
             showRef:b
         })
+    }
+    beforeUpload = ({fileList}) =>{
+        return false;
     }
     submitContent = () => {
         this.setState({
@@ -251,6 +254,14 @@ export class WriteThesis extends React.Component {
                 label="摘要"
                 name="overview">
                     <TextArea allowClear showCount style={{width:300}}></TextArea>
+                </Form.Item>
+                <Form.Item
+                label="额外文件"
+                name="upload"
+                action="118.195.171.21">
+                    <Upload name="logo" beforeUpload={this.beforeUpload}>
+                        <Button icon={<UploadOutlined />}> Click to upload </Button>
+                    </Upload>
                 </Form.Item>
                 <Modal
                     title="引用查询"
