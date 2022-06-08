@@ -66,12 +66,12 @@ function App() {
 
 const { Content, Footer, Sider } = Layout;
 
-function BottomPart() {
-  const [bottom, setBottom] = useState(10);
-  return <Affix offsetBottom={bottom}>
+const BottomPart = () => {
+  return <Affix offsetBottom={10}>
     <Tooltip title="新文章">
       <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
-              size="large" href="#" style={{ position: "absolute", bottom: 80, right: 80}}/>
+              size="large" style={{ position: "absolute", bottom: 80, right: 80}}
+              />
     </Tooltip>
   </Affix>
 }
@@ -292,6 +292,7 @@ class MainContent extends React.Component {
   };
 
   onClick = (key) => {
+    console.log(key);
     this.setState({num: key.key});
     if(key.key === '6') {
       this.setState({
@@ -300,9 +301,18 @@ class MainContent extends React.Component {
       let ele = document.getElementById('logInfo');
       ele.style.display='none';
     }
-    if (key.key === '8') {
+    else if (key.key === '8') {
       this.setState({ isFocus: !this.state.isFocus });
     }
+  }
+
+  quickNew = () => {
+    this.setState({
+      collapsed: true,
+      num: 6,
+    });
+    let ele = document.getElementById('logInfo');
+    ele.style.display='none';
   }
 
   render() {
@@ -348,7 +358,13 @@ class MainContent extends React.Component {
             </Footer>
           </Layout>
         </Layout>
-        <BottomPart/>
+          <Affix offsetBottom={10}>
+            <Tooltip title="新文章">
+              <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
+                      size="large" style={{ position: "absolute", bottom: 80, right: 80}}
+                      onClick={this.quickNew}/>
+            </Tooltip>
+          </Affix>
         </>
     );
   }
