@@ -17,6 +17,7 @@ export class WriteThesis extends React.Component {
     state = {
         title:'',
         editorState: BraftEditor.createEditorState(null),
+        outputHTML: '',
         flag:'',
         isSee:false,
         direction:[],
@@ -45,7 +46,6 @@ export class WriteThesis extends React.Component {
         // 使用BraftEditor.createEditorState将html字符串转换为编辑器需要的editorStat
         that.setState({
             flag:0,
-            editorState: BraftEditor.createEditorState(htmlContent),
         });
     }
     handleTitleChange=(value)=>{
@@ -81,6 +81,12 @@ export class WriteThesis extends React.Component {
         });*/
     }
     submitForm =(value)=>{
+        if(!value['title'] && !value['path'] && !value['thesisType']
+            && !value['overview'] && !value['writerName'] && !value['publisher']
+            && !value['publishMeeting']) {
+            alert("搜索条件不能全为空!");
+            return;
+        }
         console.log(value);
         let that=this;
         axios({
@@ -127,7 +133,8 @@ export class WriteThesis extends React.Component {
     }
 
     handleEditorChange = (editorState) => {
-        this.setState({ editorState });
+        console.log(editorState.toHTML());
+        this.setState({ editorState: editorState, outputHTML: editorState.toHTML() });
     }
 
     showDrawer = () => {
@@ -163,7 +170,7 @@ export class WriteThesis extends React.Component {
                 layout='vertical'
                 //labelCol={{span:8,}}
                 //wrapperCol={{span:16,}}
-                initialValues={{remeber:true,}}
+                initialValues={{remember:true,}}
                 onFinish={this.onFinish}
                 //onFinishFailed={onFinishFailed}
                 autoComplete="off"
@@ -364,12 +371,12 @@ export class WriteThesis extends React.Component {
                 <div style={{marginTop:20}}>
                     <Input placeholder='标题' size={"large"} bordered={false} onChange={this.handleTitleChange}/>
                 </div>
-                    <div className="my-component" style={{backgroundColor:'white' }}>
-                    <BraftEditor
-                        value={editorState}
-                        onChange={this.handleEditorChange}
-                    />
-                </div>
+                    <div className="editor-wrapper" style={{backgroundColor:'white' }}>
+                        <BraftEditor
+                            value={ editorState }
+                            onChange={this.handleEditorChange}
+                        />
+                    </div>
                 </Space>
                 <div className="bottomElement">
                     <Button type="primary" style={{width: "25%"}} onClick={this.showDrawer}>完成</Button>
@@ -423,12 +430,12 @@ export class UpdateThesis extends React.Component {
     }
 
     handleEditorChange = (editorState) => {
-        this.setState({ editorState })
+        this.setState({ editorState })
     }
 
     render () {
 
-        const { editorState } = this.state
+        const { editorState } = this.state
         return (
             <div className="my-component">
                 <BraftEditor

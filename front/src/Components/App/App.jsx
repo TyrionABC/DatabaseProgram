@@ -147,7 +147,10 @@ const InnerForm = () => {
   const onFinish = (values) => {
     if(!values['title'] && !values['path'] && !values['thesisType']
         && !values['overview'] && !values['writerName'] && !values['publisher']
-        && !values['publishMeeting']) alert("搜索条件不能全为空!");
+        && !values['publishMeeting']) {
+      alert("搜索条件不能全为空!");
+      return;
+    }
     console.log('Success:', values);
     // 请求论文列表, 接收论文列表
     axios.post('http://localhost:8080/admin/select', values)
