@@ -6,6 +6,7 @@ import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import { CommentOutlined } from '@ant-design/icons';
 import {useLocation} from "react-router";
+import TextArea from 'antd/lib/input/TextArea';
 
 export default function SeeThesis() {
     let { state } = useLocation();
@@ -47,7 +48,7 @@ class Detail extends React.Component{
                     </Col>
                     <Col span={8}>
                         <div style={{border:'dashed'}}>
-                            <UserComment id={this.props.id} />
+                            <UserComment id={this.props.id} userId={this.props.userId}/>
                         </div>
                     </Col>
                 </Row>
@@ -60,9 +61,10 @@ class UserComment extends React.Component{
     state={
         comment:[],
         isSee:false,
-        editorState: BraftEditor.createEditorState(null),
-        outputHTML: '',
-        parentCommentId:''
+        content:'',
+        oldContent:'',
+        parentCommentId:'',
+        isVis:false
     }
     componentDidMount () {
         let that=this;
@@ -76,8 +78,11 @@ class UserComment extends React.Component{
             })
         });
     }
-    handleEditorChange = (editorState) => {
-        this.setState({ editorState: editorState, outputHTML: editorState.toHTML() });
+    handleEditorChange = (event) => {
+        this.setState({content:event.target.value});
+    }
+    handleEditorupdate = (event) =>{
+        this.setState({oldContent:event.target.value});
     }
     addComment=()=>{
         this.setState({
@@ -88,17 +93,81 @@ class UserComment extends React.Component{
     addReply=(parentCommentId)=>{
         this.setState({
             parentCommentId:parentCommentId,
-            isSee:'true',
+            isSee:true,
         })
+    }
+    deleteComment=(commentId)=>{
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/deleteComment/',
+            data:commentId
+        }).then(function(res) {
+            console.log(res.data);
+            if(res.data){
+                alert("删除成功");
+                window.location.reload();
+            }
+        });
+    }
+    updateComment=(commentId)=>{
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/getComment/',
+            data:commentId
+        }).then(function(res) {
+            console.log(res.data);
+            this.setState({
+                oldContent:res.data.content,
+                isVis:true
+            })
+        });
+    }
+    sumbitComment=()=>{
+        const newComment={
+            content:this.state.content,
+            parentCommentId:this.state.parentCommentId,
+            userId:this.props.userId,
+            id:this.props.id,
+        };
+        console.log(newComment);
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/insertComment/',
+            data:newComment
+        }).then(function(res) {
+            console.log(res.data);
+            if(res.data){
+                alert("评论成功");
+                window.location.reload();
+            }
+        });
+    }
+    sumbitUpdate=()=>{
+        const newComment={
+            content:this.state.oldContent,
+            id:this.props.id,
+        };
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/updateComment/',
+            data:newComment
+        }).then(function(res) {
+            console.log(res.data);
+            if(res.data){
+                alert("修改成功");
+                window.location.reload();
+            }
+        });
     }
     render(){
         let actions=[];
-        const {editorState}=this.state;
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId){
-                actions[index]=[<span onClick={()=>{this.addReply(item.parentCommentId)}}>回复</span>,<span>删除</span>,<span>修改</span>];
+                actions[index]=[<span onClick={()=>{this.addReply(item.parentCommentId)}}>回复</span>,
+                <span onClick={()=>{this.deleteComment(item.commentId)}}>删除</span>,
+                <span onClick={()=>{this.updateComment(item.commentId)}}>修改</span>];
             }else{
-                actions[index]=[<span>回复</span>];
+                actions[index]=[<span onClick={()=>{this.addReply(item.parentCommentId)}}>回复</span>];
             }
         })
         return (
@@ -138,13 +207,38 @@ class UserComment extends React.Component{
                     title='评论编辑器' 
                     centered 
                     visible={this.state.isSee}
-                    onOk={()=>this.setState({isSee:false})}
-                    onCancel={()=>this.setState({isSee:false})}
-                    width="90%">
-                        <BraftEditor
-                            value={ editorState }
+                    onCancel={()=>{this.setState({isSee:false})}}
+                    footer={[
+                        <Button type="primary" onClick={this.sumbitComment} style={{marginBottom:20}}>发表</Button>,
+                        <Button onClick={()=>{this.setState({isSee:false})}}>取消</Button>
+                    ]}
+                    width="50%">
+                        <TextArea
+                            showCount
+                            maxLength={50}
+                            style={{width:'90%',height:'80%'}}
                             onChange={this.handleEditorChange}
                         />
+                    </Modal>
+                    <Modal 
+                    title='评论修改器' 
+                    centered 
+                    visible={this.state.isVis}
+                    onCancel={()=>{this.setState({isVis:false})}}
+                    footer={[
+                        <Button type="primary" onClick={this.sumbitUpdate} style={{marginBottom:20}}>修改</Button>,
+                        <Button onClick={()=>{this.setState({isVis:false})}}>取消</Button>
+                    ]}
+                    width="50%"
+                    destroyOnClose>
+                        <TextArea
+                            showCount
+                            maxLength={50}
+                            style={{width:'90%',height:'80%'}}
+                            onChange={this.handleEditorupdate}
+                            value={this.state.oldContent}
+                        />
+                        <Button type="primary" onClick={this.sumbitUpdate} style={{marginBottom:20}}>修改</Button>
                     </Modal>
                 </div>
             </>
