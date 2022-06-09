@@ -1,7 +1,10 @@
 import React from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal,Space} from 'antd'
 import {useParams} from "react-router-dom";
+import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import { CommentOutlined } from '@ant-design/icons';
 
 export default function SeeThesis() {
     const params = useParams();
@@ -53,6 +56,10 @@ class Detail extends React.Component{
 class UserComment extends React.Component{
     state={
         comment:[],
+        isSee:false,
+        editorState: BraftEditor.createEditorState(null),
+        outputHTML: '',
+        parentCommentId:''
     }
     componentDidMount () {
         let that=this;
@@ -66,11 +73,27 @@ class UserComment extends React.Component{
             })
         });
     }
+    handleEditorChange = (editorState) => {
+        this.setState({ editorState: editorState, outputHTML: editorState.toHTML() });
+    }
+    addComment=()=>{
+        this.setState({
+            parentCommentId:'',
+            isSee:true,
+        })
+    }
+    addReply=(parentCommentId)=>{
+        this.setState({
+            parentCommentId:parentCommentId,
+            isSee:'true',
+        })
+    }
     render(){
         let actions=[];
+        const {editorState}=this.state;
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId){
-                actions[index]=[<span>回复</span>,<span>删除</span>];
+                actions[index]=[<span onClick={()=>{this.addReply(item.parentCommentId)}}>回复</span>,<span>删除</span>,<span>修改</span>];
             }else{
                 actions[index]=[<span>回复</span>];
             }
@@ -93,7 +116,7 @@ class UserComment extends React.Component{
                                                     return(
                                                         <Comment
                                                         actions={actions[key_index]}
-                                                        author={(key.userName)+" 回复 " +(key.parentUserName)}
+                                                        author={(key.userName)+" 回复 "+(key.parentUserName)}
                                                         avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
                                                         content={key.content}>
                                                         </Comment>
@@ -105,6 +128,21 @@ class UserComment extends React.Component{
                             }
                         )
                     }
+                </div>
+                <div style={{textAlign:'center'}}>
+                    <Button type="primary" onClick={this.addComment} icon={<CommentOutlined/> } style={{marginBottom:50}}>发表评论</Button>
+                    <Modal 
+                    title='评论编辑器' 
+                    centered 
+                    visible={this.state.isSee}
+                    onOk={()=>this.setState({isSee:false})}
+                    onCancel={()=>this.setState({isSee:false})}
+                    width="90%">
+                        <BraftEditor
+                            value={ editorState }
+                            onChange={this.handleEditorChange}
+                        />
+                    </Modal>
                 </div>
             </>
         )
