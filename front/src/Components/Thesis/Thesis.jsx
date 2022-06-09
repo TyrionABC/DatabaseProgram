@@ -7,16 +7,19 @@ import { SearchOutlined } from '@ant-design/icons';
 import './Thesis.css';
 import axios from 'axios';
 import SeeThesis from "./SeeThesis";
+import {Link} from "react-router-dom";
 
 export class Latest extends React.Component {
   state = {
     searchText: '',
     searchedColumn: '',
     data: '',
+    id: '',
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.state = { id: props.id };
     this.getLatest();
   }
 
@@ -112,34 +115,31 @@ export class Latest extends React.Component {
   render() {
     const columns = [
       {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-        width: '10%',
-        ...this.getColumnSearchProps('id'),
-      },
-      {
         title: '标题',
         dataIndex: 'title',
         key: 'title',
-        width: '10%',
+        width: '12%',
         ...this.getColumnSearchProps('title'),
         render: (_, record) => (
-          <Button type="link" onClick={() => { window.location.href = "/detail/" + record.id }}>{ record.title }</Button>
+            <Button type="link">
+              <Link to={"/detail/"+record.id} state={{userid: this.state.id}}>
+                { record.title }
+              </Link>
+            </Button>
         )
       },
       {
         title: '作者',
         dataIndex: 'writer',
         key: 'writer',
-        width: '10%',
+        width: '12%',
         ...this.getColumnSearchProps('writer'),
       },
       {
         title: '发布日期',
         dataIndex: 'thesisDate',
         key: 'thesisDate',
-        width: '10%',
+        width: '12%',
         ...this.getColumnSearchProps('thesisDate'),
         sorter: (a, b) => {
           let ta = new Date(a.thesisDate).getTime();
@@ -152,35 +152,35 @@ export class Latest extends React.Component {
         title: '发布人',
         dataIndex: 'publisher',
         key: 'publisher',
-        width: '10%',
+        width: '8%',
         ...this.getColumnSearchProps('publisher'),
       },
       {
         title: '论文类型',
         dataIndex: 'thesisType',
         key: 'thesisType',
-        width: '10%',
+        width: '8%',
         ...this.getColumnSearchProps('thesisType'),
       },
       {
         title: '研究方向',
         dataIndex: 'path',
         key: 'path',
-        width: '10%',
+        width: '28%',
         ...this.getColumnSearchProps('path'),
       },
       {
         title: '发布会议',
         dataIndex: 'publishMeeting',
         key: 'publishMeeting',
-        width: '10%',
+        width: '12%',
         ...this.getColumnSearchProps('publishMeeting'),
       },
       {
         title: '点赞数',
         dataIndex: 'like',
         key: 'like',
-        width: '10%',
+        width: '8%',
         ...this.getColumnSearchProps('like'),
         sorter: (a, b) => a.like - b.like,
         sortDirections: ['descend', 'ascend'],

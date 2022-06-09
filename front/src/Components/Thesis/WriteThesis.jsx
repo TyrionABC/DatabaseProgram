@@ -55,9 +55,21 @@ export class WriteThesis extends React.Component {
         console.log(this.state.title);
     }
     onFinish=(value)=>{
+        if(this.state.title === null
+            || this.state.title === ""
+            || this.state.outputHTML === ""
+            || this.state.outputHTML === null) {
+            alert("标题和内容不能为空!");
+            return;
+        }
         let directions=[];
+        let fa = this.state.direction;
         for(var i=0;i<value.direction.length;i++){
-            directions=directions.concat(value.direction[i]);
+            // 如果选择了'其他'选项，则添加其父方向
+            if(value.direction[i] === "其他") {
+                directions = directions.concat(fa[i]);
+            }
+            else directions=directions.concat(value.direction[i]);
         }
         let submitData = {
             title:this.state.title,
@@ -73,17 +85,27 @@ export class WriteThesis extends React.Component {
             publisher:this.state.publisher
         };
         console.log(submitData);
-        axios({
+        this.sendThesisSubmit(submitData)
+            .then(function(res) { console.log(res) });
+    }
+
+    sendThesisSubmit = async (data) => {
+        await axios({
             method: 'post',
             url: 'http://localhost:8080/admin/insertPaper',
-            data: submitData,
+            data: data,
         }).then(function(res) {
             console.log(res.data);
-            if(res.data){alert("success");window.location.href="./app";}
-            else {alert("fail");}
+            if(res.data){
+                alert("提交成功!");
+                window.location.reload();
+            }
+            else {alert("提交失败! 请重试");}
         });
+        return false;
     }
-    submitForm =(value)=>{
+
+    submitForm = async (value)=>{
         if(!value['title'] && !value['path'] && !value['thesisType']
             && !value['overview'] && !value['writerName'] && !value['publisher']
             && !value['publishMeeting']) {
@@ -92,10 +114,10 @@ export class WriteThesis extends React.Component {
         }
         console.log(value);
         let that=this;
-        axios({
+        await axios({
             method: 'post',
             url: 'http://localhost:8080/admin/select',
-            data:value
+            data: value
         }).then(function(res) {
             console.log(res.data);
             that.setState({
@@ -103,6 +125,7 @@ export class WriteThesis extends React.Component {
             })
         });
     }
+
     addReference = () =>{
         this.setState({
             isSee:true,
@@ -228,7 +251,7 @@ export class WriteThesis extends React.Component {
                     label="会议"
                     name="publishMeeting"
                     rules={[{required:true},]}>
-                    <Input/>
+                    <Input maxLength={50}/>
                 </Form.Item>
                 <Form.Item
                     label="发表日期"
@@ -253,14 +276,14 @@ export class WriteThesis extends React.Component {
                 <Form.Item 
                 label="摘要"
                 name="overview">
-                    <TextArea allowClear showCount style={{width:300}}></TextArea>
+                    <TextArea allowClear showCount maxLength={100}/>
                 </Form.Item>
                 <Form.Item
                 label="额外文件"
                 name="upload"
                 action="118.195.171.21">
                     <Upload name="logo" beforeUpload={this.beforeUpload}>
-                        <Button icon={<UploadOutlined />}> Click to upload </Button>
+                        <Button icon={<UploadOutlined />}> 点击上传 </Button>
                     </Upload>
                 </Form.Item>
                 <Modal
@@ -362,7 +385,9 @@ export class WriteThesis extends React.Component {
                                     key="action"
                                     render={(_,record) => (
                                         <Space size="middle">
-                                            <a style={{color:'green'}} onClick={()=>this.addRef(record.id, record.title)}>添加</ a>
+                                            <a id="addRefs" style={{color:'green'}} onClick={()=>{
+                                                this.addRef(record.id, record.title);
+                                            document.getElementById('addRefs').disabled = "true"}}>添加</ a>
                                         </Space>
                                     )}
                                 />
@@ -390,7 +415,11 @@ export class WriteThesis extends React.Component {
             <div className="site-layout-content">
                 <Space direction='vertical' size="middle">
                 <div style={{marginTop:20}}>
-                    <Input placeholder='标题' size={"large"}  bordered={false} onChange={this.handleTitleChange}/>
+                    <Input placeholder='标题'
+                           size={"large"}
+                           bordered={false}
+                           onChange={this.handleTitleChange}
+                           maxLength={50}/>
                 </div>
                     <div className="editor-wrapper" style={{backgroundColor:'white' }}>
                         <BraftEditor

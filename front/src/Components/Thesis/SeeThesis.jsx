@@ -1,15 +1,18 @@
-import React from 'react'
+import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal,Space} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import { CommentOutlined } from '@ant-design/icons';
+import {useLocation} from "react-router";
 
 export default function SeeThesis() {
+    let { state } = useLocation();
+    console.log(state.userid);
     const params = useParams();
     console.log(params);
-    return <Detail id={params.id}/>
+    return <Detail id={params.id} userId={state.userid}/>
 }
 
 class Detail extends React.Component{
