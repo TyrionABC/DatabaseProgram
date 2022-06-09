@@ -9,6 +9,8 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller
@@ -20,6 +22,7 @@ public class CommentController {
     private UserMapper userMapper;
     @Autowired
     private CommentMapper commentMapper;
+    //comment加root字段
     //获取该文章所有评论,根评论的父亲评论也要传
     @CrossOrigin
     @ResponseBody
@@ -45,13 +48,16 @@ public class CommentController {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("commentId",comment1.getCommentId());
         jsonObject.put("content",comment1.getContent());
-        jsonObject.put("date",comment1.getDate().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  // 设置日期格式
+        String strTime = simpleDateFormat.format(comment1.getDate());
+        jsonObject.put("date",strTime);
         if (comment1.getParentCommentId()==null)
             jsonObject.put("parentCommentId","");
         else
             jsonObject.put("parentCommentId",comment1.getParentCommentId());
         jsonObject.put("userName",userMapper.selectUserById(comment1.getUserId()).getName());
         jsonObject.put("publisherId",comment1.getUserId());
+        jsonObject.put("root",comment1.getRoot());
         if (comment1.getParentCommentId()==null)
             jsonObject.put("parentUserName","");
         else
@@ -67,7 +73,7 @@ public class CommentController {
         commentService.delete(comment.getCommentId());
         return "true";
     }
-    //更改评论,commentId,content,userId,id
+    //更改评论,commentId,content,userId,id//
     @CrossOrigin
     @ResponseBody
     @PostMapping("/updateComment")
@@ -75,16 +81,15 @@ public class CommentController {
         commentService.update(comment);
         return "true";
     }
-    //添加评论
+    //添加评论,需要parentId,content,userId,id,root//
     @CrossOrigin
     @ResponseBody
     @PostMapping("/insertComment")
     public String insert(@RequestBody Comment comment){
-        //System.out.println(comment);
         commentService.insert(comment);
         return "true";
     }
-    //查询单条评论内容
+    //查询单条评论内容//
     @CrossOrigin
     @ResponseBody
     @GetMapping("/insertComment/{id}")

@@ -23,7 +23,8 @@ public class Comment {
     private String id;
 
     private String content;
-
+    @TableField("root")
+    private String root;
     @TableField(exist = false)
     private List<Comment> replyComments = new ArrayList<>();
 
@@ -44,8 +45,17 @@ public class Comment {
                 ", userId='" + userId + '\'' +
                 ", id='" + id + '\'' +
                 ", content='" + content + '\'' +
+                ", root='" + root + '\'' +
                 ", replyComments=" + replyComments +
                 '}';
+    }
+
+    public String getRoot() {
+        return root;
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
     }
 
     public String getCommentId() {

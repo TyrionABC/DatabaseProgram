@@ -5,6 +5,7 @@ import com.domain.Comment;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -20,4 +21,10 @@ public interface CommentMapper extends BaseMapper<Comment> {
     List<Comment> selectCommentsByParent(String id);
     @Select("select * from comment where comment_id=#{commentId}")
     Comment selectComment(String commentId);
+
+    @Update("update comment set parent_comment_id=null where comment_id=#{commentId}")
+    void updateNull(String commentId);
+
+    @Delete("delete from comment where root=#{root}")
+    void deleteCommentByRoot(String root);
 }

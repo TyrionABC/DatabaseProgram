@@ -26,17 +26,24 @@ public class CommentServiceImp implements CommentService{
         }
         comment.setDate(new Date());
         comment.setCommentId(id);
-        if ("".equals(comment.getParentCommentId()))
+        //没有父评论，设置root为id
+        if ("".equals(comment.getParentCommentId())){
             comment.setParentCommentId(null);
+            comment.setRoot(id);
+        }
         System.out.println(comment);
         commentMapper.insert(comment);
     }
 
     @Override
     public void delete(String commentId) {
+        //是根评论则删除所有评论
+        if (commentMapper.selectComment(commentId).getRoot().equals(commentId)){
+            commentMapper.deleteCommentByRoot(commentId);
+        }
         List<Comment> comments=commentMapper.selectCommentsByParent(commentId);
         for(Comment comment:comments){
-            comment.setParentCommentId(null);
+            commentMapper.updateNull(comment.getCommentId());
         }
         QueryWrapper<Comment> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("comment_id",commentId);
@@ -45,10 +52,7 @@ public class CommentServiceImp implements CommentService{
 
     @Override
     public void update(Comment comment) {
-        comment.setDate(new Date());
-        //System.out.println(comment);
-        //comment.setParentCommentId(commentMapper.selectComment(comment.getCommentId()).getParentCommentId());
-        System.out.println(comment);
+        Comment comment1=commentMapper.selectComment(comment.getCommentId());
         commentMapper.updateById(comment);
     }
 

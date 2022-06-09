@@ -2,10 +2,7 @@ package com.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.domain.Belong;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -25,4 +22,6 @@ public interface BelongMapper extends BaseMapper<Belong> {
     void delete(String id,String directionName);
 //    @Insert("insert into belong(id,direction_name) values (#{id},#{directionName})")
 //    void insertInto(String id,String directionName);
+    @Update("update belong set direction_name=#{newName} where direction_name=#{oldName}")
+    void updateDirection(String oldName,String newName);
 }

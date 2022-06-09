@@ -255,15 +255,19 @@ class LabbbApplicationTests {
         System.out.println(paperService.getMyPapers("1216776075@qq.com"));
     }
     @Test
-    void tt(){
+    void tt() throws NotFoundException {
         //System.out.println(paperService.getPaperOfMonth());
         //paperService.update(new Paper_Basic_info("0c28414e-2","spring and springboot","理论证明型",null,"1216776075@qq.com",1,"111"));
         //System.out.println(paperMapper.getNums());
-        Query query = new Query();
-        query.setTitle("英语讨论");
-        System.out.println(paperService.selectPapersByConditions(query));
+        Direction direction = new Direction();
+        direction.setDirectionName("222222");
+        System.out.println(directionService.updateChildren("2",direction));
 
         //publishService.update(new Paper_publish("22","延吉会议",new Date(),"1216776075@qq.com","mbt"));
+    }
+    @Test
+    void ttt(){
+        System.out.println(commentMapper.selectComment("9bb73bcd-5"));
     }
 
 

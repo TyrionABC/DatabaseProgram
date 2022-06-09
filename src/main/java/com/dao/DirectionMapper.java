@@ -29,4 +29,7 @@ public interface DirectionMapper extends BaseMapper<Direction> {
     @Select("select * from direction where direction_name=parent_direction_name")
     List<Direction> selectAllParents();
 
+    @Update("update direction set parent_direction_name=#{newParent} where parent_direction_name=#{oldParent}")
+    void updateParentDirection(String oldParent,String newParent);
+
 }

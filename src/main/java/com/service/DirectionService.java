@@ -18,4 +18,6 @@ public interface DirectionService {
     List<Direction> getDirectionsByParent(String parentDirectionName);
     List<Direction> getPaperDirection(String id);
     List<Direction> getAllParents();
+    boolean updateParent(String name,Direction direction);
+    boolean updateChildren(String name,Direction direction);
 }

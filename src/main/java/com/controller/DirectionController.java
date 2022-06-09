@@ -51,44 +51,29 @@ public class DirectionController {
         }
         return jsonArray;
     }
-    @GetMapping("test")
-    @ResponseBody
-    public JSONObject test(){
-        JSONObject jsonObject=new JSONObject();
-        String[] children=new String[200];
-        children[0]="11";
-        children[1]="22";
-        jsonObject.put("array",children);
-        return jsonObject;
-    }
     //查找某方向,需要传入方向名称
     @CrossOrigin
     @GetMapping("/getDirection/{directionName}")
     @ResponseBody
     public JSONObject editInput(@PathVariable String directionName) {
-        System.out.println(directionName);
         JSONObject jsonObject=new JSONObject();
         Direction direction = directionService.selectDirectionByName(directionName);
         jsonObject.put("directionName",direction.getDirectionName());
         jsonObject.put("parentDirectionName",direction.getParentDirectionName());
         jsonObject.put("level",direction.getLevel());
         jsonObject.put("path",direction.getPath());
-        System.out.println(direction);
         return jsonObject;
     }
     //删除某方向,该方向存在则删除，将其所有子方向改为一级方向并返回true；不存在则返回false
     @CrossOrigin
-    @GetMapping("/deleteDirection/{directionName}")
+    @PostMapping("/deleteDirection")
     @ResponseBody
-    public String deleteDirection(@PathVariable(value = "directionName") String directionName) {
-        if(directionService.selectDirectionByName(directionName)!=null){
-            directionService.deleteDirectionByName(directionName);
-            return "true";
-        }
-        else
-            return "false";
+    public String deleteDirection(@RequestBody Direction direction) {
+        directionService.deleteDirectionByName(direction.getDirectionName());
+        return "true";
     }
-    //新增方向,要在前端校验是否为空
+    //新增方向,要在前端校验是否为空,传入方向名directionName和父方向parentDirectionName
+    //方向已存在返回false，成功插入则返回true
     @CrossOrigin
     @PostMapping("/insertDirection")
     @ResponseBody
@@ -99,7 +84,7 @@ public class DirectionController {
         else
             return "false";
     }
-    //更新方向,要传入方向名和父方向和原方向名,若不传父方向则默认将其改为一级方向
+    //更新方向,要传入方向名和父方向和原方向名
     @CrossOrigin
     @PostMapping("/updateDirection/{directionName}")
     @ResponseBody
@@ -108,11 +93,10 @@ public class DirectionController {
         if (direction1==null){//要更改的对象不存在
             return "false";
         }
-        else if(directionService.selectDirectionByName(direction.getDirectionName())!=null){
-            return "false";//要改成的方向名已经存在
-        }
-        directionService.updateDirection(directionName,direction);
-        return "true";
+        if (direction1.getDirectionName().equals(direction1.getParentDirectionName()))
+            return ""+directionService.updateParent(directionName,direction);//修改父方向
+        else
+            return ""+directionService.updateChildren(directionName,direction);//修改子方向
     }
 
 }
