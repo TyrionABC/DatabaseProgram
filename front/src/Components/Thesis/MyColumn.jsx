@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Descriptions, PageHeader, Table, Tabs} from "antd";
+import {Button, Descriptions, PageHeader, Table, Tabs} from "antd";
 import React from "react";
 
 export default class MyColumn extends React.Component {
@@ -39,6 +39,19 @@ export default class MyColumn extends React.Component {
         })
     }
 
+    deleteNote = async (id) => {
+        await axios.post('http://localhost:8080/admin/deleteNote', { id: id })
+            .then(function(res) {
+                console.log(res.data);
+                if(res.data) {
+                    alert("删除成功!");
+                }
+                else {
+                    alert("删除失败!");
+                }
+            });
+        window.location.reload();
+    }
 
     render() {
         const {TabPane} = Tabs;
@@ -47,23 +60,31 @@ export default class MyColumn extends React.Component {
         }
         const columns = [
             {
-                title: 'ID',
-                dataIndex: 'id',
-                key: 'id',
-                width: '10%',
-            },
-            {
                 title: '论文标题',
                 dataIndex: 'title',
                 key: 'title',
-                width: '10%',
+                width: '45%',
             },
             {
                 title: '内容',
                 dataIndex: 'note',
                 key: 'note',
-                width: '10%',
+                width: '45%',
             },
+            {
+                title: '操作',
+                width: '10%',
+                render: (_, record) => (
+                    <Button type="primary" danger onClick={()=>{
+                        this.deleteNote(record.id)
+                            .then(function(res) {
+                                console.log(res);
+                            })
+                    }}>
+                        删除
+                    </Button>
+                )
+            }
         ];
         const routes = [
             {

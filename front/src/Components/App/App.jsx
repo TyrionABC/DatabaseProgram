@@ -13,7 +13,7 @@ import {
   Space,
   Modal,
   Descriptions,
-  PageHeader
+  PageHeader, Skeleton
 } from 'antd';
 import {
   SearchOutlined,
@@ -89,6 +89,7 @@ function Name() {
 
 function SearchResult(props) {
   const data = props.lists;
+  const userid = useStore(state=>state.email);
   const { Column, ColumnGroup } = Table;
   const routes = [
     {
@@ -133,7 +134,9 @@ function SearchResult(props) {
           key="action"
           render={(value, record, index) => (
               <Space size="middle">
-                <Button type="link" onClick={()=>{ window.location.href="/detail/"+record.id}}>查看</Button>
+                <Button type="link">
+                  <Link to={"/detail/"+record.id} state={{userid: userid}}>查看</Link>
+                </Button>
               </Space>
           )}
       />
@@ -266,7 +269,7 @@ const items = [
 ];
 
 function setContent(id, name) {
-  contents[0] = <Latest/>;
+  contents[0] = <Latest id={id}/>;
   contents[1] = <MyThesis id={id}/>;
   contents[2] = <MyColumn id={id}/>;
   contents[3] = <GetContentData id={id}/>;

@@ -1,6 +1,7 @@
 import axios from "axios";
 import {Button, Descriptions, PageHeader, Table, Tabs} from "antd";
 import React from "react";
+import {Link} from "react-router-dom";
 
 export default class MyThesis extends React.Component {
     state = {
@@ -45,6 +46,20 @@ export default class MyThesis extends React.Component {
         console.log(key);
     }
 
+    deleteThesis = async (id) => {
+        await axios.post('http://localhost:8080/admin/deletePaper', { id: id })
+            .then(function(res) {
+                console.log(res.data);
+                if(res.data) {
+                    alert("删除成功!");
+                }
+                else {
+                    alert("删除失败!");
+                }
+            });
+        window.location.reload();
+    }
+
     render() {
         const {TabPane} = Tabs;
         console.log(this.state);
@@ -58,23 +73,21 @@ export default class MyThesis extends React.Component {
         ];
         const columns = [
             {
-                title: 'ID',
-                dataIndex: 'id',
-                key: 'id',
-                width: '10%',
-            },
-            {
                 title: '标题',
                 dataIndex: 'title',
                 key: 'title',
                 width: '10%',
                 render: (_, record) => (
                     this.state.location === '2' ?
-                        <Button type="link" onClick={()=>{ window.location.href="/detail/" + record.id }}>
-                            { record.title }
+                        <Button type="link">
+                            <Link to={"/detail/"+record.id} state={{userid: this.state.id}}>
+                                { record.title }
+                            </Link>
                         </Button> :
-                        <Button type="link" onClick={()=>{ window.location.href="/edit/" + record.id }}>
-                            { record.title }
+                        <Button type="link">
+                            <Link to={"/edit/"+record.id} state={{userid: this.state.id}}>
+                                { record.title }
+                            </Link>
                         </Button>
                 )
             },
@@ -128,6 +141,19 @@ export default class MyThesis extends React.Component {
                 sorter: (a, b) => a.like - b.like,
                 sortDirections: ['descend', 'ascend'],
             },
+            {
+                title: '操作',
+                width: '10%',
+                render: (_, record) => (
+                    <Button type="primary" danger onClick={()=>{
+                        this.deleteThesis(record.id)
+                            .then(function(res) {
+                                console.log(res);
+                            })}}>
+                        删除
+                    </Button>
+                )
+            }
         ];
         return <>
             <PageHeader style={{background: '#fff'}} title="我的文章" breadcrumb={{routes}}>
