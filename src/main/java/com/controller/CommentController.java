@@ -29,18 +29,39 @@ public class CommentController {
     @GetMapping("/selectAllComments/{paperId}")
     public JSONArray getAll(@PathVariable String paperId){
         JSONArray jsonArray=new JSONArray();
-        List<Comment> comments=commentService.selectAll(paperId);
-        for(Comment comment1:comments){
-            if (comment1.getParentCommentId()!=null){
-                continue;
-            }
-            putInComment(jsonArray, comment1);
-            if (comment1.getParentCommentId()==null){
-                for (Comment comment:comment1.getReplyComments()){
-                    putInComment(jsonArray, comment);
-                }
-            }
+        //List<Comment> comments=commentService.selectAll(paperId);
+        List<Comment> comments=commentMapper.getAllByPaper(paperId);
+        for (Comment comment1:comments){
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("commentId",comment1.getCommentId());
+            jsonObject.put("content",comment1.getContent());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  // 设置日期格式
+            String strTime = simpleDateFormat.format(comment1.getDate());
+            jsonObject.put("date",strTime);
+            if (comment1.getParentCommentId()==null)
+                jsonObject.put("parentCommentId","");
+            else
+                jsonObject.put("parentCommentId",comment1.getParentCommentId());
+            jsonObject.put("userName",userMapper.selectUserById(comment1.getUserId()).getName());
+            jsonObject.put("publisherId",comment1.getUserId());
+            jsonObject.put("root",comment1.getRoot());
+            if (comment1.getParentCommentId()==null)
+                jsonObject.put("parentUserName","");
+            else
+                jsonObject.put("parentUserName",userMapper.selectUserById(commentMapper.selectComment(comment1.getParentCommentId()).getUserId()).getName());
+            jsonArray.add(jsonObject);
         }
+//        for(Comment comment1:comments){
+//            if (comment1.getParentCommentId()!=null){
+//                continue;
+//            }
+//            putInComment(jsonArray, comment1);
+//            if (comment1.getParentCommentId()==null){
+//                for (Comment comment:comment1.getReplyComments()){
+//                    putInComment(jsonArray, comment);
+//                }
+//            }
+//        }
         return jsonArray;
     }
 
@@ -73,7 +94,7 @@ public class CommentController {
         commentService.delete(comment.getCommentId());
         return "true";
     }
-    //更改评论,commentId,content,userId,id//
+    //更改评论,commentId,content//
     @CrossOrigin
     @ResponseBody
     @PostMapping("/updateComment")

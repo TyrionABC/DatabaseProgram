@@ -27,4 +27,10 @@ public interface CommentMapper extends BaseMapper<Comment> {
 
     @Delete("delete from comment where root=#{root}")
     void deleteCommentByRoot(String root);
+
+    @Select("select * from comment where root=#{root}")
+    List<Comment> getAllCommentsByRoot(String root);
+
+    @Select("select * from comment where id=#{paperId}")
+    List<Comment> getAllByPaper(String paperId);
 }
