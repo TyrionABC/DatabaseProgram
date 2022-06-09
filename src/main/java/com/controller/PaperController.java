@@ -166,6 +166,20 @@ public class PaperController {
     @ResponseBody
     public JSONArray select(@RequestBody Query query){
         System.out.println(query.getTitle());
+        if ("".equals(query.getDirectionName()))
+            query.setDirectionName(null);
+        if ("".equals(query.getName()))
+            query.setName(null);
+        if ("".equals(query.getOverview()))
+            query.setOverview(null);
+        if ("".equals(query.getPublishMeeting()))
+            query.setPublishMeeting(null);
+        if ("".equals(query.getThesisType()))
+            query.setThesisType(null);
+        if ("".equals(query.getTitle()))
+            query.setTitle(null);
+        if ("".equals(query.getUserName()))
+            query.setUserName(null);
         List<Paper> papers=paperService.selectPapersByConditions(query);
         //System.out.println(papers);
         JSONArray json = new JSONArray();
