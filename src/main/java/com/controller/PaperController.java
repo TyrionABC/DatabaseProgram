@@ -153,7 +153,7 @@ public class PaperController {
         jo.put("thesisType",paper.getThesisType());
         jo.put("title",paper.getTitle());
         jo.put("like",paper.getLike());
-        jo.put("writer",paper.getWriterName());
+        jo.put("writers",paper.getWriters());
         jo.put("publisher",paper.getPublisher());
         jo.put("path",paper.getPaths());
         jo.put("publishMeeting",paper.getPublishMeeting());
@@ -184,7 +184,7 @@ public class PaperController {
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
             //此处改成数组
-            jo.put("writerName",paper.getWriters());
+            jo.put("writers",paper.getWriters());
             jo.put("like",paper.getLike());
             json.add(jo);
         }

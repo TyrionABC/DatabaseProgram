@@ -177,6 +177,21 @@ public class PaperServiceImp implements PaperService{
                     paper.getPaths().add(parent);
                 paper.getPaths().add(belong.getDirectionName());
             }
+            List<Writer> writers=writerService.selectWriters(paper.getId());
+            List<String> writerList=new ArrayList<>();
+            paper.setWriters(writerList);
+            if (writers==null){
+                paper.getWriters().add("");
+            }
+            else {
+                for (int i=1;i<=writers.size();i++){
+                    for (Writer writer:writers){
+                        if (writer.getLevel()==i){
+                            paper.getWriters().add(writer.getWriterName());
+                        }
+                    }
+                }
+            }
         }
 
         return papers;
