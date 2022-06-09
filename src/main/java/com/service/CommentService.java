@@ -11,4 +11,5 @@ public interface CommentService {
     List<Comment> selectAll(String id);
     List<Comment> getRoots(String id);
     List<Comment> getReplies(String commentId);
+    Comment selectComment(String commentId);
 }

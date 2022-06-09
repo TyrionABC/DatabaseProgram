@@ -14,4 +14,6 @@ public interface NoteAndFileMapper extends BaseMapper<Note_and_extra_file> {
     List<Note_and_extra_file> getMyNotes(String userId);
     @Delete("delete from note_and_extra_file where id=#{id}")
     void deleteNoteById(String id);
+    @Select("select * from note_and_extra_file where id=#{id}")
+    Note_and_extra_file selectNoteAndExtraFile(String id);
 }

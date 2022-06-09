@@ -14,6 +14,8 @@ public class NoteAndFileServiceImp implements NoteAndFileService{
     private NoteAndFileMapper noteAndFileMapper;
     @Override
     public void insert(Note_and_extra_file note_and_extra_file) {
+        note_and_extra_file.setOverview(
+                noteAndFileMapper.selectNoteAndExtraFile(note_and_extra_file.getId()).getOverview());
         noteAndFileMapper.insert(note_and_extra_file);
     }
 

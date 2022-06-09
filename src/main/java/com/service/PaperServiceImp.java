@@ -9,6 +9,7 @@ import com.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -33,6 +34,10 @@ public class PaperServiceImp implements PaperService{
     private DirectionService directionService;
     @Autowired
     private WriterService writerService;
+    @Autowired
+    private PublishService publishService;
+    @Autowired
+    private UserService userService;
     @Override
     public String insertPaper(Paper_Basic_info paper) {
         String id = UUID.randomUUID().toString().substring(0,10);
@@ -153,63 +158,136 @@ public class PaperServiceImp implements PaperService{
 
     @Override
     public List<Paper> selectMyPapers(String userId) {
-        List<Paper> papers=paperMapper.getMyPapers(userId);
+        List<Paper> papers = paperMapper.getMyPapers(userId);
         method(papers);
-        for (Paper paper:papers){
-                List<String> list=new ArrayList<>();
-                paper.setPaths(list);
-                List<Belong> belongs=belongService.getAllById(paper.getId());
-                for(Belong belong:belongs){
-                    String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
-                    int flag=1;
-                    for (Belong belong1:belongs){
-                        if (parent.equals(belong1.getDirectionName())){
-                            flag=0;
-                            break;
-                        }
+        for (Paper paper : papers) {
+            List<String> list = new ArrayList<>();
+            paper.setPaths(list);
+            List<Belong> belongs = belongService.getAllById(paper.getId());
+            for (Belong belong : belongs) {
+                String parent = directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                int flag = 1;
+                for (Belong belong1 : belongs) {
+                    if (parent.equals(belong1.getDirectionName())) {
+                        flag = 0;
+                        break;
                     }
-                    if (flag==1)
-                        paper.getPaths().add(parent);
-                    paper.getPaths().add(belong.getDirectionName());
                 }
+                if (flag == 1)
+                    paper.getPaths().add(parent);
+                paper.getPaths().add(belong.getDirectionName());
             }
+        }
 
         return papers;
     }
-
+//    "id": "05a783b3-9",
+//            "publisherId": "1476984813@qq.com",
+//            "thesisDate": "2022-06-08",
+//            "thesisType": "综述性",
+//            "title": "英语讨论",
+//            "like": 0,
+//            "writer": "第一作者:lsw;第二作者:lsw2",
+//            "publisher": "lsw",
+//            "publishMeeting": "许昌会议"
     @Override
-    public List<Paper> selectNewPapers() {
-        int flag=0;
-        List<Paper> papers=paperMapper.getNewPapers();
-        List<Paper> newPapers=new ArrayList<>();
-        for(Paper paper:papers){
-            flag=0;
-            for(Paper newPaper:newPapers){
-                if (paper.getId().equals(newPaper.getId())){
-                    flag=1;
-                    break;
+    public List<Paper> selectNewPapers(){
+        List<Paper_Basic_info> paper_basic_infos=paperMapper.selectNewPapers();
+        List<Paper> papers=new ArrayList<Paper>();//???
+        for (Paper_Basic_info paper_basic_info:paper_basic_infos){
+            Paper paper=new Paper();
+            paper.setId(paper_basic_info.getId());
+            paper.setPublisherId(paper_basic_info.getPublisherId());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  // 设置日期格式
+            String strTime = simpleDateFormat.format(paper_basic_info.getThesisDate());
+            paper.setThesisDate(strTime);
+            paper.setThesisType(paper_basic_info.getThesisType());
+            paper.setTitle(paper_basic_info.getTitle());
+            paper.setLike(paper_basic_info.getLike());
+            paper.setPublisher(userService.selectUserById(paper_basic_info.getPublisherId()).getName());
+            Paper_publish publish=publishService.selectByPaperId(paper_basic_info.getId());
+            if (publish==null){
+                paper.setPublishMeeting("");
+            }
+            else {
+                paper.setPublisher(publish.getPublisher());
+                paper.setPublishMeeting(publish.getPublishMeeting());
+            }
+            List<Writer> writers=writerService.selectWriters(paper_basic_info.getId());
+            List<String> writerList=new ArrayList<>();
+            paper.setWriters(writerList);
+            if (writers==null){
+                paper.getWriters().add("");
+            }
+            else {
+                for (int i=1;i<=writers.size();i++){
+                    for (Writer writer:writers){
+                        if (writer.getLevel()==i){
+                            paper.getWriters().add(writer.getWriterName());
+                        }
+                    }
                 }
             }
-            if (flag==1)
-                continue;
-            if (writerMapper.selectWritersById(paper.getId()).size()>1){
-                String str1="";
-                String str2="";
-                for(Writer writer:writerMapper.selectWritersById(paper.getId())){
-                    if (writer.getLevel()==1){
-                        str1+="第一作者:"+writer.getWriterName()+";";
-                    }
-
-                    else{
-                        str2+="第二作者:"+writer.getWriterName()+"";
+            List<String> paths=new ArrayList<>();
+            paper.setPaths(paths);
+            List<Belong> belongs=belongService.getAllById(paper.getId());
+            for(Belong belong:belongs){
+                String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                int flag=1;
+                for (Belong belong1:belongs){
+                    if (parent.equals(belong1.getDirectionName())||paper.getPaths().contains(parent)){
+                        flag=0;
+                        break;
                     }
                 }
-                paper.setWriterName(str1+str2);
+                if (flag==1)
+                    paper.getPaths().add(parent);
+                paper.getPaths().add(belong.getDirectionName());
             }
-            newPapers.add(paper);
+            papers.add(paper);
         }
-        return newPapers;
+        return papers;
     }
+//        "writer": "第一作者:lsw;第二作者:lsw2",
+//        "publisher": "lsw",
+//        "publishMeeting": "许昌会议"
+//    @Override
+//    public List<Paper> selectNewPapers() {
+//        int flag=0;
+//        List<Paper_Basic_info> paper_basic_infos=paperMapper.selectNewPapers();
+//        List<Paper> papers=paperMapper.getNewPapers();
+//        for (Paper paper:papers){
+//            System.out.println(paper);
+//        }
+//        List<Paper> newPapers=new ArrayList<>();
+//        for(Paper paper:papers){
+//            flag=0;
+//            for(Paper newPaper:newPapers){
+//                if (paper.getId().equals(newPaper.getId())){
+//                    flag=1;
+//                    break;
+//                }
+//            }
+//            if (flag==1)
+//                continue;
+//            if (writerMapper.selectWritersById(paper.getId()).size()>1){
+//                String str1="";
+//                String str2="";
+//                for(Writer writer:writerMapper.selectWritersById(paper.getId())){
+//                    if (writer.getLevel()==1){
+//                        str1+="第一作者:"+writer.getWriterName()+";";
+//                    }
+//
+//                    else{
+//                        str2+="第二作者:"+writer.getWriterName()+"";
+//                    }
+//                }
+//                paper.setWriterName(str1+str2);
+//            }
+//            newPapers.add(paper);
+//        }
+//        return newPapers;
+//    }
 
     @Override
     public List<MyPaper> getMyPapers(String userId) {

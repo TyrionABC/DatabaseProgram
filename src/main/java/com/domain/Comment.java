@@ -1,6 +1,7 @@
 package com.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @TableName("comment")
 public class Comment {
+    @TableId
     @TableField("comment_id")
     private String commentId;
     @TableField("parent_comment_id")
@@ -22,6 +24,9 @@ public class Comment {
 
     private String content;
 
+    @TableField(exist = false)
+    private List<Comment> replyComments = new ArrayList<>();
+
     public List<Comment> getReplyComments() {
         return replyComments;
     }
@@ -29,8 +34,19 @@ public class Comment {
     public void setReplyComments(List<Comment> replyComments) {
         this.replyComments = replyComments;
     }
-    @TableField(exist = false)
-    private List<Comment> replyComments = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "commentId='" + commentId + '\'' +
+                ", parentCommentId='" + parentCommentId + '\'' +
+                ", date=" + date +
+                ", userId='" + userId + '\'' +
+                ", id='" + id + '\'' +
+                ", content='" + content + '\'' +
+                ", replyComments=" + replyComments +
+                '}';
+    }
 
     public String getCommentId() {
         return commentId;
@@ -78,18 +94,6 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "commentId='" + commentId + '\'' +
-                ", parentCommentId='" + parentCommentId + '\'' +
-                ", date=" + date +
-                ", userId='" + userId + '\'' +
-                ", id='" + id + '\'' +
-                ", content='" + content + '\'' +
-                '}';
     }
 
 }
