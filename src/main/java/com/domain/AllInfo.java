@@ -15,6 +15,7 @@ public class AllInfo {
     String text;
     String publishMeeting;
     String id;
+    String overview;
 
     @Override
     public String toString() {
@@ -28,11 +29,20 @@ public class AllInfo {
                 ", text='" + text + '\'' +
                 ", publishMeeting='" + publishMeeting + '\'' +
                 ", id='" + id + '\'' +
+                ", overview='" + overview + '\'' +
                 ", publishTime=" + publishTime +
                 ", publisher='" + publisher + '\'' +
                 ", referIds=" + referIds +
                 ", writers=" + writers +
                 '}';
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
     public String getId() {

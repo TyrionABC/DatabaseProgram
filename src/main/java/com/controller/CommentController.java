@@ -51,6 +51,7 @@ public class CommentController {
         else
             jsonObject.put("parentCommentId",comment1.getParentCommentId());
         jsonObject.put("userName",userMapper.selectUserById(comment1.getUserId()).getName());
+        jsonObject.put("publisherId",comment1.getUserId());
         if (comment1.getParentCommentId()==null)
             jsonObject.put("parentUserName","");
         else
@@ -66,7 +67,7 @@ public class CommentController {
         commentService.delete(comment.getCommentId());
         return "true";
     }
-    //更改评论
+    //更改评论,commentId,content,userId,id
     @CrossOrigin
     @ResponseBody
     @PostMapping("/updateComment")
@@ -82,6 +83,13 @@ public class CommentController {
         //System.out.println(comment);
         commentService.insert(comment);
         return "true";
+    }
+    //查询单条评论内容
+    @CrossOrigin
+    @ResponseBody
+    @GetMapping("/insertComment/{id}")
+    public String selectOne(@PathVariable String id){
+        return commentService.selectComment(id).getContent();
     }
 
 }

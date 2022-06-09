@@ -1,12 +1,14 @@
 package com.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Arrays;
 
 @TableName("note_and_extra_file")
 public class Note_and_extra_file {
+    @TableId
     private String id;
     @TableField("publisher_id")
     private String publisherId;
@@ -79,4 +81,5 @@ public class Note_and_extra_file {
                 ", flag=" + flag +
                 '}';
     }
+
 }

@@ -85,7 +85,7 @@ public class PaperController {
         return json;
     }
 
-    //获取用户最近发布的20篇论文
+    //获取用户最近发布的20篇论文,有问题,且时间精确到天即可
     @CrossOrigin
     @GetMapping("/paper")
     @ResponseBody
@@ -98,6 +98,7 @@ public class PaperController {
             if (paper.getFlag()==1)
                 continue;
             JSONObject jo = new JSONObject();
+            jo.put("writers",paper.getWriters());
             putIn(paper, jo);
             json.add(jo);
         }
@@ -330,6 +331,9 @@ public class PaperController {
             str[i++]=writer.getWriterName();
         }
         jsonObject.put("writers",str);
+        ////
+        jsonObject.put("overview",noteAndFileService.select(paperId).getOverview());
+        ////
         return jsonObject;
     }
     //插入论文,传入子方向，基本信息，发布信息，索引，作者信息
@@ -359,6 +363,13 @@ public class PaperController {
             System.out.println(writer);
             writerService.insert(new Writer(id,writer,i++));
         }
+        //
+        Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
+        note_and_extra_file.setOverview(allInfo.getOverview());
+        note_and_extra_file.setPublisherId(allInfo.getPublisherId());
+        note_and_extra_file.setFlag(1);
+        noteAndFileService.insert(note_and_extra_file);
+        //
         return "true";
     }
     //修改论文,传入id,传入子方向，基本信息，发布信息，索引，作者信息
@@ -378,6 +389,28 @@ public class PaperController {
                 allInfo.getPublishTime(),allInfo.getPublisherId(),allInfo.getPublisher()));
         //修改索引信息
         referenceService.update(id,allInfo.getReferIds());
+        //修改摘要
+        Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
+        note_and_extra_file.setOverview(allInfo.getOverview());
+        note_and_extra_file.setPublisherId(allInfo.getPublisherId());
+        noteAndFileService.update(note_and_extra_file);
+        ///////
+        return "true";
+    }
+    //删除笔记
+    @CrossOrigin
+    @PostMapping("/deleteNotes")
+    @ResponseBody
+    public String deleteNotes(@RequestBody Note_and_extra_file note){
+        noteAndFileService.delete(note.getId());
+        return "true";
+    }
+    //写笔记
+    @CrossOrigin
+    @PostMapping("/insertNotes")
+    @ResponseBody
+    public String insertNotes(@RequestBody Note_and_extra_file note){
+        noteAndFileService.insert(note);
         return "true";
     }
 

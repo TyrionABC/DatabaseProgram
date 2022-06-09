@@ -24,8 +24,10 @@ public class CommentServiceImp implements CommentService{
         while (commentMapper.selectOne(queryWrapper)!=null){
             id=UUID.randomUUID().toString().substring(0,10);
         }
-        //comment.setDate(new Date());
+        comment.setDate(new Date());
         comment.setCommentId(id);
+        if ("".equals(comment.getParentCommentId()))
+            comment.setParentCommentId(null);
         System.out.println(comment);
         commentMapper.insert(comment);
     }
@@ -43,6 +45,10 @@ public class CommentServiceImp implements CommentService{
 
     @Override
     public void update(Comment comment) {
+        comment.setDate(new Date());
+        //System.out.println(comment);
+        //comment.setParentCommentId(commentMapper.selectComment(comment.getCommentId()).getParentCommentId());
+        System.out.println(comment);
         commentMapper.updateById(comment);
     }
 
@@ -56,6 +62,12 @@ public class CommentServiceImp implements CommentService{
     public List<Comment> getReplies(String commentId) {
         return commentMapper.selectReplies(commentId);
     }
+
+    @Override
+    public Comment selectComment(String commentId) {
+        return commentMapper.selectComment(commentId);
+    }
+
     @Override
     public List<Comment> selectAll(String id) {
         List<Comment> comments=commentMapper.selectRoots(id);

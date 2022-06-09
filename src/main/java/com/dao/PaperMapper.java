@@ -75,6 +75,8 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
     List<Paper> getNewPapers();
 
 
+
+
     @Select("select * from paper_basic_info where id=#{id}")
     Paper_Basic_info selectPaperById(String id);
 
@@ -115,6 +117,6 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
             "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 11 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 11 MONTH), '%Y-%m') and flag=0;")
     List<Month> getNums();
 
-
-
+    @Select("select * from paper_basic_info where flag=0 order by thesis_date desc limit 0,20")
+    List<Paper_Basic_info> selectNewPapers();
 }
