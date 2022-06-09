@@ -413,5 +413,14 @@ public class PaperController {
         noteAndFileService.insert(note);
         return "true";
     }
+    //改笔记
+    @CrossOrigin
+    @PostMapping("/updateNotes")
+    @ResponseBody
+    public String updateNotes(@RequestBody Note_and_extra_file note){
+        noteAndFileService.update(note);
+        return "true";
+    }
+
 
 }
