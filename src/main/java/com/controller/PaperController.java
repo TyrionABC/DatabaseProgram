@@ -368,8 +368,10 @@ public class PaperController {
         publishService.insert(new Paper_publish(id,allInfo.getPublishMeeting(),
                 allInfo.getPublishTime(),allInfo.getPublisherId(),allInfo.getPublisher()));
         //储存索引信息
-        for (String referId:allInfo.getReferIds()){
-            referenceService.insertReference(new Reference(id,referId));
+        if (allInfo.getReferIds().size()!=0){
+            for (String referId:allInfo.getReferIds()){
+                referenceService.insertReference(new Reference(id,referId));
+            }
         }
         //存储作者信息
         int i=1;
