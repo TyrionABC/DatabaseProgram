@@ -91,6 +91,7 @@ class UserComment extends React.Component{
         })
     }
     addReply=(parentCommentId)=>{
+        console.log(parentCommentId);
         this.setState({
             parentCommentId:parentCommentId,
             isSee:true,
@@ -163,11 +164,11 @@ class UserComment extends React.Component{
         let actions=[];
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId){
-                actions[index]=[<span onClick={()=>{this.addReply(item.parentCommentId)}}>回复</span>,
+                actions[index]=[<span onClick={()=>{this.addReply(item.commentId)}}>回复</span>,
                 <span onClick={()=>{this.deleteComment(item.commentId)}}>删除</span>,
                 <span onClick={()=>{this.updateComment(item.commentId)}}>修改</span>];
             }else{
-                actions[index]=[<span onClick={()=>{this.addReply(item.parentCommentId)}}>回复</span>];
+                actions[index]=[<span onClick={()=>{this.addReply(item.commentId)}}>回复</span>];
             }
         })
         return (
@@ -178,19 +179,23 @@ class UserComment extends React.Component{
                             if(item.parentUserName==='')
                                 return(
                                     <Comment 
+                                    key={item_index}
                                     actions={actions[item_index]}
                                     author={item.userName}
                                     avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                    content={item.content}>
+                                    content={item.content}
+                                    datetime={item.date}
+                                    style={{marginLeft:30}}>
                                         {
-                                            this.state.comment.map((key,key_index)=>{
-                                                if(key.parentUserName!=='')
+                                            this.state.comment.map((ikey,key_index)=>{
+                                                if(ikey.parentCommentId===item.commentId)
                                                     return(
                                                         <Comment
+                                                        key={key_index}
                                                         actions={actions[key_index]}
-                                                        author={(key.userName)+" 回复 "+(key.parentUserName)}
+                                                        author={(ikey.userName)+" 回复 "+(ikey.parentUserName)}
                                                         avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                                        content={key.content}>
+                                                        content={ikey.content} >
                                                         </Comment>
                                                     )
                                             })
