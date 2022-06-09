@@ -62,6 +62,11 @@ export class WriteThesis extends React.Component {
             alert("标题和内容不能为空!");
             return;
         }
+        console.log(value.writer);
+        if(value.writer === null || value.writer.length === 0) {
+            alert("作者栏不能为空!");
+            return;
+        }
         let directions=[];
         let fa = this.state.direction;
         for(var i=0;i<value.direction.length;i++){
@@ -106,8 +111,8 @@ export class WriteThesis extends React.Component {
     }
 
     submitForm = async (value)=>{
-        if(!value['title'] && !value['path'] && !value['thesisType']
-            && !value['overview'] && !value['writerName'] && !value['publisher']
+        if(!value['title'] && !value['directionName'] && !value['thesisType']
+            && !value['overview'] && !value['name'] && !value['userName']
             && !value['publishMeeting']) {
             alert("搜索条件不能全为空!");
             return;
@@ -132,6 +137,11 @@ export class WriteThesis extends React.Component {
         })
     }
     addRef = (id, title) => {
+        let list = this.state.ref;
+        if(list.indexOf(id) !== -1) {
+            alert("不能添加相同引用!")
+            return;
+        }
         let a=[];
         for(var i=0;i<this.state.ref.length;i++){
             a.push(this.state.ref[i]);
@@ -146,6 +156,7 @@ export class WriteThesis extends React.Component {
             ref:a,
             showRef:b
         })
+        alert("已添加" + title);
     }
     beforeUpload = ({fileList}) =>{
         return false;
@@ -235,13 +246,14 @@ export class WriteThesis extends React.Component {
                                         label={"第"+(name+1)+"作者"}
                                         {...restField}
                                         name={name}
+                                        rules={[{required:true}]}
                                     >
-                                        <Input id={name+1} />
+                                        <Input id={name+1} minLength={1} maxLength={50}/>
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={()=>remove(name)} />
                                 </Space>
                             ))}
-                            <Form.Item label={"添加作者"} rules={[{required:true},]}>
+                            <Form.Item label={"添加作者"} rules={[{required:true}]}>
                                 <Button type="dashed" onClick={()=>add()} block icon={<PlusOutlined/>}/>
                             </Form.Item>
                         </>
@@ -314,7 +326,7 @@ export class WriteThesis extends React.Component {
                                 </Form.Item>
                                 <Form.Item
                                     label="研究方向"
-                                    name="path"
+                                    name="directionName"
                                 >
                                     <Input />
                                 </Form.Item>
@@ -332,13 +344,13 @@ export class WriteThesis extends React.Component {
                                 </Form.Item>
                                 <Form.Item
                                     label="作者"
-                                    name="writerName"
+                                    name="name"
                                 >
                                     <Input />
                                 </Form.Item>
                                 <Form.Item
                                     label="发布人"
-                                    name="publisher"
+                                    name="userName"
                                 >
                                     <Input />
                                 </Form.Item>
@@ -385,9 +397,8 @@ export class WriteThesis extends React.Component {
                                     key="action"
                                     render={(_,record) => (
                                         <Space size="middle">
-                                            <a id="addRefs" style={{color:'green'}} onClick={()=>{
-                                                this.addRef(record.id, record.title);
-                                            document.getElementById('addRefs').disabled = "true"}}>添加</ a>
+                                            <a style={{color:'green'}} onClick={()=>{
+                                                this.addRef(record.id, record.title);}}>添加</a>
                                         </Space>
                                     )}
                                 />

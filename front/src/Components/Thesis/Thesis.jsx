@@ -1,6 +1,6 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List } from 'antd';
+import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List, Skeleton} from 'antd';
 import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
@@ -15,12 +15,12 @@ export class Latest extends React.Component {
     searchedColumn: '',
     data: '',
     id: '',
+    loaded: false,
   };
 
   constructor(props) {
     super(props);
     this.state = { id: props.id };
-    this.getLatest();
   }
 
   getColumnSearchProps = dataIndex => ({
@@ -101,12 +101,14 @@ export class Latest extends React.Component {
     this.setState({ searchText: '' });
   };
 
-  getLatest() {
+  componentDidMount() {
+    let that = this;
     axios.get('http://localhost:8080/admin/paper')
         .then(response => {
           response = response.data;
-          this.setState ({
+          that.setState ({
             data: response,
+            loaded: true,
           });
         })
         .catch(err => console.log(err));
@@ -130,8 +132,8 @@ export class Latest extends React.Component {
       },
       {
         title: '作者',
-        dataIndex: 'writer',
-        key: 'writer',
+        dataIndex: 'writers',
+        key: 'writers',
         width: '12%',
         ...this.getColumnSearchProps('writer'),
       },
@@ -228,13 +230,22 @@ export class Latest extends React.Component {
       return(clock);
     }
     console.log(this.state.data);
+    let { loaded } = this.state;
+    const MySkeleton = () => {
+      return <>
+        <Skeleton active/>
+        <Skeleton active/>
+        <Skeleton active/>
+      </>
+    };
     return <>
         <PageHeader style={{background: '#fff'}} title="最新文章" breadcrumb={{ routes }}>
           <Descriptions>
             <Descriptions.Item label="更新时间">{ CurentTime() }</Descriptions.Item>
           </Descriptions>
         </PageHeader>
-        <Table className="site-layout-content" columns={columns} dataSource={this.state.data} />
+      { loaded ? <Table className="site-layout-content" columns={columns} dataSource={this.state.data} />
+      : <MySkeleton/> }
       </>
   }
 }

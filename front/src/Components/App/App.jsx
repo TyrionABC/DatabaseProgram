@@ -109,7 +109,6 @@ function SearchResult(props) {
     </PageHeader>
     <Table dataSource={arr}>
       <ColumnGroup title="基本信息">
-        <Column title="ID" dataIndex="id" key="id" />
         <Column title="标题" dataIndex="title" key="title" />
         <Column title="作者" dataIndex="writerName" key="writerName" />
         <Column
@@ -146,93 +145,6 @@ function SearchResult(props) {
 
 let contents = [];
 
-const InnerForm = () => {
-  const onFinish = (values) => {
-    if(!values['title'] && !values['path'] && !values['thesisType']
-        && !values['overview'] && !values['writerName'] && !values['publisher']
-        && !values['publishMeeting']) {
-      alert("搜索条件不能全为空!");
-      return;
-    }
-    console.log('Success:', values);
-    // 请求论文列表, 接收论文列表
-    axios.post('http://localhost:8080/admin/select', values)
-        .then(function (response) {
-          console.log(response);
-          let pass;
-          if(response.data.length === 0)
-            pass = [];
-          else pass = response.data;
-          contents[7] = <SearchResult lists={pass}/>;
-        })
-        .catch(err => console.log(err));
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-
-  return (
-      <Form
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-      >
-        <Form.Item
-            label="论文标题"
-            name="title"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-            label="研究方向"
-            name="path"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-            label="论文类型"
-            name="thesisType"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-            label="论文摘要"
-            name="overview"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-            label="作者"
-            name="writer"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-            label="发布人"
-            name="publisher"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-            label="会议"
-            name="publishMeeting"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            查询
-          </Button>
-        </Form.Item>
-      </Form>
-  );
-}
-
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -240,15 +152,6 @@ function getItem(label, key, icon, children) {
     children,
     label,
   };
-}
-
-function Info() {
-  let name = useStore(state=>state.name);
-  let email = useStore(state=>state.email);
-  return {
-    publisher: name,
-    publisherId: email,
-  }
 }
 
 const items = [
@@ -285,6 +188,9 @@ class MainContent extends React.Component {
     isFocus: false,
     id: this.props.mail,
     username: this.props.name,
+    loaded: false,
+    result: '',
+    clicked: false,
   };
 
   onCollapse = (collapsed) => {
@@ -321,9 +227,45 @@ class MainContent extends React.Component {
     ele.style.display='none';
   }
 
+  onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  onFinish = async (values) => {
+    if(!values['title'] && !values['directionName'] && !values['thesisType']
+        && !values['overview'] && !values['name'] && !values['userName']
+        && !values['publishMeeting']) {
+      alert("搜索条件不能全为空!");
+      window.location.reload();
+    }
+    console.log('Success:', values);
+    // 请求论文列表, 接收论文列表
+    let that = this;
+    await axios.post('http://localhost:8080/admin/select', values)
+        .then(function (response) {
+          console.log(response);
+          that.setState({ result: response.data, loaded: true });
+        })
+        .catch(err => console.log(err));
+  };
+
   render() {
+    const MySkeleton = () => {
+      return <>
+        <Skeleton active/>
+        <Skeleton active/>
+        <Skeleton active/>
+        <Skeleton active/>
+        <Skeleton active/>
+      </>
+    }
     const { collapsed, num, isFocus } = this.state;
     setContent(this.state.id, this.state.username);
+    if(this.state.clicked) {
+      this.state.loaded ? contents[7] = <SearchResult lists={this.state.result}/>
+          : contents[7] = <MySkeleton/>;
+    }
+
     return (
         <>
         <Layout
@@ -352,7 +294,66 @@ class MainContent extends React.Component {
                   onCancel={() => this.setState({ isFocus: !isFocus })}
                   width={1000}
               >
-                <InnerForm />
+                <Form
+                    name="basic"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    initialValues={{ remember: true }}
+                    onFinish={this.onFinish}
+                    onFinishFailed={this.onFinishFailed}
+                    autoComplete="off"
+                >
+                  <Form.Item
+                      label="论文标题"
+                      name="title"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                      label="研究方向"
+                      name="directionName"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                      label="论文类型"
+                      name="thesisType"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                      label="论文摘要"
+                      name="overview"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                      label="作者"
+                      name="name"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                      label="发布人"
+                      name="userName"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                      label="会议"
+                      name="publishMeeting"
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                    <Button type="primary" htmlType="submit" onClick={()=>{ this.setState({
+                      clicked: true,
+                      loaded: false,
+                    }) }}>
+                      查询
+                    </Button>
+                  </Form.Item>
+                </Form>
               </Modal>
             </Content>
             <Footer

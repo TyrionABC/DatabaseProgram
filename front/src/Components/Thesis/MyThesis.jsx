@@ -93,8 +93,8 @@ export default class MyThesis extends React.Component {
             },
             {
                 title: '作者',
-                dataIndex: 'writer',
-                key: 'writer',
+                dataIndex: 'writers',
+                key: 'writers',
                 width: '10%',
             },
             {
