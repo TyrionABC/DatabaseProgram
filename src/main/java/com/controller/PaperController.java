@@ -426,7 +426,7 @@ public class PaperController {
     @ResponseBody
     public String insertNotes(@RequestBody Note_and_extra_file note){
         System.out.println(note);
-        noteAndFileService.insert(note);
+        //noteAndFileService.insert(note);
         return "true";
     }
     //改笔记,输入id和note即可

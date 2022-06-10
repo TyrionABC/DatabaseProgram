@@ -43,8 +43,8 @@ export default class MyColumn extends React.Component {
         })
     }
 
-    deleteNote = async (id) => {
-        await axios.post('http://localhost:8080/admin/deleteNote', { id: id })
+    deleteNote = (id) => {
+        axios.post('http://localhost:8080/admin/deleteNote', { id: id })
             .then(function(res) {
                 console.log(res.data);
                 if(res.data) {

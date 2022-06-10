@@ -20,6 +20,7 @@ class Detail extends React.Component{
     state={
         text:'',
         title:'',
+        publisherId: '',
     }
     componentDidMount () {
         // 假设此处从服务端获取html格式的编辑器内容
@@ -30,8 +31,10 @@ class Detail extends React.Component{
         }).then(function(res) {
             console.log(res.data);
             that.setState({
+                publisherId: res.data.publisherId,
                 text:res.data.text,
                 title:res.data.title,
+
                 //parentComment:res.data.parentComment,
             })
         });
@@ -55,7 +58,7 @@ class Detail extends React.Component{
                 <Divider > 论文笔记 </Divider>
                 <Row>
                     <div>
-                        <UserNote id={this.props.id} userId={this.props.userId} />
+                        <UserNote id={this.props.id} userId={this.props.userId} publisherId={this.state.publisherId} />
                     </div>
                 </Row>
             </>
@@ -272,6 +275,7 @@ export class UserNote extends React.Component{
     state={
         oldNote:'',
         publishedNote:'',
+        currentNote: '',
         editorState: BraftEditor.createEditorState(null),
     }
     componentDidMount(){
@@ -311,14 +315,16 @@ export class UserNote extends React.Component{
         });
     }
     handleEditorChange=(editorState)=>{
-        this.setState({ editorState: editorState, publishedNote: editorState.toHTML() });
+        this.setState({ editorState: editorState, currentNote: editorState.toHTML() });
     }
     submitNote=()=>{
         const note={
             id:this.props.id,
-            note:this.state.publishedNote,
+            note:this.state.currentNote,
             flag:0,
+            publisherId: this.props.publisherId,
         }
+        console.log(note);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/insertNotes/',
@@ -347,30 +353,33 @@ export class UserNote extends React.Component{
     }
     render(){
         const {editorState}=this.state.editorState;
+        const judge = () => {
+            if(!this.state.publishedNote && this.props.userId === this.props.publisherId){
+                return(
+                    <Row>
+                        <Col span={20}>
+                            <BraftEditor
+                                value={editorState}
+                                onChange={this.handleEditorChange}/>
+                        </Col>
+                        <Col span={4}>
+                            <Space>
+                                <Button type="primary" onClick={this.submitNote}>发布笔记</Button>
+                                <Button type="primary" onClick={this.preserveNote}>保存草稿</Button>
+                            </Space>
+                        </Col>
+                    </Row>
+                )
+            }
+            else {
+                return(
+                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100}} />
+                )
+            }
+        }
         return(
             <>
-                {
-                    ()=>{
-                        if(this.state.publishedNote==='')return(
-                            <Row>
-                                <Col span={20}>
-                                    <BraftEditor 
-                                    value={editorState}
-                                    onChange={this.handleEditorChange}/>
-                                </Col>
-                                <Col span={4}>
-                                    <Space>
-                                        <Button type="primary" onClick={this.submitNote}>发布笔记</Button>
-                                        <Button type="primary" onClick={this.preserveNote}>保存草稿</Button>
-                                    </Space>
-                                </Col>
-                            </Row>
-                        )
-                        else return(
-                            <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100}} />
-                        )
-                    }
-                }
+                { judge() }
             </>
         );
     }
