@@ -44,7 +44,7 @@ export default class MyColumn extends React.Component {
     }
 
     deleteNote = (id) => {
-        axios.post('http://localhost:8080/admin/deleteNote', { id: id })
+        axios.post('http://localhost:8080/admin/deleteNotes', { id: id })
             .then(function(res) {
                 console.log(res.data);
                 if(res.data) {
