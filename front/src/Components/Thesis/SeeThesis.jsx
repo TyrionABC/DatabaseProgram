@@ -64,6 +64,7 @@ class UserComment extends React.Component{
         content:'',
         oldContent:'',
         parentCommentId:'',
+        rootId:'',
         isVis:false
     }
     componentDidMount () {
@@ -72,9 +73,10 @@ class UserComment extends React.Component{
             method: 'get',
             url: 'http://localhost:8080/admin/selectAllComments/'+that.props.id,
         }).then(function(res) {
-            console.log(res.data);
+            let mid=res.data;
+            mid.sort((a,b)=>a.date>b.date?1:-1);
             that.setState({
-                comment:res.data,
+                comment:mid,
             })
         });
     }
@@ -88,13 +90,15 @@ class UserComment extends React.Component{
         this.setState({
             parentCommentId:'',
             isSee:true,
+            rootId:this.state.commentId
         })
     }
-    addReply=(parentCommentId)=>{
+    addReply=(parentCommentId,root)=>{
         console.log(parentCommentId);
         this.setState({
             parentCommentId:parentCommentId,
             isSee:true,
+            rootId:root
         })
     }
     deleteComment=(commentId)=>{
@@ -129,6 +133,7 @@ class UserComment extends React.Component{
             parentCommentId:this.state.parentCommentId,
             userId:this.props.userId,
             id:this.props.id,
+            root:this.state.rootId
         };
         console.log(newComment);
         axios({
@@ -162,13 +167,18 @@ class UserComment extends React.Component{
     }
     render(){
         let actions=[];
+        /*let mid=[];
+        mid.sort((a,b)=>a.date>b.date?1:-1);
+        console.log(mid);
+        this.setState({rootId:''});
+        console.log("1");*/
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId){
-                actions[index]=[<span onClick={()=>{this.addReply(item.commentId)}}>回复</span>,
+                actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,
                 <span onClick={()=>{this.deleteComment(item.commentId)}}>删除</span>,
                 <span onClick={()=>{this.updateComment(item.commentId)}}>修改</span>];
             }else{
-                actions[index]=[<span onClick={()=>{this.addReply(item.commentId)}}>回复</span>];
+                actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>];
             }
         })
         return (
@@ -188,14 +198,15 @@ class UserComment extends React.Component{
                                     style={{marginLeft:30}}>
                                         {
                                             this.state.comment.map((ikey,key_index)=>{
-                                                if(ikey.parentCommentId===item.commentId)
+                                                if(ikey.root===item.root&&ikey.parentUserName!=='')
                                                     return(
                                                         <Comment
                                                         key={key_index}
                                                         actions={actions[key_index]}
                                                         author={(ikey.userName)+" 回复 "+(ikey.parentUserName)}
                                                         avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                                        content={ikey.content} >
+                                                        content={ikey.content}
+                                                        datetime={ikey.date} >
                                                         </Comment>
                                                     )
                                             })
