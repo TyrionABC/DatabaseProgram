@@ -129,9 +129,9 @@ public class PaperController {
     @PostMapping("/myPaper/false")
     @ResponseBody
     public JSONArray myDraft(@RequestBody Id userId){
-        System.out.println(userId.getUserId());
+        //System.out.println(userId.getUserId());
         List<Paper> allPapers=paperService.selectMyPapers(userId.getUserId());//所有数据
-        System.out.println(userId);
+        //System.out.println(userId);
         JSONArray json = new JSONArray();
         for(Paper paper : allPapers){
             if (paper.getFlag()==0)
@@ -147,7 +147,7 @@ public class PaperController {
 
     private void putIn(Paper paper, JSONObject jo) {
         jo.put("id", paper.getId());
-        jo.put("literatureLink", paper.getLiteratureLink());
+        //jo.put("literatureLink", paper.getLiteratureLink());
         jo.put("publisherId",paper.getPublisherId());
         jo.put("thesisDate",paper.getThesisDate());
         jo.put("thesisType",paper.getThesisType());
