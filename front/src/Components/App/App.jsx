@@ -76,15 +76,35 @@ const BottomPart = () => {
   </Affix>
 }
 
-function Name() {
-  const name = useStore(state => state.name);
-  return <>
-    <Avatar size={'large'}
-            src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-            style={{margin: 5}}/>
-    <br/>
-    <Link to="/" id="logInfo" style={{color: 'white'}}>signed as: {name}</Link>
-  </>
+class Name extends React.Component {
+  state = {
+    id: this.props.id,
+    data: [],
+  }
+
+  componentDidMount() {
+    let that = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/admin/getUserDetails',
+      data: { userId: this.state.id },
+    }).then(function(res) {
+      console.log(res.data);
+      that.setState({
+        data: res.data,
+      })
+    })
+  }
+
+  render() {
+    return <>
+      <Avatar size={'large'}
+              src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+              style={{margin: 5}}/>
+      <br/>
+      <Link to="/" id="logInfo" style={{color: 'white'}}>signed as: {this.state.data.name}</Link>
+    </>
+  }
 }
 
 function SearchResult(props) {
@@ -282,7 +302,7 @@ class MainContent extends React.Component {
         >
           <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
             <div className="content">
-              <Name/>
+              <Name id={this.state.id}/>
             </div>
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={this.onClick}/>
           </Sider>

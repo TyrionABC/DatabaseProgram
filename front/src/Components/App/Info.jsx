@@ -110,6 +110,10 @@ function PrivacySet(props) {
     axios.post('http://localhost:8080/admin/update', jsonVal)
         .then(function (response) {
           console.log(response);
+          if(response.data) {
+            alert("修改成功!");
+            window.location.reload();
+          }
         })
         .catch(err => console.log(err));
   };
