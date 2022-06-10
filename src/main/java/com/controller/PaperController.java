@@ -425,6 +425,7 @@ public class PaperController {
     @PostMapping("/insertNotes")
     @ResponseBody
     public String insertNotes(@RequestBody Note_and_extra_file note){
+        System.out.println(note);
         noteAndFileService.insert(note);
         return "true";
     }
