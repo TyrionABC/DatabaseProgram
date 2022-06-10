@@ -13,11 +13,15 @@ public class NoteAndFileServiceImp implements NoteAndFileService{
     @Autowired
     private NoteAndFileMapper noteAndFileMapper;
     @Override
-    public void insert(Note_and_extra_file note_and_extra_file) {
-        Note_and_extra_file note_and_extra_file1=noteAndFileMapper.selectNoteAndExtraFile(note_and_extra_file.getId());
-        note_and_extra_file1.setNote(note_and_extra_file.getNote());
-        note_and_extra_file1.setFlag(note_and_extra_file.getFlag());
-        noteAndFileMapper.updateById(note_and_extra_file);
+    public void insert(Note_and_extra_file note) {
+//        publisherId,flag,note,id
+        Note_and_extra_file note_and_extra_file=noteAndFileMapper.selectNoteAndExtraFile(note.getId());
+        if (note_and_extra_file==null){
+            noteAndFileMapper.insert(note);//写论文时没有插入摘要，要创建笔记
+        }
+        else {
+            noteAndFileMapper.updateById(note);//写论文时插入过overview，笔记已经存在
+        }
     }
 
     @Override
@@ -29,6 +33,7 @@ public class NoteAndFileServiceImp implements NoteAndFileService{
 
     @Override
     public void update(Note_and_extra_file note_and_extra_file) {
+        System.out.println(note_and_extra_file);
         noteAndFileMapper.updateById(note_and_extra_file);
     }
 

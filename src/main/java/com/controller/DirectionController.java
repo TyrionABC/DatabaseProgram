@@ -64,7 +64,7 @@ public class DirectionController {
         jsonObject.put("path",direction.getPath());
         return jsonObject;
     }
-    //删除某方向,该方向存在则删除，将其所有子方向改为一级方向并返回true；不存在则返回false
+    //删除某方向,输入directionName，该方向存在则删除，将其所有子方向改为一级方向并返回true；不存在则返回false
     @CrossOrigin
     @PostMapping("/deleteDirection")
     @ResponseBody
@@ -74,6 +74,7 @@ public class DirectionController {
     }
     //新增方向,要在前端校验是否为空,传入方向名directionName和父方向parentDirectionName
     //方向已存在返回false，成功插入则返回true
+    //输入directionName,parentDirectionName
     @CrossOrigin
     @PostMapping("/insertDirection")
     @ResponseBody
@@ -85,6 +86,7 @@ public class DirectionController {
             return "false";
     }
     //更新方向,要传入方向名和父方向和原方向名
+    //输入directionName,parentDirectionName，都不能为空
     @CrossOrigin
     @PostMapping("/updateDirection/{directionName}")
     @ResponseBody
@@ -93,10 +95,12 @@ public class DirectionController {
         if (direction1==null){//要更改的对象不存在
             return "false";
         }
-        if (direction1.getDirectionName().equals(direction1.getParentDirectionName()))
-            return ""+directionService.updateParent(directionName,direction);//修改父方向
+        if (direction1.getDirectionName().equals(direction1.getParentDirectionName())&&direction1.getLevel()==1)
+            return ""+directionService.updateParent(directionName,direction);//修改父方向且要修改的方向确实是父方向
+        else if (!direction1.getDirectionName().equals(direction1.getParentDirectionName())&&direction1.getLevel()==2)
+            return ""+directionService.updateChildren(directionName,direction);//修改子方向且要修改的方向确实为子方向
         else
-            return ""+directionService.updateChildren(directionName,direction);//修改子方向
+            return "false";
     }
 
 }

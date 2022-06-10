@@ -27,11 +27,15 @@ public class DirectionServiceImp implements DirectionService{
             return false;
         }
         else{
+            //插入一级方向
             if (direction.getDirectionName().equals(direction.getParentDirectionName())) {
                 direction.setLevel(1);
                 direction.setPath(direction.getDirectionName());
             }
-            else {
+            else {//插入二级方向
+                Direction parent=directionMapper.selectDirectionByName(direction.getParentDirectionName());
+                 if (parent==null||parent.getLevel()==2)
+                     return false;//子方向的父亲方向不存在或者父方向为子方向
                 direction.setLevel(2);
                 direction.setPath(direction.getParentDirectionName()+"-"+direction.getDirectionName());
             }
@@ -42,6 +46,7 @@ public class DirectionServiceImp implements DirectionService{
 
     @Override
     public void deleteDirectionByName(String name) {
+        //如果是父方向,则修改其子方向的信息
         if (directionMapper.selectDirectionByName(name).getLevel()==1){
             List<Direction> directions=directionMapper.selectDirectionByParent(name);
             for(Direction direction:directions){
@@ -50,8 +55,8 @@ public class DirectionServiceImp implements DirectionService{
                 direction.setPath(direction.getDirectionName());
                 directionMapper.updateById(direction);
             }
-            belongMapper.deleteByDirection(name);
         }
+        belongMapper.deleteByDirection(name);
         directionMapper.deleteDirectionByName(name);
     }
 

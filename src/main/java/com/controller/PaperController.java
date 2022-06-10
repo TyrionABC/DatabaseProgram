@@ -305,7 +305,7 @@ public class PaperController {
         jsonObject.put("text",paper.getText());
         return jsonObject;
     }
-//    //通过id，获取论文全部信息
+    //通过id，获取论文全部信息
     @CrossOrigin
     @GetMapping("getAllInfo/{paperId}")
     @ResponseBody
@@ -413,7 +413,7 @@ public class PaperController {
         ///////
         return "true";
     }
-    //删除笔记
+    //删除笔记，输入id
     @CrossOrigin
     @PostMapping("/deleteNotes")
     @ResponseBody
@@ -421,7 +421,7 @@ public class PaperController {
         noteAndFileService.delete(note.getId());
         return "true";
     }
-    //写笔记
+    //写笔记,输入publisherId,flag,note,id
     @CrossOrigin
     @PostMapping("/insertNotes")
     @ResponseBody
@@ -429,7 +429,7 @@ public class PaperController {
         noteAndFileService.insert(note);
         return "true";
     }
-    //改笔记
+    //改笔记,输入id和note即可
     @CrossOrigin
     @PostMapping("/updateNotes")
     @ResponseBody

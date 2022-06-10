@@ -48,6 +48,8 @@ class LabbbApplicationTests {
     private BelongMapper belongMapper;
     @Autowired
     private BelongService belongService;
+    @Autowired
+    private NoteAndFileMapper noteAndFileMapper;
     @Test
     void contextLoads() {
         List<User> users=userMapper.selectList(null);
@@ -267,7 +269,12 @@ class LabbbApplicationTests {
     }
     @Test
     void ttt(){
-        System.out.println(commentMapper.selectComment("9bb73bcd-5"));
+        Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
+//        note_and_extra_file.setNote("男儿当自强");
+//        note_and_extra_file.setFlag(1);
+//        note_and_extra_file.setPublisherId("1216776075@qq.com");
+        note_and_extra_file.setId("05a783b3-9");
+        noteAndFileService.delete(note_and_extra_file.getId());
     }
 
 
