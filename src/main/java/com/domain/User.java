@@ -1,10 +1,12 @@
 package com.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("user")
 public class User {
+    @TableId
     @TableField("user_id")
     private String userId;
     @TableField(select = false)

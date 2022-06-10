@@ -147,7 +147,6 @@ public class PaperController {
 
     private void putIn(Paper paper, JSONObject jo) {
         jo.put("id", paper.getId());
-        //jo.put("literatureLink", paper.getLiteratureLink());
         jo.put("publisherId",paper.getPublisherId());
         jo.put("thesisDate",paper.getThesisDate());
         jo.put("thesisType",paper.getThesisType());

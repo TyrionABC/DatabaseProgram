@@ -99,6 +99,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/updateComment")
     public String updateComment(@RequestBody Comment comment){
+        System.out.println(comment);
         commentService.update(comment);
         return "true";
     }

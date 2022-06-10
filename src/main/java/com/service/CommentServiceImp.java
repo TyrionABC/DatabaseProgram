@@ -24,7 +24,7 @@ public class CommentServiceImp implements CommentService{
         while (commentMapper.selectOne(queryWrapper)!=null){
             id=UUID.randomUUID().toString().substring(0,10);
         }
-        comment.setDate(new Date());
+        comment.setDate(new Date(System.currentTimeMillis()));
         comment.setCommentId(id);
         //没有父评论，设置root为id
         if ("".equals(comment.getParentCommentId())){
