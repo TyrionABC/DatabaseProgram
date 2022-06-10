@@ -1,6 +1,10 @@
 import React, {useState} from 'react'
 import axios from "axios";
+<<<<<<< Updated upstream
 import {Col, Row, Comment, Avatar, Button, Modal, message} from 'antd'
+=======
+import {Col, Row, Comment, Avatar, Button, Modal, Divider} from 'antd'
+>>>>>>> Stashed changes
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
@@ -52,6 +56,12 @@ class Detail extends React.Component{
                         </div>
                     </Col>
                 </Row>
+                <Divider > 论文笔记 </Divider>
+                <Row>
+                    <div>
+                        <UserNote id={this.props.id} userId={this.props.userId} />
+                    </div>
+                </Row>
             </>
         )
     }
@@ -65,6 +75,7 @@ class UserComment extends React.Component{
         oldContent:'',
         parentCommentId:'',
         rootId:'',
+        updateCommentId:'',
         isVis:false
     }
     componentDidMount () {
@@ -90,7 +101,7 @@ class UserComment extends React.Component{
         this.setState({
             parentCommentId:'',
             isSee:true,
-            rootId:this.state.commentId
+            rootId:'',
         })
     }
     addReply=(parentCommentId,root)=>{
@@ -102,10 +113,13 @@ class UserComment extends React.Component{
         })
     }
     deleteComment=(commentId)=>{
+        const newComment={
+            commentId:commentId,
+        }
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/deleteComment/',
-            data:commentId
+            data:newComment
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
@@ -115,15 +129,16 @@ class UserComment extends React.Component{
         });
     }
     updateComment=(commentId)=>{
+        let that=this;
         axios({
-            method: 'post',
-            url: 'http://localhost:8080/admin/getComment/',
-            data:commentId
+            method: 'get',
+            url: 'http://localhost:8080/admin/insertComment/'+commentId,
         }).then(function(res) {
             console.log(res.data);
-            this.setState({
-                oldContent:res.data.content,
-                isVis:true
+            that.setState({
+                oldContent:res.data,
+                isVis:true,
+                updateCommentId:commentId
             })
         });
     }
@@ -151,8 +166,9 @@ class UserComment extends React.Component{
     sumbitUpdate=()=>{
         const newComment={
             content:this.state.oldContent,
-            id:this.props.id,
+            commentId:this.state.updateCommentId,
         };
+        console.log(newComment);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/updateComment/',
@@ -167,11 +183,6 @@ class UserComment extends React.Component{
     }
     render(){
         let actions=[];
-        /*let mid=[];
-        mid.sort((a,b)=>a.date>b.date?1:-1);
-        console.log(mid);
-        this.setState({rootId:''});
-        console.log("1");*/
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId){
                 actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,
@@ -254,10 +265,41 @@ class UserComment extends React.Component{
                             onChange={this.handleEditorupdate}
                             value={this.state.oldContent}
                         />
-                        <Button type="primary" onClick={this.sumbitUpdate} style={{marginBottom:20}}>修改</Button>
                     </Modal>
                 </div>
             </>
         )
+    }
+}
+
+export class UserNote extends React.Component{
+    state={
+        note:'',
+        editorState: BraftEditor.createEditorState(null),
+    }
+    componentDidMount(){
+        let that=this;
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/myNotes/true/',
+            data:{userId:that.props.userId},
+        }).then(function(res) {
+            const notes=res.data;
+            let note={};
+            for(var i=0;i<notes.length;i++){
+                if(notes[i].id===that.props.id){
+                    note=notes[i];
+                }
+            }
+            that.setState({
+                note:note,
+            })
+        });
+    }
+    render(){
+        return(
+            <>
+            </>
+        );
     }
 }
