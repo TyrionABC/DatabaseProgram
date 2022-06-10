@@ -1,11 +1,13 @@
 import axios from "axios";
-import {Button, Descriptions, PageHeader, Table, Tabs} from "antd";
+import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message} from "antd";
 import React from "react";
 
 export default class MyColumn extends React.Component {
     state = {
         data_1: [],
         data_2: [],
+        loaded_1: false,
+        loaded_2: false,
         id: '',
     }
 
@@ -23,7 +25,8 @@ export default class MyColumn extends React.Component {
         }).then(function(res) {
             console.log(res.data);
             that.setState({
-                data_1: res.data
+                data_1: res.data,
+                loaded_1: true,
             })
         });
 
@@ -35,6 +38,7 @@ export default class MyColumn extends React.Component {
             console.log(res.data);
             that.setState({
                 data_2: res.data,
+                loaded_2: true,
             })
         })
     }
@@ -44,10 +48,10 @@ export default class MyColumn extends React.Component {
             .then(function(res) {
                 console.log(res.data);
                 if(res.data) {
-                    alert("删除成功!");
+                    message.success("删除成功!");
                 }
                 else {
-                    alert("删除失败!");
+                    message.error("删除失败!");
                 }
             });
         window.location.reload();
@@ -103,10 +107,12 @@ export default class MyColumn extends React.Component {
             <div className="site-layout-content">
                 <Tabs defaultActiveKey="1" onChange={callback} centered>
                     <TabPane tab="草稿箱" key="1">
-                        <Table className="site-layout-content" columns={columns} dataSource={this.state.data_2}/>
+                        {this.state.loaded_2?<Table className="site-layout-content" columns={columns} dataSource={this.state.data_2}/>
+                            : <Skeleton active/>}
                     </TabPane>
                     <TabPane tab="已发布" key="2">
-                        <Table className="site-layout-content" columns={columns} dataSource={this.state.data_1}/>
+                        {this.state.loaded_1?<Table className="site-layout-content" columns={columns} dataSource={this.state.data_1}/>
+                            : <Skeleton active/>}
                     </TabPane>
                 </Tabs>
             </div>

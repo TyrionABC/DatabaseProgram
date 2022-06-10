@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, PageHeader, Select, Tabs } from 'antd';
+import {Button, Form, Input, PageHeader, Select, Tabs, message } from 'antd';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Option} from "antd/es/mentions";
@@ -17,11 +17,11 @@ function BasicSet(props) {
         .then(function (response) {
           console.log(response);
           if(response.data) {
-            alert("修改成功!");
+            message.success("修改成功!");
             window.location.reload();
           }
           else {
-            alert("修改失败!");
+            message.error("修改失败!");
           }
         })
         .catch(err => console.log(err));
@@ -102,6 +102,10 @@ function BasicSet(props) {
 
 function PrivacySet(props) {
   const onFinish = (values) => {
+    if(CryptoJS.MD5(values['originPassword']).toString() !== psw ) {
+      message.warning("原密码输入错误!");
+      return;
+    }
     console.log('Success:', values);
     let jsonVal = {
       userId: props.id,
@@ -111,8 +115,11 @@ function PrivacySet(props) {
         .then(function (response) {
           console.log(response);
           if(response.data) {
-            alert("修改成功!");
+            message.success("修改成功!");
             window.location.reload();
+          }
+          else {
+            message.error("修改失败!");
           }
         })
         .catch(err => console.log(err));
@@ -136,14 +143,6 @@ function PrivacySet(props) {
           required: true,
           message: '请输入原密码',
         },
-        ({getFieldValue}) => ({
-          validator(_, value) {
-            if(CryptoJS.MD5(getFieldValue('originPassword')).toString() === psw) {
-              return Promise.resolve();
-            }
-            else return Promise.reject(new Error('原密码输入错误'));
-          }
-        })
       ]}
       hasFeedback
     >
@@ -160,7 +159,7 @@ function PrivacySet(props) {
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if(getFieldValue('newPassword').length <= 8) {
+              if(getFieldValue('newPassword').length < 8) {
                 return Promise.reject(new Error('密码的长度至少为8位'));
               }
               else return Promise.resolve();

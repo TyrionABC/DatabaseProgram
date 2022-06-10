@@ -1,6 +1,6 @@
 import React from 'react'
 // 引入编辑器组件
-import {Input, Space, Form, Select, Col, Row, Cascader, Button, DatePicker, Modal, Table, Tag, Drawer, Upload} from 'antd';
+import {Input, Space, Form, Select, Col, Row, Cascader, Button, DatePicker, Modal, Table, Tag, Drawer, Upload, message} from 'antd';
 import BraftEditor from 'braft-editor'
 // 引入编辑器样式
 import 'braft-editor/dist/index.css'
@@ -59,12 +59,12 @@ export class WriteThesis extends React.Component {
             || this.state.title === ""
             || this.state.outputHTML === ""
             || this.state.outputHTML === null) {
-            alert("标题和内容不能为空!");
+            message.warning("标题和内容不能为空!");
             return;
         }
         console.log(value.writer);
         if(value.writer === null || value.writer.length === 0) {
-            alert("作者栏不能为空!");
+            message.warning("作者栏不能为空!");
             return;
         }
         let directions=[];
@@ -102,10 +102,10 @@ export class WriteThesis extends React.Component {
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("提交成功!");
+                message.success("提交成功!");
                 window.location.reload();
             }
-            else {alert("提交失败! 请重试");}
+            else {message.error("提交失败! 请重试");}
         });
         return false;
     }
@@ -114,7 +114,7 @@ export class WriteThesis extends React.Component {
         if(!value['title'] && !value['directionName'] && !value['thesisType']
             && !value['overview'] && !value['name'] && !value['userName']
             && !value['publishMeeting']) {
-            alert("搜索条件不能全为空!");
+            message.warning("搜索条件不能全为空!");
             return;
         }
         console.log(value);
@@ -139,7 +139,7 @@ export class WriteThesis extends React.Component {
     addRef = (id, title) => {
         let list = this.state.ref;
         if(list.indexOf(id) !== -1) {
-            alert("不能添加相同引用!")
+            message.warning("不能添加相同引用!")
             return;
         }
         let a=[];
@@ -156,7 +156,7 @@ export class WriteThesis extends React.Component {
             ref:a,
             showRef:b
         })
-        alert("已添加" + title);
+        message.success("已添加" + title);
     }
     beforeUpload = ({fileList}) =>{
         return false;

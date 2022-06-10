@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {Button, FlexboxGrid, Content, Container, Panel, Form, ButtonToolbar, Schema, ButtonGroup} from "rsuite";
+import { message } from "antd";
 import "rsuite/dist/rsuite.min.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './intro.css';
@@ -68,7 +69,7 @@ function Navi() {
             navigate('/admin',{replace:true, state:data});
           }
           if(correct===0) {
-            alert("密码或用户名错误!");
+            message.warning("密码或用户名错误!");
           }
         })
         .catch(err => console.log(err))

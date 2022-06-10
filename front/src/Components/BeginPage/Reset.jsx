@@ -1,5 +1,6 @@
 import React  from "react";
 import {Button, Schema, Form, FlexboxGrid, ButtonToolbar } from "rsuite";
+import { message } from "antd";
 import "rsuite/dist/rsuite.min.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CryptoJS from "crypto-js";
@@ -68,7 +69,7 @@ const Reset = () => {
   const handleSubmit = () => {
     if (!formRef.current.check() || !correctCode()) {
       console.error('Form Error');
-      alert("输入有误!");
+      message.error("输入有误!");
       return;
     }
     let psw = CryptoJS.MD5(formValue['password']).toString(); // AES 加密
@@ -82,10 +83,10 @@ const Reset = () => {
           console.log('response: ', response);
           const success = response['data'];
           if (success) {
-            alert("操作成功!");
+            message.success("操作成功!");
             window.history.go(-1);
           } else {
-            alert("操作失败, 请重试!");
+            message.error("操作失败, 请重试!");
           }
         })
         .catch(err => console.log(err));
@@ -93,7 +94,7 @@ const Reset = () => {
 
   const handleCheckEmail = (e) => {
     if(!formRef.current.check()) {
-      alert("输入有误!");
+      message.error("输入有误!");
       return;
     }
     e.preventDefault();
@@ -125,7 +126,7 @@ const Reset = () => {
           console.log('success');
         }, function (error) {
           console.log('failed');
-          alert('发送失败');
+          message.error('发送失败');
         });
   };
 

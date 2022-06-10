@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal, message} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
@@ -109,7 +109,7 @@ class UserComment extends React.Component{
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("删除成功");
+                message.success("删除成功");
                 window.location.reload();
             }
         });
@@ -143,7 +143,7 @@ class UserComment extends React.Component{
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("评论成功");
+                message.success("评论成功");
                 window.location.reload();
             }
         });
@@ -160,7 +160,7 @@ class UserComment extends React.Component{
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("修改成功");
+                message.success("修改成功");
                 window.location.reload();
             }
         });

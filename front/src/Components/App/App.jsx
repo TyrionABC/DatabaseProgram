@@ -13,7 +13,9 @@ import {
   Space,
   Modal,
   Descriptions,
-  PageHeader, Skeleton
+  PageHeader,
+  Skeleton,
+    message,
 } from 'antd';
 import {
   SearchOutlined,
@@ -262,7 +264,7 @@ class MainContent extends React.Component {
     if(!values['title'] && !values['directionName'] && !values['thesisType']
         && !values['overview'] && !values['name'] && !values['userName']
         && !values['publishMeeting']) {
-      alert("搜索条件不能全为空!");
+      message.warning("搜索条件不能全为空!");
       window.location.reload();
     }
     console.log('Success:', values);
