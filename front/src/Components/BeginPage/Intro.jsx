@@ -69,7 +69,7 @@ function Navi() {
             navigate('/admin',{replace:true, state:data});
           }
           if(correct===0) {
-            message.warning("密码或用户名错误!");
+            message.error("密码或用户名错误!");
           }
         })
         .catch(err => console.log(err))

@@ -111,7 +111,7 @@ function PrivacySet(props) {
       userId: props.id,
       password: CryptoJS.MD5(values['newPassword']).toString(),
     }
-    axios.post('http://localhost:8080/admin/update', jsonVal)
+    axios.post('http://localhost:8080/admin/updateUser', jsonVal)
         .then(function (response) {
           console.log(response);
           if(response.data) {
