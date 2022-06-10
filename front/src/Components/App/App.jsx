@@ -132,11 +132,11 @@ function SearchResult(props) {
     <Table dataSource={arr}>
       <ColumnGroup title="基本信息">
         <Column title="标题" dataIndex="title" key="title" />
-        <Column title="第一作者" dataIndex="writerName" key="writerName"
+        <Column title="第一作者" dataIndex="writers" key="writers"
           render={(_, record)=>(
-              <>
-                { record[0] }
-              </>
+              <div>
+                { record.writers[0] }
+              </div>
           )}
         />
         <Column
