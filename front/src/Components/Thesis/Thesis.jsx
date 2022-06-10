@@ -1,6 +1,6 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List, Skeleton} from 'antd';
+import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List, Skeleton, Collapse, Tag} from 'antd';
 import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
@@ -8,6 +8,7 @@ import './Thesis.css';
 import axios from 'axios';
 import SeeThesis from "./SeeThesis";
 import {Link} from "react-router-dom";
+import {Panel} from "rsuite";
 
 export class Latest extends React.Component {
   state = {
@@ -115,12 +116,13 @@ export class Latest extends React.Component {
   }
 
   render() {
+    const { Panel } = Collapse;
     const columns = [
       {
         title: '标题',
         dataIndex: 'title',
         key: 'title',
-        width: '12%',
+        width: '8%',
         ...this.getColumnSearchProps('title'),
         render: (_, record) => (
             <Button type="link">
@@ -134,8 +136,19 @@ export class Latest extends React.Component {
         title: '作者',
         dataIndex: 'writers',
         key: 'writers',
-        width: '12%',
+        width: '16%',
         ...this.getColumnSearchProps('writer'),
+        render: (_, record) => (
+            <Collapse ghost>
+              <Panel header="作者列表" key='1'>
+                <List
+                    size="small"
+                    dataSource={record.writers}
+                    renderItem={(item) => <List.Item>{item}</List.Item>}
+                />
+              </Panel>
+            </Collapse>
+        )
       },
       {
         title: '发布日期',
@@ -170,6 +183,13 @@ export class Latest extends React.Component {
         key: 'path',
         width: '28%',
         ...this.getColumnSearchProps('path'),
+        render: (_, record) => (
+            record.path.map((item, index)=>(
+                <Tag key={item}>
+                  {item}
+                </Tag>
+            ))
+        )
       },
       {
         title: '发布会议',

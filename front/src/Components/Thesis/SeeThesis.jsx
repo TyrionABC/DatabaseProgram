@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
@@ -52,6 +52,12 @@ class Detail extends React.Component{
                         </div>
                     </Col>
                 </Row>
+                <Divider > 论文笔记 </Divider>
+                <Row>
+                    <div>
+                        <UserNote id={this.props.id} userId={this.props.userId} />
+                    </div>
+                </Row>
             </>
         )
     }
@@ -65,6 +71,7 @@ class UserComment extends React.Component{
         oldContent:'',
         parentCommentId:'',
         rootId:'',
+        updateCommentId:'',
         isVis:false
     }
     componentDidMount () {
@@ -90,7 +97,7 @@ class UserComment extends React.Component{
         this.setState({
             parentCommentId:'',
             isSee:true,
-            rootId:this.state.commentId
+            rootId:'',
         })
     }
     addReply=(parentCommentId,root)=>{
@@ -102,28 +109,32 @@ class UserComment extends React.Component{
         })
     }
     deleteComment=(commentId)=>{
+        const newComment={
+            commentId:commentId,
+        }
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/deleteComment/',
-            data:commentId
+            data:newComment
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("删除成功");
+                message.success("删除成功");
                 window.location.reload();
             }
         });
     }
     updateComment=(commentId)=>{
+        let that=this;
         axios({
-            method: 'post',
-            url: 'http://localhost:8080/admin/getComment/',
-            data:commentId
+            method: 'get',
+            url: 'http://localhost:8080/admin/insertComment/'+commentId,
         }).then(function(res) {
             console.log(res.data);
-            this.setState({
-                oldContent:res.data.content,
-                isVis:true
+            that.setState({
+                oldContent:res.data,
+                isVis:true,
+                updateCommentId:commentId
             })
         });
     }
@@ -143,7 +154,7 @@ class UserComment extends React.Component{
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("评论成功");
+                message.success("评论成功");
                 window.location.reload();
             }
         });
@@ -151,8 +162,9 @@ class UserComment extends React.Component{
     sumbitUpdate=()=>{
         const newComment={
             content:this.state.oldContent,
-            id:this.props.id,
+            commentId:this.state.updateCommentId,
         };
+        console.log(newComment);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/updateComment/',
@@ -160,18 +172,13 @@ class UserComment extends React.Component{
         }).then(function(res) {
             console.log(res.data);
             if(res.data){
-                alert("修改成功");
+                message.success("修改成功");
                 window.location.reload();
             }
         });
     }
     render(){
         let actions=[];
-        /*let mid=[];
-        mid.sort((a,b)=>a.date>b.date?1:-1);
-        console.log(mid);
-        this.setState({rootId:''});
-        console.log("1");*/
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId){
                 actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,
@@ -254,10 +261,117 @@ class UserComment extends React.Component{
                             onChange={this.handleEditorupdate}
                             value={this.state.oldContent}
                         />
-                        <Button type="primary" onClick={this.sumbitUpdate} style={{marginBottom:20}}>修改</Button>
                     </Modal>
                 </div>
             </>
         )
+    }
+}
+
+export class UserNote extends React.Component{
+    state={
+        oldNote:'',
+        publishedNote:'',
+        editorState: BraftEditor.createEditorState(null),
+    }
+    componentDidMount(){
+        let that=this;
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/myNotes/false/',
+            data:{userId:that.props.userId},
+        }).then(function(res) {
+            const notes=res.data;
+            let note={};
+            for(var i=0;i<notes.length;i++){
+                if(notes[i].id===that.props.id){
+                    note=notes[i];
+                }
+            }
+            that.setState({
+                oldNote:note.note,
+                editorState:BraftEditor.createEditorState(note.note),
+            })
+        });
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/myNotes/true/',
+            data:{userId:that.props.userId},
+        }).then(function(res) {
+            const notes=res.data;
+            let note={};
+            for(var i=0;i<notes.length;i++){
+                if(notes[i].id===that.props.id){
+                    note=notes[i];
+                }
+            }
+            that.setState({
+                publishedNote:note.note,
+            })
+        });
+    }
+    handleEditorChange=(editorState)=>{
+        this.setState({ editorState: editorState, publishedNote: editorState.toHTML() });
+    }
+    submitNote=()=>{
+        const note={
+            id:this.props.id,
+            note:this.state.publishedNote,
+            flag:0,
+        }
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/insertNotes/',
+            data:note,
+        }).then(function(res) {
+            if(res.data){
+                alert("发表成功");
+            }
+        })
+    }
+    preserveNote=()=>{
+        const note={
+            id:this.props.id,
+            note:this.state.publishedNote,
+            flag:1,
+        }
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/insertNotes/',
+            data:note,
+        }).then(function(res) {
+            if(res.data){
+                alert("发表成功");
+            }
+        })
+    }
+    render(){
+        const {editorState}=this.state.editorState;
+        return(
+            <>
+                {
+                    ()=>{
+                        if(this.state.publishedNote==='')return(
+                            <Row>
+                                <Col span={20}>
+                                    <BraftEditor 
+                                    value={editorState}
+                                    onChange={this.handleEditorChange}/>
+                                </Col>
+                                <Col span={4}>
+                                    <Space>
+                                        <Button type="primary" onClick={this.submitNote}>发布笔记</Button>
+                                        <Button type="primary" onClick={this.preserveNote}>保存草稿</Button>
+                                    </Space>
+                                </Col>
+                            </Row>
+                        )
+                        else return(
+                            <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100}} />
+                        )
+                    }
+                }
+            </>
+        );
     }
 }

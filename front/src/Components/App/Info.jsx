@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, PageHeader, Select, Tabs } from 'antd';
+import {Button, Form, Input, PageHeader, Select, Tabs, message } from 'antd';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Option} from "antd/es/mentions";
@@ -11,10 +11,18 @@ const { TabPane } = Tabs;
 
 function BasicSet(props) {
   const onFinish = (values) => {
+    values.userId = props.id;
     console.log('Success:', values);
     axios.post('http://localhost:8080/admin/updateUser', values)
         .then(function (response) {
           console.log(response);
+          if(response.data) {
+            message.success("修改成功!");
+            window.location.reload();
+          }
+          else {
+            message.error("修改失败!");
+          }
         })
         .catch(err => console.log(err));
   };
@@ -35,7 +43,7 @@ function BasicSet(props) {
 
         <Form.Item
             label="用户名"
-            name="username"
+            name="name"
             rules={[{ message: '请输入用户名', required: true }]}
         >
           <Input placeholder={props.info.name}/>
@@ -57,13 +65,13 @@ function BasicSet(props) {
 
         <Form.Item
             label="学校/单位"
-            name="work"
+            name="school"
             rules={[{ message: '请输入学校/工作地点', required: true }]}
         >
           <Input placeholder={props.info.school}/>
         </Form.Item>
 
-        <Form.Item name="researchDirection"
+        <Form.Item name="direction"
                    label="主研究方向"
                    rules={[{message: '请选择研究方向', required: true}]}>
           <Select
@@ -94,13 +102,25 @@ function BasicSet(props) {
 
 function PrivacySet(props) {
   const onFinish = (values) => {
+    if(CryptoJS.MD5(values['originPassword']).toString() !== psw ) {
+      message.warning("原密码输入错误!");
+      return;
+    }
     console.log('Success:', values);
     let jsonVal = {
+      userId: props.id,
       password: CryptoJS.MD5(values['newPassword']).toString(),
     }
-    axios.post('http://localhost:8080/admin/update', jsonVal)
+    axios.post('http://localhost:8080/admin/updateUser', jsonVal)
         .then(function (response) {
           console.log(response);
+          if(response.data) {
+            message.success("修改成功!");
+            window.location.reload();
+          }
+          else {
+            message.error("修改失败!");
+          }
         })
         .catch(err => console.log(err));
   };
@@ -123,14 +143,6 @@ function PrivacySet(props) {
           required: true,
           message: '请输入原密码',
         },
-        ({getFieldValue}) => ({
-          validator(_, value) {
-            if(CryptoJS.MD5(getFieldValue('originPassword')).toString() === psw) {
-              return Promise.resolve();
-            }
-            else return Promise.reject(new Error('原密码输入错误'));
-          }
-        })
       ]}
       hasFeedback
     >
@@ -147,7 +159,7 @@ function PrivacySet(props) {
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if(getFieldValue('newPassword').length <= 8) {
+              if(getFieldValue('newPassword').length < 8) {
                 return Promise.reject(new Error('密码的长度至少为8位'));
               }
               else return Promise.resolve();
@@ -195,11 +207,11 @@ function DoSet(props) {
     <Tabs tabPosition={'left'}>
       <TabPane tab="基本设置" key="1">
         <PageHeader title="基本设置"/>
-        <BasicSet info={props.info}/>
+        <BasicSet info={props.info} id={props.id}/>
       </TabPane>
       <TabPane tab="隐私设置" key="2">
         <PageHeader title="修改密码"/>
-        <PrivacySet info={props.info}/>
+        <PrivacySet info={props.info} id={props.id}/>
       </TabPane>
     </Tabs>
   </div>
@@ -231,6 +243,6 @@ export class BasicInfoSet extends React.Component {
   }
 
   render() {
-    return <DoSet info={this.state.data}/>
+    return <DoSet info={this.state.data} id={this.state.id}/>
   }
 }

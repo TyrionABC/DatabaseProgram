@@ -13,7 +13,9 @@ import {
   Space,
   Modal,
   Descriptions,
-  PageHeader, Skeleton
+  PageHeader,
+  Skeleton,
+    message,
 } from 'antd';
 import {
   SearchOutlined,
@@ -76,15 +78,35 @@ const BottomPart = () => {
   </Affix>
 }
 
-function Name() {
-  const name = useStore(state => state.name);
-  return <>
-    <Avatar size={'large'}
-            src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-            style={{margin: 5}}/>
-    <br/>
-    <Link to="/" id="logInfo" style={{color: 'white'}}>signed as: {name}</Link>
-  </>
+class Name extends React.Component {
+  state = {
+    id: this.props.id,
+    data: [],
+  }
+
+  componentDidMount() {
+    let that = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/admin/getUserDetails',
+      data: { userId: this.state.id },
+    }).then(function(res) {
+      console.log(res.data);
+      that.setState({
+        data: res.data,
+      })
+    })
+  }
+
+  render() {
+    return <>
+      <Avatar size={'large'}
+              src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+              style={{margin: 5}}/>
+      <br/>
+      <Link to="/" id="logInfo" style={{color: 'white'}}>signed as: {this.state.data.name}</Link>
+    </>
+  }
 }
 
 function SearchResult(props) {
@@ -110,16 +132,23 @@ function SearchResult(props) {
     <Table dataSource={arr}>
       <ColumnGroup title="基本信息">
         <Column title="标题" dataIndex="title" key="title" />
-        <Column title="作者" dataIndex="writerName" key="writerName" />
+        <Column title="第一作者" dataIndex="writerName" key="writerName"
+          render={(_, record)=>(
+              <>
+                { record[0] }
+              </>
+          )}
+        />
         <Column
             title="研究方向"
             dataIndex="path"
             key="path"
-            render={(tag => (
-                      <Tag color="blue" key={tag}>
-                        {tag}
-                      </Tag>
-                  )
+            render={(_, record) => (
+                record.path.map((item, index)=>(
+                    <Tag key={item}>
+                      {item}
+                    </Tag>
+                ))
             )}
         />
         <Column title="类型" dataIndex="thesisType" key="thesisType" />
@@ -235,7 +264,7 @@ class MainContent extends React.Component {
     if(!values['title'] && !values['directionName'] && !values['thesisType']
         && !values['overview'] && !values['name'] && !values['userName']
         && !values['publishMeeting']) {
-      alert("搜索条件不能全为空!");
+      message.warning("搜索条件不能全为空!");
       window.location.reload();
     }
     console.log('Success:', values);
@@ -275,7 +304,7 @@ class MainContent extends React.Component {
         >
           <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
             <div className="content">
-              <Name/>
+              <Name id={this.state.id}/>
             </div>
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={this.onClick}/>
           </Sider>
@@ -367,7 +396,7 @@ class MainContent extends React.Component {
         </Layout>
           <Affix offsetBottom={10}>
             <Tooltip title="新文章">
-              <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
+              <Button type="primary" shape="circle" icon={<PlusOutlined />}
                       size="large" style={{ position: "absolute", bottom: 80, right: 80}}
                       onClick={this.quickNew}/>
             </Tooltip>
