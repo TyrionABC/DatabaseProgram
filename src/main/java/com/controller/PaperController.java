@@ -138,7 +138,6 @@ public class PaperController {
                 continue;
             JSONObject jo = new JSONObject();
             putIn(paper, jo);
-            jo.put("flag",paper.getFlag());
             json.add(jo);
         }
         System.out.println(json);

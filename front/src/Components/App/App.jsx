@@ -110,16 +110,23 @@ function SearchResult(props) {
     <Table dataSource={arr}>
       <ColumnGroup title="基本信息">
         <Column title="标题" dataIndex="title" key="title" />
-        <Column title="作者" dataIndex="writerName" key="writerName" />
+        <Column title="第一作者" dataIndex="writerName" key="writerName"
+          render={(_, record)=>(
+              <>
+                { record[0] }
+              </>
+          )}
+        />
         <Column
             title="研究方向"
             dataIndex="path"
             key="path"
-            render={(tag => (
-                      <Tag color="blue" key={tag}>
-                        {tag}
-                      </Tag>
-                  )
+            render={(_, record) => (
+                record.path.map((item, index)=>(
+                    <Tag key={item}>
+                      {item}
+                    </Tag>
+                ))
             )}
         />
         <Column title="类型" dataIndex="thesisType" key="thesisType" />
@@ -367,7 +374,7 @@ class MainContent extends React.Component {
         </Layout>
           <Affix offsetBottom={10}>
             <Tooltip title="新文章">
-              <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
+              <Button type="primary" shape="circle" icon={<PlusOutlined />}
                       size="large" style={{ position: "absolute", bottom: 80, right: 80}}
                       onClick={this.quickNew}/>
             </Tooltip>

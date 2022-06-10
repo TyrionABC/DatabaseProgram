@@ -440,7 +440,7 @@ export class WriteThesis extends React.Component {
                     </div>
                 </Space>
                 <div className="bottomElement">
-                    <Button type="primary" style={{width: "25%"}} onClick={this.showDrawer}>完成</Button>
+                    <Button type="primary" ghost style={{width: "25%"}} onClick={this.showDrawer}>完成</Button>
                 </div>
             </div>
                 <Drawer title="提交论文" placement="right" onClose={this.onClose} visible={this.state.visible}>

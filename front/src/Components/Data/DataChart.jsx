@@ -144,7 +144,7 @@ class Counting extends React.Component {
     if(day.length === 0) day[0] = '论文为空'
     const options = {
       title: {
-        text: "论文数量"
+        text: "已发布论文数量"
       },
       xAxis: {
         type: 'category',
