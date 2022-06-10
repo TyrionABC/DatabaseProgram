@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal, message} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
@@ -270,11 +270,29 @@ class UserComment extends React.Component{
 
 export class UserNote extends React.Component{
     state={
-        note:'',
+        oldNote:'',
+        publishedNote:'',
         editorState: BraftEditor.createEditorState(null),
     }
     componentDidMount(){
         let that=this;
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/myNotes/false/',
+            data:{userId:that.props.userId},
+        }).then(function(res) {
+            const notes=res.data;
+            let note={};
+            for(var i=0;i<notes.length;i++){
+                if(notes[i].id===that.props.id){
+                    note=notes[i];
+                }
+            }
+            that.setState({
+                oldNote:note.note,
+                editorState:BraftEditor.createEditorState(note.note),
+            })
+        });
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/myNotes/true/',
@@ -288,13 +306,71 @@ export class UserNote extends React.Component{
                 }
             }
             that.setState({
-                note:note,
+                publishedNote:note.note,
             })
         });
     }
+    handleEditorChange=(editorState)=>{
+        this.setState({ editorState: editorState, publishedNote: editorState.toHTML() });
+    }
+    submitNote=()=>{
+        const note={
+            id:this.props.id,
+            note:this.state.publishedNote,
+            flag:0,
+        }
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/insertNotes/',
+            data:note,
+        }).then(function(res) {
+            if(res.data){
+                alert("发表成功");
+            }
+        })
+    }
+    preserveNote=()=>{
+        const note={
+            id:this.props.id,
+            note:this.state.publishedNote,
+            flag:1,
+        }
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/insertNotes/',
+            data:note,
+        }).then(function(res) {
+            if(res.data){
+                alert("发表成功");
+            }
+        })
+    }
     render(){
+        const {editorState}=this.state.editorState;
         return(
             <>
+                {
+                    ()=>{
+                        if(this.state.publishedNote==='')return(
+                            <Row>
+                                <Col span={20}>
+                                    <BraftEditor 
+                                    value={editorState}
+                                    onChange={this.handleEditorChange}/>
+                                </Col>
+                                <Col span={4}>
+                                    <Space>
+                                        <Button type="primary" onClick={this.submitNote}>发布笔记</Button>
+                                        <Button type="primary" onClick={this.preserveNote}>保存草稿</Button>
+                                    </Space>
+                                </Col>
+                            </Row>
+                        )
+                        else return(
+                            <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100}} />
+                        )
+                    }
+                }
             </>
         );
     }
