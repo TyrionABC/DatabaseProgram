@@ -1,10 +1,6 @@
 import React, {useState} from 'react'
 import axios from "axios";
-<<<<<<< Updated upstream
 import {Col, Row, Comment, Avatar, Button, Modal, message} from 'antd'
-=======
-import {Col, Row, Comment, Avatar, Button, Modal, Divider} from 'antd'
->>>>>>> Stashed changes
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
