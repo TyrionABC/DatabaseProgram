@@ -15,8 +15,10 @@ public class NoteAndFileServiceImp implements NoteAndFileService{
     @Override
     public void insert(Note_and_extra_file note) {
 //        publisherId,flag,note,id
+        System.out.println(note);
         Note_and_extra_file note_and_extra_file=noteAndFileMapper.selectNoteAndExtraFile(note.getId());
         if (note_and_extra_file==null){
+            if (note.getOverview()==null)
             note.setOverview("");
             noteAndFileMapper.insert(note);//写论文时没有插入摘要，要创建笔记
 

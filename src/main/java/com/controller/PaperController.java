@@ -359,10 +359,9 @@ public class PaperController {
     @ResponseBody
     public String putin(@RequestBody AllInfo allInfo){
         //储存基本信息
+        System.out.println(allInfo);
         String id=paperService.insertPaper(new Paper_Basic_info(allInfo.getTitle(),allInfo.getThesisType(),
                 allInfo.getLiteratureLink(),allInfo.getPublisherId(),allInfo.getFlag(),allInfo.getText()));
-        System.out.println(id);
-        System.out.println(allInfo);
         //存储方向信息
         for (String direction:allInfo.getDirections()){
             belongService.insertBelong(new Belong(direction,id));
@@ -379,12 +378,12 @@ public class PaperController {
         //存储作者信息
         int i=1;
         for (String writer:allInfo.getWriters()){
-            System.out.println(writer);
             writerService.insert(new Writer(id,writer,i++));
         }
         //插入笔记
         if (allInfo.getOverview()!=null){
             Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
+            note_and_extra_file.setId(id);
             note_and_extra_file.setOverview(allInfo.getOverview());
             note_and_extra_file.setPublisherId(allInfo.getPublisherId());
             note_and_extra_file.setFlag(1);
