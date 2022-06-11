@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 // data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
@@ -50,8 +51,8 @@ public class PaperController {
     @PostMapping("/myNotes/true")
     @ResponseBody
     public JSONArray myNotes(@RequestBody Id userId){
-        System.out.println(userId.getUserId());
         List<Note_and_extra_file> allNotes=noteAndFileService.selectMyNotes(userId.getUserId());//所有数据
+        System.out.println(allNotes);
         JSONArray json = new JSONArray();
         for(Note_and_extra_file note : allNotes){
             if (note.getFlag()==1)
@@ -60,6 +61,18 @@ public class PaperController {
             jo.put("note", note.getNote());
             jo.put("title",paperMapper.selectPaperById(note.getId()).getTitle());
             jo.put("id",note.getId());
+            //插入方向
+            List<String> paths=new ArrayList<>();
+            List<Belong> belongs=belongService.getAllById(note.getId());
+            for(Belong belong:belongs){
+                String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                String directionName=belong.getDirectionName();
+                if (!paths.contains(parent))
+                    paths.add(parent);
+                if (!paths.contains(directionName))
+                paths.add(directionName);
+            }
+            jo.put("path",paths);
             json.add(jo);
         }
         System.out.println(json);
@@ -80,6 +93,18 @@ public class PaperController {
             jo.put("note", note.getNote());
             jo.put("title",paperMapper.selectPaperById(note.getId()).getTitle());
             jo.put("id",note.getId());
+            //插入方向
+            List<String> paths=new ArrayList<>();
+            List<Belong> belongs=belongService.getAllById(note.getId());
+            for(Belong belong:belongs){
+                String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                String directionName=belong.getDirectionName();
+                if (!paths.contains(parent))
+                    paths.add(parent);
+                if (!paths.contains(directionName))
+                    paths.add(directionName);
+            }
+            jo.put("path",paths);
             json.add(jo);
         }
         System.out.println(json);

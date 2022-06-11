@@ -131,17 +131,12 @@ public class PaperServiceImp implements PaperService{
             paper.setPaths(list);
             List<Belong> belongs=belongService.getAllById(paper.getId());
             for(Belong belong:belongs){
-                String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
-                int flag=1;
-                for (Belong belong1:belongs){
-                    if (parent.equals(belong1.getDirectionName())){
-                        flag=0;
-                        break;
-                    }
-                }
-                if (flag==1)
+                String parent = directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                String directionName=belong.getDirectionName();
+                if (!paper.getPaths().contains(parent))
                     paper.getPaths().add(parent);
-                paper.getPaths().add(belong.getDirectionName());
+                if (!paper.getPaths().contains(directionName))
+                    paper.getPaths().add(directionName);
             }
             List<Writer> writers=writerService.selectWriters(paper.getId());
             for (int i = 1; i <= writers.size(); i++) {
@@ -166,16 +161,11 @@ public class PaperServiceImp implements PaperService{
             List<Belong> belongs = belongService.getAllById(paper.getId());
             for (Belong belong : belongs) {
                 String parent = directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
-                int flag = 1;
-                for (Belong belong1 : belongs) {
-                    if (parent.equals(belong1.getDirectionName())) {
-                        flag = 0;
-                        break;
-                    }
-                }
-                if (flag == 1)
+                String directionName=belong.getDirectionName();
+                if (!paper.getPaths().contains(parent))
                     paper.getPaths().add(parent);
-                paper.getPaths().add(belong.getDirectionName());
+                if (!paper.getPaths().contains(directionName))
+                paper.getPaths().add(directionName);
             }
             List<Writer> writers=writerService.selectWriters(paper.getId());
             List<String> writerList=new ArrayList<>();
@@ -208,7 +198,7 @@ public class PaperServiceImp implements PaperService{
     @Override
     public List<Paper> selectNewPapers(){
         List<Paper_Basic_info> paper_basic_infos=paperMapper.selectNewPapers();
-        List<Paper> papers=new ArrayList<Paper>();//???
+        List<Paper> papers=new ArrayList<>();//???
         for (Paper_Basic_info paper_basic_info:paper_basic_infos){
             Paper paper=new Paper();
             paper.setId(paper_basic_info.getId());
@@ -247,17 +237,12 @@ public class PaperServiceImp implements PaperService{
             paper.setPaths(paths);
             List<Belong> belongs=belongService.getAllById(paper.getId());
             for(Belong belong:belongs){
-                String parent=directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
-                int flag=1;
-                for (Belong belong1:belongs){
-                    if (parent.equals(belong1.getDirectionName())||paper.getPaths().contains(parent)){
-                        flag=0;
-                        break;
-                    }
-                }
-                if (flag==1)
+                String parent = directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                String directionName=belong.getDirectionName();
+                if (!paper.getPaths().contains(parent))
                     paper.getPaths().add(parent);
-                paper.getPaths().add(belong.getDirectionName());
+                if (!paper.getPaths().contains(directionName))
+                    paper.getPaths().add(directionName);
             }
             papers.add(paper);
         }
