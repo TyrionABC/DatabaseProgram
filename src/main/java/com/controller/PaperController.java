@@ -131,6 +131,26 @@ public class PaperController {
         System.out.println(json.size());
         return json;
     }
+    //获取所有论文
+    @CrossOrigin
+    @GetMapping("/allPaper")
+    @ResponseBody
+    public JSONArray allPaper(){
+        List<Paper> allPapers=paperService.selectAllPapers();//所有数据
+        System.out.println(allPapers.size());
+        JSONArray json = new JSONArray();
+        // 需要添加作者、发布人姓名、研究方向、发布会议
+        for(Paper paper : allPapers){
+            if (paper.getFlag()==1)
+                continue;
+            JSONObject jo = new JSONObject();
+            jo.put("writers",paper.getWriters());
+            putIn(paper, jo);
+            json.add(jo);
+        }
+        System.out.println(json.size());
+        return json;
+    }
     //获取用户发布的论文
     @CrossOrigin
     @PostMapping("/myPaper/true")

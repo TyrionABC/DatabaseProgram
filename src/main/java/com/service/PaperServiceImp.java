@@ -321,4 +321,58 @@ public class PaperServiceImp implements PaperService{
         paperMapper.updateById(paper_basic_info);
     }
 
+    @Override
+    public List<Paper> selectAllPapers() {
+        List<Paper_Basic_info> paper_basic_infos=paperMapper.selectList(null);
+        List<Paper> papers=new ArrayList<>();//???
+        for (Paper_Basic_info paper_basic_info:paper_basic_infos){
+            Paper paper=new Paper();
+            paper.setId(paper_basic_info.getId());
+            paper.setPublisherId(paper_basic_info.getPublisherId());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  // 设置日期格式
+            String strTime = simpleDateFormat.format(paper_basic_info.getThesisDate());
+            paper.setThesisDate(strTime);
+            paper.setThesisType(paper_basic_info.getThesisType());
+            paper.setTitle(paper_basic_info.getTitle());
+            paper.setLike(paper_basic_info.getLike());
+            paper.setPublisher(userService.selectUserById(paper_basic_info.getPublisherId()).getName());
+            Paper_publish publish=publishService.selectByPaperId(paper_basic_info.getId());
+            if (publish==null){
+                paper.setPublishMeeting("");
+            }
+            else {
+                paper.setPublisher(publish.getPublisher());
+                paper.setPublishMeeting(publish.getPublishMeeting());
+            }
+            List<Writer> writers=writerService.selectWriters(paper_basic_info.getId());
+            List<String> writerList=new ArrayList<>();
+            paper.setWriters(writerList);
+            if (writers==null){
+                paper.getWriters().add("");
+            }
+            else {
+                for (int i=1;i<=writers.size();i++){
+                    for (Writer writer:writers){
+                        if (writer.getLevel()==i){
+                            paper.getWriters().add(writer.getWriterName());
+                        }
+                    }
+                }
+            }
+            List<String> paths=new ArrayList<>();
+            paper.setPaths(paths);
+            List<Belong> belongs=belongService.getAllById(paper.getId());
+            for(Belong belong:belongs){
+                String parent = directionService.selectDirectionByName(belong.getDirectionName()).getParentDirectionName();
+                String directionName=belong.getDirectionName();
+                if (!paper.getPaths().contains(parent))
+                    paper.getPaths().add(parent);
+                if (!paper.getPaths().contains(directionName))
+                    paper.getPaths().add(directionName);
+            }
+            papers.add(paper);
+        }
+        return papers;
+    }
+
 }

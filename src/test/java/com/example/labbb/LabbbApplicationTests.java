@@ -269,11 +269,7 @@ class LabbbApplicationTests {
     }
     @Test
     void ttt(){
-        Direction direction=new Direction();
-        direction.setDirectionName("ssm");
-        direction.setParentDirectionName("aaaaaaaaaaaa");
-        if (directionService.getDirectionsByParent("aaaaaaaaaaaa")==null)
-        System.out.println(1111111111);
+        System.out.println(paperService.selectAllPapers().size());
     }
 
 
