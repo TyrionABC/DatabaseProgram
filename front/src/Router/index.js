@@ -20,7 +20,7 @@ export default class Routing extends React.Component {
                 <Route path="/admin" element={ <Admin/>}/>
                 <Route path="/writing" element={ <WriteThesis/> }/>
                 <Route path="/detail/:id" element={ <SeeThesis/> }/>
-                <Route path="/edit/:id" element={ <UpdateThesis/> }/>
+                <Route path="/edit/:id/:publisher" element={ <UpdateThesis/> }/>
                 <Route path="*" element={ <NotFound/> }/>
             </Routes>
         </Router>

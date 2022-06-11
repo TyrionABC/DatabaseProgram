@@ -89,7 +89,7 @@ export default class MyThesis extends React.Component {
                             </Link>
                         </Button> :
                         <Button type="link">
-                            <Link to={"/edit/"+record.id} state={{userid: this.state.id}}>
+                            <Link to={"/edit/"+record.id+"/"+record.publisher} state={{userid: this.state.id}}>
                                 { record.title }
                             </Link>
                         </Button>

@@ -163,7 +163,10 @@ function SearchResult(props) {
           render={(value, record, index) => (
               <Space size="middle">
                 <Button type="link">
-                  <Link to={"/detail/"+record.id} state={{userid: userid}}>查看</Link>
+                  <Link to={"/detail/"+record.id} state={{
+                    userid: userid,
+
+                  }}>查看</Link>
                 </Button>
               </Space>
           )}

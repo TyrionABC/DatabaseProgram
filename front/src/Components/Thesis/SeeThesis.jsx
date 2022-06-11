@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message, PageHeader} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message, PageHeader, Empty, Tooltip} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
-import { CommentOutlined } from '@ant-design/icons';
+import {CommentOutlined, HeartFilled, HeartTwoTone} from '@ant-design/icons';
 import {useLocation} from "react-router";
 import TextArea from 'antd/lib/input/TextArea';
 import './Thesis.css';
@@ -14,14 +14,24 @@ export default function SeeThesis() {
     console.log(state.userid);
     const params = useParams();
     console.log(params);
+    const config = {
+        content: ' + 1',
+        icon: <HeartTwoTone twoToneColor="#D00"/>
+    }
     return <>
         <PageHeader
             className="site-page-header"
             onBack={() => window.history.go(-1)}
             title="返回"
             subTitle="论文详情页"
-            style={{margin: '16px', background: "white"}}
+            style={{marginBottom:'16px', background: 'white'}}
             ghost
+            extra={[ <Tooltip title="点赞"><Button onClick={()=>{
+                axios.get('http://localhost:8080/admin/like/' + params.id)
+                    .then(function(res) {
+                        message.info(config);
+                    })
+            }} type='text' danger icon={<HeartFilled />} /></Tooltip> ]}
         />
         <div className="site-layout">
             <Detail id={params.id} userId={state.userid}/>
@@ -47,7 +57,6 @@ class Detail extends React.Component{
                 publisherId: res.data.publisherId,
                 text:res.data.text,
                 title:res.data.title,
-
                 //parentComment:res.data.parentComment,
             })
         });
@@ -59,7 +68,7 @@ class Detail extends React.Component{
                     <Col span={16}>
                         <div className="thesis-content">
                             <div style={{textAlign:'center'}}>
-                                <h1>{this.state.title}</h1>
+                                {this.state.title}
                             </div>
                             <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,marginRight:100}} />
                         </div>
@@ -208,42 +217,44 @@ class UserComment extends React.Component{
             }else{
                 actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>];
             }
-        })
+        });
+        const commentArea = () => {
+            if(this.state.comment.length === 0) return <Empty/>;
+            return this.state.comment.map((item,item_index)=>{
+                    if(item.parentUserName==='')
+                        return(
+                            <Comment
+                                key={item_index}
+                                actions={actions[item_index]}
+                                author={item.userName}
+                                avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
+                                content={item.content}
+                                datetime={item.date}
+                                style={{marginLeft:30}}>
+                                {
+                                    this.state.comment.map((ikey,key_index)=>{
+                                        if(ikey.root===item.root&&ikey.parentUserName!=='')
+                                            return(
+                                                <Comment
+                                                    key={key_index}
+                                                    actions={actions[key_index]}
+                                                    author={(ikey.userName)+" 回复 "+(ikey.parentUserName)}
+                                                    avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
+                                                    content={ikey.content}
+                                                    datetime={ikey.date} >
+                                                </Comment>
+                                            )
+                                    })
+                                }
+                            </Comment>
+                        )
+                }
+            )
+        }
         return (
             <>
                 <div className="comment-content-inner">
-                    {
-                        this.state.comment.map((item,item_index)=>{
-                            if(item.parentUserName==='')
-                                return(
-                                    <Comment 
-                                    key={item_index}
-                                    actions={actions[item_index]}
-                                    author={item.userName}
-                                    avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                    content={item.content}
-                                    datetime={item.date}
-                                    style={{marginLeft:30}}>
-                                        {
-                                            this.state.comment.map((ikey,key_index)=>{
-                                                if(ikey.root===item.root&&ikey.parentUserName!=='')
-                                                    return(
-                                                        <Comment
-                                                        key={key_index}
-                                                        actions={actions[key_index]}
-                                                        author={(ikey.userName)+" 回复 "+(ikey.parentUserName)}
-                                                        avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                                        content={ikey.content}
-                                                        datetime={ikey.date} >
-                                                        </Comment>
-                                                    )
-                                            })
-                                        }
-                                    </Comment>
-                                )
-                            }
-                        )
-                    }
+                    { commentArea() }
                 </div>
                 <div style={{textAlign:'center'}}>
                     <Button type="text" ghost block onClick={this.addComment} icon={<CommentOutlined/> } style={{marginBottom:50}}>发表评论</Button>
@@ -389,15 +400,16 @@ export class UserNote extends React.Component{
                         <Col span={4}>
                             <Space>
                                 <Button type="primary" onClick={this.submitNote}>发布笔记</Button>
-                                <Button type="primary" onClick={this.preserveNote}>保存草稿</Button>
+                                <Button type="primary" ghost onClick={this.preserveNote}>保存草稿</Button>
                             </Space>
                         </Col>
                     </Row>
                 )
             }
             else if(!this.state.publishedNote) {
-                return ( <div dangerouslySetInnerHTML={{__html: '<h3>作者还没有发布笔记哦~</h3>'}}
-                              style={{ padding: 50, textAlign: 'center' }}/> )
+                return ( <div style={{padding: '15%'}}>
+                    <Empty/>
+                </div> )
             }
             else {
                 return(
