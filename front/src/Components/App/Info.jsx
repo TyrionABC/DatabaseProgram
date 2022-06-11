@@ -18,7 +18,7 @@ function BasicSet(props) {
           console.log(response);
           if(response.data) {
             message.success("修改成功!");
-            window.location.reload();
+            setTimeout(window.location.reload(), 5000);
           }
           else {
             message.error("修改失败!");
@@ -116,7 +116,7 @@ function PrivacySet(props) {
           console.log(response);
           if(response.data) {
             message.success("修改成功!");
-            window.location.reload();
+            setTimeout(window.location.reload(), 5000);
           }
           else {
             message.error("修改失败!");

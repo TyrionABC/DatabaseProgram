@@ -265,7 +265,7 @@ class MainContent extends React.Component {
         && !values['overview'] && !values['name'] && !values['userName']
         && !values['publishMeeting']) {
       message.warning("搜索条件不能全为空!");
-      window.location.reload();
+      setTimeout(window.location.reload(), 5000);
     }
     console.log('Success:', values);
     // 请求论文列表, 接收论文列表

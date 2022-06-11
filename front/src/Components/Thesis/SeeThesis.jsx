@@ -90,7 +90,7 @@ class UserComment extends React.Component{
         parentCommentId:'',
         rootId:'',
         updateCommentId:'',
-        isVis:false
+        isVis:false,
     }
     componentDidMount () {
         let that=this;
@@ -138,7 +138,7 @@ class UserComment extends React.Component{
             console.log(res.data);
             if(res.data){
                 message.success("删除成功");
-                window.location.reload();
+                setTimeout(window.location.reload(), 5000);
             }
         });
     }
@@ -173,7 +173,10 @@ class UserComment extends React.Component{
             console.log(res.data);
             if(res.data){
                 message.success("评论成功");
-                window.location.reload();
+                setTimeout(window.location.reload(), 5000);
+            }
+            else {
+                message.error("评论失败");
             }
         });
     }
@@ -191,7 +194,7 @@ class UserComment extends React.Component{
             console.log(res.data);
             if(res.data){
                 message.success("修改成功");
-                window.location.reload();
+                setTimeout(window.location.reload(), 5000);
             }
         });
     }
@@ -346,7 +349,10 @@ export class UserNote extends React.Component{
             data:note,
         }).then(function(res) {
             if(res.data){
-                alert("发表成功");
+                message.success("发表成功");
+            }
+            else {
+                message.error("发表失败");
             }
         })
     }
@@ -362,7 +368,10 @@ export class UserNote extends React.Component{
             data:note,
         }).then(function(res) {
             if(res.data){
-                alert("发表成功");
+                message.success("发表成功");
+            }
+            else {
+                message.error("发表失败");
             }
         })
     }
@@ -386,9 +395,13 @@ export class UserNote extends React.Component{
                     </Row>
                 )
             }
+            else if(!this.state.publishedNote) {
+                return ( <div dangerouslySetInnerHTML={{__html: '<h3>作者还没有发布笔记哦~</h3>'}}
+                              style={{ padding: 50, textAlign: 'center' }}/> )
+            }
             else {
                 return(
-                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100}} />
+                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}}/>
                 )
             }
         }

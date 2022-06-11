@@ -49,12 +49,12 @@ export default class MyColumn extends React.Component {
                 console.log(res.data);
                 if(res.data) {
                     message.success("删除成功!");
+                    setTimeout(window.location.reload(), 5000);
                 }
                 else {
                     message.error("删除失败!");
                 }
             });
-        window.location.reload();
     }
 
     render() {

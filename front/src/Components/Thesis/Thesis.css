@@ -27,7 +27,6 @@
 
 .note-content {
     height: 600px;
-    overflow: scroll;
     background: white;
     padding: 16px;
     margin: 16px;

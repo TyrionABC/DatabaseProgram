@@ -50,18 +50,18 @@ export default class MyThesis extends React.Component {
         console.log(key);
     }
 
-    deleteThesis = async (id) => {
-        await axios.post('http://localhost:8080/admin/deletePaper', { id: id })
+    deleteThesis = (id) => {
+        axios.post('http://localhost:8080/admin/deletePaper', { id: id })
             .then(function(res) {
                 console.log(res.data);
                 if(res.data) {
                     message.success("删除成功!");
+                    setTimeout(window.location.reload(), 5000);
                 }
                 else {
                     message.error("删除失败!");
                 }
             });
-        window.location.reload();
     }
 
     render() {
