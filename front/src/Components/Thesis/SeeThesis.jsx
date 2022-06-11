@@ -72,6 +72,13 @@ export default function SeeThesis() {
         }).catch(err=>console.log(err))
     }
     console.log(myItem);
+    let onOff = true;
+    const sendLike = () => {
+        axios.get('http://localhost:8080/admin/like/' + params.id)
+            .then(function(res) {
+                message.info(config);
+            });
+    }
     return <>
         <PageHeader
             className="site-page-header"
@@ -79,11 +86,17 @@ export default function SeeThesis() {
             style={{marginBottom:'16px', background: 'white'}}
             ghost
             extra={[ <Tooltip title="点赞"><Button onClick={()=>{
-                axios.get('http://localhost:8080/admin/like/' + params.id)
-                    .then(function(res) {
-                        message.info(config);
-                    })
-            }} type='text' danger size="large" icon={<HeartFilled />} /></Tooltip> ]}
+                if (onOff) {
+                    onOff = false // 把onOff值改为false,点击间隔过短就无法运行函数
+                    console.log('输出')
+                    sendLike();
+                    setTimeout(function () {
+                        onOff = true // 1秒钟后onOff等于true
+                    }, 1000)
+                } else {
+                    message.warning('点击过快')
+                }
+                }} type='text' danger size="large" icon={<HeartFilled />} /></Tooltip> ]}
         >
             <Descriptions size="small" column={3}>
                 <Descriptions.Item label="标题" style={{fontWeight: 'bold'}}>{ data_.title }</Descriptions.Item>

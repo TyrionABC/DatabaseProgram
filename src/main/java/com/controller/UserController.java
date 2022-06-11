@@ -184,4 +184,20 @@ public class UserController {
             return "false";
         }
     }
+    //查询权限
+    @CrossOrigin
+    @GetMapping("/getPermission/{userId}")
+    @ResponseBody
+    public String getPermission(@PathVariable String userId){
+        System.out.println(userId);
+        User user=userService.selectUserById(userId);
+        if (user==null)
+            return "false";
+        else{
+            if (user.getPermission())
+                return 1+"";
+            else
+                return 0+"";
+        }
+    }
 }
