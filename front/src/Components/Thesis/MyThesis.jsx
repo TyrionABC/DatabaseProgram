@@ -87,10 +87,7 @@ export default class MyThesis extends React.Component {
                         <Button type="link">
                             <Link to={"/detail/"+record.id} state={{
                                 userid: this.state.id,
-                                title: record.title,
-                                firstWriter: record.writers,
-                                type: record.thesisType,
-                                direction: record.path,
+                                directions: record.path,
                             }}>
                                 { record.title }
                             </Link>

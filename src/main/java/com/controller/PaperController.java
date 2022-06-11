@@ -350,6 +350,7 @@ public class PaperController {
         ////
         if(noteAndFileService.select(paperId)!=null)
         jsonObject.put("overview",noteAndFileService.select(paperId).getOverview());
+        System.out.println(jsonObject);
         ////
         return jsonObject;
     }

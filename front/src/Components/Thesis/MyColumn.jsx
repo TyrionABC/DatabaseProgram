@@ -1,6 +1,8 @@
 import axios from "axios";
 import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message} from "antd";
 import React from "react";
+import Modal from "antd/es/modal/Modal";
+import {Link} from "react-router-dom";
 
 export default class MyColumn extends React.Component {
     state = {
@@ -9,6 +11,9 @@ export default class MyColumn extends React.Component {
         loaded_1: false,
         loaded_2: false,
         id: '',
+        isVisible: false,
+        dirs: '',
+        location: 1,
     }
 
     constructor(props) {
@@ -57,23 +62,59 @@ export default class MyColumn extends React.Component {
             });
     }
 
+    showModal = () => {
+        this.setState({isVisible: true});
+    };
+
+    handleOk = () => {
+        this.setState({isVisible: false});
+    };
+
+    handleCancel = () => {
+        this.setState({isVisible: false});
+    };
+
+    callback = (key) => {
+        this.setState({location: key});
+        console.log(key);
+    }
+
     render() {
         const {TabPane} = Tabs;
-        function callback(key) {
-            console.log(key);
-        }
+
         const columns = [
             {
                 title: '论文标题',
                 dataIndex: 'title',
                 key: 'title',
                 width: '45%',
+                render: (_, record) => (
+                    this.state.location === '2' ?
+                        <>{ record.title }</>
+                        :
+                        <Button type="link">
+                            <Link to={"/detail/"+record.id} state={{
+                                userid: this.state.id,
+                            }}>
+                                { record.title }
+                            </Link>
+                        </Button>
+                )
             },
             {
                 title: '内容',
                 dataIndex: 'note',
                 key: 'note',
                 width: '45%',
+                render: (_, record) => (
+                    <>
+                        <Button onClick={this.showModal}>内容</Button>
+                        <Modal title={record.title+" 笔记"} visible={this.state.isVisible}
+                               onOk={this.handleOk} onCancel={this.handleCancel}>
+                            <div dangerouslySetInnerHTML={{__html: record.note}}/>
+                        </Modal>
+                    </>
+                )
             },
             {
                 title: '操作',
@@ -105,7 +146,7 @@ export default class MyColumn extends React.Component {
                 </Descriptions>
             </PageHeader>
             <div className="site-layout-content">
-                <Tabs defaultActiveKey="1" onChange={callback} centered>
+                <Tabs defaultActiveKey="1" onChange={this.callback} centered>
                     <TabPane tab="草稿箱" key="1">
                         {this.state.loaded_2?<Table className="site-layout-content" columns={columns} dataSource={this.state.data_2}/>
                             : <Skeleton active/>}

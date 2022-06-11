@@ -128,10 +128,7 @@ export class Latest extends React.Component {
             <Button type="link">
               <Link to={"/detail/"+record.id} state={{
                 userid: this.state.id,
-                title: record.title,
-                firstWriter: record.writers[0],
-                type: record.thesisType,
-                direction: record.path,
+                directions: record.path
               }}>
                 { record.title }
               </Link>

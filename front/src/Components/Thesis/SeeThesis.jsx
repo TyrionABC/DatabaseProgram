@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import axios from "axios";
 import {
     Col,
@@ -14,15 +14,17 @@ import {
     Empty,
     Tooltip,
     Descriptions,
-    Tag
+    Tag, Dropdown,
+    Menu
 } from 'antd'
-import {useParams} from "react-router-dom";
+import {useParams, Link} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
-import {CommentOutlined, HeartFilled, HeartTwoTone} from '@ant-design/icons';
+import {CommentOutlined, DownOutlined, HeartFilled, HeartTwoTone, SmileOutlined} from '@ant-design/icons';
 import {useLocation} from "react-router";
 import TextArea from 'antd/lib/input/TextArea';
 import './Thesis.css';
+import {reset} from "mdb-ui-kit/src/js/mdb/util/scrollbar";
 
 export default function SeeThesis() {
     let { state } = useLocation();
@@ -33,12 +35,45 @@ export default function SeeThesis() {
         content: ' + 1',
         icon: <HeartTwoTone twoToneColor="#D00"/>
     }
+    let [data_, changeData] = useState('');
+    useEffect(()=>{
+        getData();
+    }, []);
+    let [myItem, changeItem] = useState([]);
+    let [menu, changeMenu] = useState(<div>{}</div>);
+    const getData = () => {
+        axios({
+            method: 'get',
+            url: 'http://localhost:8080/admin/getAllInfo/'+params.id,
+        }).then(function(res) {
+            console.log(res.data);
+            changeData(res.data);
+            for(var i = 0; i < res.data.refers.length; i++) {
+                console.log("flag");
+                myItem.push({ label:
+                        (<Button type="link" onClick={()=>window.location.reload()}>
+                            <Link to={"/detail/" + res.data.refers[i].referenceId} state={{
+                                userid: state.userid,
+                                directions: state.directions,
+                            }}>{res.data.refers[i].title}</Link>
+                        </Button>)
+                })
+                changeItem(myItem);
+            }
+            if(myItem.length === 0) {
+                myItem.push({label: (
+                        <a>{'无引用'}</a>
+                    )})
+                changeItem(myItem);
+            }
+            changeMenu(<Menu items={myItem}/>)
+        }).catch(err=>console.log(err))
+    }
+    console.log(myItem);
     return <>
         <PageHeader
             className="site-page-header"
-            onBack={() => window.history.go(-1)}
-            title="返回"
-            subTitle="论文详情页"
+            title="论文详情页"
             style={{marginBottom:'16px', background: 'white'}}
             ghost
             extra={[ <Tooltip title="点赞"><Button onClick={()=>{
@@ -46,21 +81,31 @@ export default function SeeThesis() {
                     .then(function(res) {
                         message.info(config);
                     })
-            }} type='text' danger icon={<HeartFilled />} /></Tooltip> ]}
+            }} type='text' danger size="large" icon={<HeartFilled />} /></Tooltip> ]}
         >
             <Descriptions size="small" column={3}>
-                <Descriptions.Item label="标题" style={{fontWeight: 'bold'}}>{ state.title }</Descriptions.Item>
+                <Descriptions.Item label="标题" style={{fontWeight: 'bold'}}>{ data_.title }</Descriptions.Item>
                 <Descriptions.Item label="第一作者">
-                    { state.firstWriter }
+                    { data_.writers }
                 </Descriptions.Item>
-                <Descriptions.Item label="论文类型">{ state.type }</Descriptions.Item>
+                <Descriptions.Item label="论文类型">{ data_.thesisType }</Descriptions.Item>
                 <Descriptions.Item label="研究方向">{
-                    state.direction.map((dirValue) => (
-                        <Tag key={dirValue} color="blue">
-                            { dirValue }
+                    state.directions.map((value)=>(
+                        <Tag key={value} color="blue">
+                            { value }
                         </Tag>
                     ))
                 }</Descriptions.Item>
+                <Descriptions.Item>
+                    <Dropdown overlay={menu}>
+                        <a onClick={(e) => e.preventDefault()}>
+                            <Space>
+                                论文引用
+                                <DownOutlined />
+                            </Space>
+                        </a>
+                    </Dropdown>
+                </Descriptions.Item>
             </Descriptions>
         </PageHeader>
         <div className="site-layout">
@@ -74,6 +119,7 @@ class Detail extends React.Component{
         text:'',
         title:'',
         publisherId: '',
+        refs: '',
     }
     componentDidMount () {
         // 假设此处从服务端获取html格式的编辑器内容
@@ -466,7 +512,7 @@ export class UserNote extends React.Component{
             }
             else {
                 return(
-                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}}/>
+                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100, wordWrap: 'break-word'}}/>
                 )
             }
         }
