@@ -11,6 +11,33 @@
     text-align: center;
 }
 
+.thesis-content {
+    height: 600px;
+    padding: 16px;
+    margin: 16px;
+    background: white;
+}
+
+.comment-content {
+    height: 600px;
+    padding: 16px;
+    margin: 16px;
+    background: white;
+}
+
+.comment-content-inner {
+    overflow: scroll;
+    height: 530px;
+    margin: 0;
+
+}
+
 .centering {
     justify-content: center;
+}
+
+::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+    color: transparent;
 }

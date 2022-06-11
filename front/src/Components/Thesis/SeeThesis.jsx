@@ -1,19 +1,31 @@
 import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message} from 'antd'
+import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message, PageHeader} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import { CommentOutlined } from '@ant-design/icons';
 import {useLocation} from "react-router";
 import TextArea from 'antd/lib/input/TextArea';
+import './Thesis.css';
 
 export default function SeeThesis() {
     let { state } = useLocation();
     console.log(state.userid);
     const params = useParams();
     console.log(params);
-    return <Detail id={params.id} userId={state.userid}/>
+    return <>
+        <PageHeader
+            className="site-page-header"
+            onBack={() => window.history.go(-1)}
+            title="返回"
+            subTitle="论文详情页"
+            style={{margin: '16px', background: "white"}}
+        />
+        <div className="site-layout">
+            <Detail id={params.id} userId={state.userid}/>
+        </div>
+        </>
 }
 
 class Detail extends React.Component{
@@ -44,13 +56,15 @@ class Detail extends React.Component{
             <>
                 <Row>
                     <Col span={16}>
-                        <div style={{textAlign:'center'}}>
-                            <h1>{this.state.title}</h1>
+                        <div className="thesis-content">
+                            <div style={{textAlign:'center'}}>
+                                <h1>{this.state.title}</h1>
+                            </div>
+                            <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,marginRight:100}} />
                         </div>
-                        <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,marginRight:100}} />
                     </Col>
                     <Col span={8}>
-                        <div style={{border:'dashed'}}>
+                        <div className="comment-content" >
                             <UserComment id={this.props.id} userId={this.props.userId}/>
                         </div>
                     </Col>
@@ -193,7 +207,7 @@ class UserComment extends React.Component{
         })
         return (
             <>
-                <div>
+                <div className="comment-content-inner">
                     {
                         this.state.comment.map((item,item_index)=>{
                             if(item.parentUserName==='')
@@ -228,9 +242,9 @@ class UserComment extends React.Component{
                     }
                 </div>
                 <div style={{textAlign:'center'}}>
-                    <Button type="primary" onClick={this.addComment} icon={<CommentOutlined/> } style={{marginBottom:50}}>发表评论</Button>
+                    <Button type="text" ghost block onClick={this.addComment} icon={<CommentOutlined/> } style={{marginBottom:50}}>发表评论</Button>
                     <Modal 
-                    title='评论编辑器' 
+                    title='评论编辑器'
                     centered 
                     visible={this.state.isSee}
                     onCancel={()=>{this.setState({isSee:false})}}
