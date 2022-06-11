@@ -25,6 +25,7 @@ import {useLocation} from "react-router";
 import TextArea from 'antd/lib/input/TextArea';
 import './Thesis.css';
 import {reset} from "mdb-ui-kit/src/js/mdb/util/scrollbar";
+import xss from "xss";
 
 export default function SeeThesis() {
     let { state } = useLocation();
@@ -432,6 +433,8 @@ export class UserNote extends React.Component{
             flag:0,
             publisherId: this.props.publisherId,
         }
+        let xss = require('xss');
+        xss(this.state.currentNote);
         console.log(note);
         axios({
             method: 'post',
@@ -458,6 +461,8 @@ export class UserNote extends React.Component{
             id:this.props.id,
             note:this.state.currentNote
        }
+        xss(this.state.currentNote);
+        console.log(note);
         if(this.state.judge===0){
             axios({
                 method: 'post',

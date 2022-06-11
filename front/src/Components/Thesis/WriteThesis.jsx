@@ -75,6 +75,8 @@ export class WriteThesis extends React.Component {
         fa.map((item)=>{
             directions.push(item[1]);
         })
+        let xss = require('xss');
+        xss(this.state.outputHTML);
         let submitData = {
             title:this.state.title,
             text:this.state.outputHTML,
