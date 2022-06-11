@@ -11,6 +11,7 @@ import './Thesis.css';
 import TextArea from 'antd/lib/input/TextArea';
 import {useParams} from "react-router-dom";
 import moment from 'moment';
+const { SHOW_CHILD } = Cascader;
 
 const {Option}=Select;
 const { Column, ColumnGroup } = Table;
@@ -70,14 +71,10 @@ export class WriteThesis extends React.Component {
             return;
         }
         let directions=[];
-        let fa = this.state.direction;
-        for(var i=0;i<value.direction.length;i++){
-            // 如果选择了'其他'选项，则添加其父方向
-            if(value.direction[i] === "其他") {
-                directions = directions.concat(fa[i]);
-            }
-            else directions=directions.concat(value.direction[i]);
-        }
+        let fa = value.direction;
+        fa.map((item)=>{
+            directions.push(item[1]);
+        })
         let submitData = {
             title:this.state.title,
             text:this.state.outputHTML,
@@ -187,22 +184,6 @@ export class WriteThesis extends React.Component {
     };
 
     render () {
-        /*const direction=[{
-            label:'人工智能',
-            value:'人工智能',
-            children:[
-                {label:'深度学习',value:'深度学习'},
-                {label:'人机对弈',value:'人机对弈'},
-                {label:'机器学习',value:'机器学习'}
-            ]
-        },{
-            label:'语言',
-            value:'语言',
-            children:[
-                {label:'中文',value:'中文'},
-                {label:'英文',value:'英文'}
-            ]
-        }];*/
         const { editorState } = this.state;
 
         const form = (<div style={{marginTop:20}}>
@@ -233,7 +214,7 @@ export class WriteThesis extends React.Component {
                     label="研究方向"
                     name="direction"
                     rules={[{required:true},]}>
-                    <Cascader allowClear options={this.state.direction} multiple />
+                    <Cascader allowClear showCheckedStrategy={SHOW_CHILD} options={this.state.direction} multiple />
                 </Form.Item>
                 <Form.List name="writer" >
                     {(fields,{add, remove})=>(
@@ -477,16 +458,17 @@ export class Update extends React.Component {
         writers:[],
         refers:[],
         initialForm:{},
+        direction:[],
     }
 
-    componentDidMount () {
-        // 假设此处从服务端获取html格式的编辑器内容
+    async componentDidMount () {
         let that=this;
-        axios({
+        let allDirections=[];
+        await axios({
             method: 'get',
             url: 'http://localhost:8080/admin/getAllDirections',
         }).then(function(res) {
-            console.log(res.data);
+            allDirections=res.data;
             that.setState({
                 directions:res.data,
             })
@@ -501,13 +483,30 @@ export class Update extends React.Component {
             console.log(res.data);
             let newShowRef=[];
             let newRef=[];
-            for(var i=0;i<res.data.refers.length;i++){
+            for(let i=0;i<res.data.refers.length;i++){
                 newShowRef.push(res.data.refers[i].title);
                 newRef.push(res.data.refers[i].referenceId);
             }
+            let direction=[];
+            let directions=res.data.directions;
+            for(let i=0; i<allDirections.length;i++){
+                allDirections[i].children.map((item)=>{
+                    let childDirection=[];
+                    for(var j=0;j<directions.length;j++){
+                        if(item.value===directions[j]){
+                            childDirection.push(allDirections[i].value);
+                            childDirection.push(item.value);
+                        }
+                    }
+                    if(childDirection.length!==0){
+                        direction.push(childDirection);
+                    }
+                })
+            }
+            //console.log(direction);
             let newForm={
                 thesisType:res.data.thesisType,
-                direction:res.data.directions,
+                direction:direction,
                 //writer:res.data.writers,
                 publishMeeting:res.data.publishMeeting,
                 publishTime:moment(res.data.publishTime,'YYYY-MM-DD'),
@@ -523,6 +522,7 @@ export class Update extends React.Component {
                 ref:newRef,
                 showRef:newShowRef,
                 initialForm:newForm,
+                direction:res.data.directions
             })
         })
     }
@@ -545,15 +545,11 @@ export class Update extends React.Component {
             message.warning("作者栏不能为空!");
             return;
         }
+        let direction=value.direction;
         let directions=[];
-        let fa = this.state.directions;
-        for(var i=0;i<value.direction.length;i++){
-            // 如果选择了'其他'选项，则添加其父方向
-            if(value.direction[i] === "其他") {
-                directions = directions.concat(fa[i]);
-            }
-            else directions=directions.concat(value.direction[i]);
-        }
+        direction.map((item)=>{
+            directions.push(item[1]);
+        })
         let submitData = {
             title:this.state.title,
             text:this.state.outputHTML,
@@ -588,6 +584,7 @@ export class Update extends React.Component {
             else {message.error("提交失败! 请重试");}
         });
         return false;
+        //console.log(data);
     }
 
     submitForm = async (value)=>{
@@ -723,7 +720,7 @@ export class Update extends React.Component {
                     label="研究方向"
                     name="direction"
                     rules={[{required:false},]}>
-                    <Cascader allowClear options={this.state.directions} multiple />
+                    <Cascader allowClear showCheckedStrategy={SHOW_CHILD} options={this.state.directions} multiple/>
                 </Form.Item>
                 <Form.List name="writer" initialValue={this.state.writers} >
                     {(fields,{add, remove})=>(
