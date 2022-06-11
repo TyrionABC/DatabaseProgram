@@ -119,4 +119,7 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
 
     @Select("select * from paper_basic_info where flag=0 order by thesis_date desc limit 0,20")
     List<Paper_Basic_info> selectNewPapers();
+
+    @Select("select * from paper_basic_info order by thesis_date desc")
+    List<Paper_Basic_info> selectAll();
 }
