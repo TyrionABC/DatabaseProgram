@@ -86,7 +86,8 @@ export class WriteThesis extends React.Component {
             referIds:this.state.ref,
             flag:this.state.flag,
             publisherId:this.state.publisherId,
-            publisher:this.state.publisher
+            publisher:this.state.publisher,
+            overview:value.overview,
         };
         console.log(submitData);
         this.sendThesisSubmit(submitData)

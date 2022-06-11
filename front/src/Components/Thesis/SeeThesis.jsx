@@ -334,6 +334,7 @@ export class UserNote extends React.Component{
         publishedNote:'',
         currentNote: '',
         editorState: BraftEditor.createEditorState(null),
+        judge:0
     }
     componentDidMount(){
         let that=this;
@@ -344,14 +345,17 @@ export class UserNote extends React.Component{
         }).then(function(res) {
             const notes=res.data;
             let note={};
+            let judge=0;
             for(var i=0;i<notes.length;i++){
                 if(notes[i].id===that.props.id){
                     note=notes[i];
+                    judge=1;
                 }
             }
             that.setState({
                 oldNote:note.note,
                 editorState:BraftEditor.createEditorState(note.note),
+                judge:judge,
             })
         });
         axios({
@@ -402,18 +406,38 @@ export class UserNote extends React.Component{
             flag:1,
             publisherId: this.props.publisherId,
         }
-        axios({
-            method: 'post',
-            url: 'http://localhost:8080/admin/insertNotes/',
-            data:note,
-        }).then(function(res) {
-            if(res.data){
-                message.success("发表成功");
-            }
-            else {
-                message.error("发表失败");
-            }
-        })
+        const updateNote={
+            id:this.props.id,
+            note:this.state.currentNote
+       }
+        if(this.state.judge===0){
+            axios({
+                method: 'post',
+                url: 'http://localhost:8080/admin/insertNotes/',
+                data:note,
+            }).then(function(res) {
+                if(res.data){
+                    message.success("发表成功");
+                }
+                else {
+                    message.error("发表失败");
+                }
+            })
+        }
+        if(this.state.judge===1){
+            axios({
+                method: 'post',
+                url: 'http://localhost:8080/admin/uodateNotes/',
+                data:updateNote,
+            }).then(function(res) {
+                if(res.data){
+                    message.success("发表成功");
+                }
+                else {
+                    message.error("发表失败");
+                }
+            })
+        }
     }
     render(){
         const {editorState}=this.state;
