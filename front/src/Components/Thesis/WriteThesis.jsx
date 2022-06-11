@@ -10,6 +10,7 @@ import { useLocation } from "react-router";
 import './Thesis.css';
 import TextArea from 'antd/lib/input/TextArea';
 import {useParams} from "react-router-dom";
+import moment from 'moment';
 
 const {Option}=Select;
 const { Column, ColumnGroup } = Table;
@@ -671,7 +672,7 @@ export class Update extends React.Component {
             ]
         }];*/
         const { editorState } = this.state;
-        const {publishMeeting}=this.state;
+        const {writers}=this.state;
         console.log(this.state.publishMeeting);
         const form = (<div style={{marginTop:20}}>
             <Form
@@ -689,7 +690,7 @@ export class Update extends React.Component {
                     name="thesisType"
                     rules={[{required:true},]}
                 >
-                    <Select allowClear >
+                    <Select allowClear defaultValue={this.state.type}>
                         <Option value="理论证明型">理论证明型</Option>
                         <Option value="综述性">综述性</Option>
                         <Option value="实验型">实验型</Option>
@@ -701,29 +702,11 @@ export class Update extends React.Component {
                     label="研究方向"
                     name="direction"
                     rules={[{required:true},]}>
-                    <Cascader allowClear options={this.state.directions} multiple value={this.state.direction}/>
+                    <Cascader allowClear options={this.state.directions} multiple defaultValue={this.state.direction}/>
                 </Form.Item>
                 <Form.List name="writer" >
                     {(fields,{add, remove})=>(
                         <>
-                            {
-                                this.state.writers.map(({item,index})=>(
-                                    <Space
-                                    key={item}
-                                    style={{display:'flex'}}
-                                    align="baseline"
-                                    >
-                                    <Form.Item
-                                        label={"第"+(index+1)+"作者"}
-                                        name={index}
-                                        rules={[{required:true}]}
-                                    >
-                                        <Input id={index+1} minLength={1} maxLength={50} value={item}/>
-                                    </Form.Item>
-                                    <MinusCircleOutlined onClick={()=>remove(index)} />
-                                </Space>  
-                                ))
-                            }
                             {fields.map(({key, name,...restField})=>(
                                 <Space
                                     key={key}
@@ -731,7 +714,7 @@ export class Update extends React.Component {
                                     align="baseline"
                                 >
                                     <Form.Item
-                                        label={"第"+(name+1+this.state.writers.length)+"作者"}
+                                        label={"第"+(name+1)+"作者"}
                                         {...restField}
                                         name={name}
                                         rules={[{required:true}]}
@@ -751,14 +734,14 @@ export class Update extends React.Component {
                     label="会议"
                     name="publishMeeting"
                     rules={[{required:true},]}>
-                    <Input value={publishMeeting} maxLength={50}/>
+                    <Input defaultValue={this.state.publishMeeting} maxLength={50}/>
                 </Form.Item>
                 <Form.Item
                     label="发表日期"
                     name="publishTime"
                     rules={[{required:true},]}
                 >
-                    <DatePicker value={this.state.publishTime}/>
+                    <DatePicker defaultValue={moment(this.state.publishTime,"YYYY-MM-DD")}/>
                 </Form.Item>
                 <Form.Item label={"添加引用"} rules={[{required:true},]}>
                     <Button type="dashed" onClick={this.addReference} block icon={<PlusOutlined/>}/>
