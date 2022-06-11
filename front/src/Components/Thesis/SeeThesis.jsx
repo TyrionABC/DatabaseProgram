@@ -21,6 +21,7 @@ export default function SeeThesis() {
             title="返回"
             subTitle="论文详情页"
             style={{margin: '16px', background: "white"}}
+            ghost
         />
         <div className="site-layout">
             <Detail id={params.id} userId={state.userid}/>
@@ -69,9 +70,9 @@ class Detail extends React.Component{
                         </div>
                     </Col>
                 </Row>
-                <Divider > 论文笔记 </Divider>
+                <Divider> 论文笔记 </Divider>
                 <Row>
-                    <div>
+                    <div className="note-content">
                         <UserNote id={this.props.id} userId={this.props.userId} publisherId={this.state.publisherId} />
                     </div>
                 </Row>

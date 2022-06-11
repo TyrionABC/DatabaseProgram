@@ -25,11 +25,19 @@
     background: white;
 }
 
+.note-content {
+    height: 600px;
+    overflow: scroll;
+    background: white;
+    padding: 16px;
+    margin: 16px;
+    width: 100%;
+}
+
 .comment-content-inner {
     overflow: scroll;
     height: 530px;
     margin: 0;
-
 }
 
 .centering {
