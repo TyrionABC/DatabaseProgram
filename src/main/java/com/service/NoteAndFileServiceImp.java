@@ -38,7 +38,10 @@ public class NoteAndFileServiceImp implements NoteAndFileService{
     @Override
     public void update(Note_and_extra_file note_and_extra_file) {
         System.out.println(note_and_extra_file);
-        noteAndFileMapper.updateById(note_and_extra_file);
+        if (this.select(note_and_extra_file.getId())==null)
+            noteAndFileMapper.insert(note_and_extra_file);
+        else
+            noteAndFileMapper.updateById(note_and_extra_file);
     }
 
     @Override

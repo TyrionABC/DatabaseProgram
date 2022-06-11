@@ -381,14 +381,15 @@ public class PaperController {
             writerService.insert(new Writer(id,writer,i++));
         }
         //插入笔记
-        if (allInfo.getOverview()!=null){
-            Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
-            note_and_extra_file.setId(id);
-            note_and_extra_file.setOverview(allInfo.getOverview());
-            note_and_extra_file.setPublisherId(allInfo.getPublisherId());
-            note_and_extra_file.setFlag(1);
-            noteAndFileService.insert(note_and_extra_file);
+        if (allInfo.getOverview()==null){
+            allInfo.setOverview("");
         }
+        Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
+        note_and_extra_file.setId(id);
+        note_and_extra_file.setOverview(allInfo.getOverview());
+        note_and_extra_file.setPublisherId(allInfo.getPublisherId());
+        note_and_extra_file.setFlag(1);
+        noteAndFileService.insert(note_and_extra_file);
         return "true";
     }
     //修改论文,传入id,传入子方向，基本信息，发布信息，索引，作者信息
@@ -407,13 +408,16 @@ public class PaperController {
         publishService.update(new Paper_publish(id,allInfo.getPublishMeeting(),
                 allInfo.getPublishTime(),allInfo.getPublisherId(),allInfo.getPublisher()));
         //修改索引信息
-        referenceService.update(id,allInfo.getReferIds());
+        if (allInfo.getReferIds()!=null)
+            referenceService.update(id,allInfo.getReferIds());
         //修改摘要
-        Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
-        note_and_extra_file.setOverview(allInfo.getOverview());
-        note_and_extra_file.setPublisherId(allInfo.getPublisherId());
-        noteAndFileService.update(note_and_extra_file);
-        ///////
+        if (allInfo.getOverview()!=null){
+            Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
+            note_and_extra_file.setOverview(allInfo.getOverview());
+            note_and_extra_file.setPublisherId(allInfo.getPublisherId());
+            note_and_extra_file.setId(id);
+            noteAndFileService.update(note_and_extra_file);
+        }
         return "true";
     }
     //删除笔记，输入id
