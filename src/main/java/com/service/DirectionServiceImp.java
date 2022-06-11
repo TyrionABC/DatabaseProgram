@@ -100,8 +100,7 @@ public class DirectionServiceImp implements DirectionService{
 
     @Override
     public List<Direction> getPaperDirection(String id) {
-        List<Direction> directions=directionMapper.selectPaperDirections(id);
-        return directions;
+        return directionMapper.selectPaperDirections(id);
     }
 
     @Override
@@ -133,29 +132,46 @@ public class DirectionServiceImp implements DirectionService{
 
     @Override
     public boolean updateChildren(String name, Direction direction) {
-        //方向名重复
-        if (directionMapper.selectDirectionByName(direction.getDirectionName())!=null){
-            System.out.println("方向名重复");
+        Direction direction1=this.selectDirectionByName(name);
+        if (!direction1.getParentDirectionName().equals(direction.getParentDirectionName())
+                &&!direction1.getDirectionName().equals(direction.getDirectionName())){
+            System.out.println("不能同时修改父方向和子方向");
             return false;
         }
-        else if (directionMapper.selectDirectionByParent(direction.getParentDirectionName())==null){
-            System.out.println("父方向不存在");
-            return false;//父方向不存在
+        else if (!direction.getDirectionName().equals(direction1.getDirectionName())){
+            System.out.println("修改子方向");
+            if (directionMapper.selectDirectionByName(direction.getDirectionName())!=null){
+                System.out.println("子方向名字重复");
+                return false;
+            }
+            else {
+                System.out.println("成功修改子方向");
+                direction.setLevel(2);
+                direction.setPath(direction.getParentDirectionName()+"-"+direction.getDirectionName());
+                //插入新方向
+                directionMapper.insert(direction);
+                //换掉所有belong的directionName
+                belongMapper.updateDirection(name,direction.getDirectionName());
+                //删除旧方向
+                directionMapper.deleteDirectionByName(name);
+                return true;
+            }
         }
-        else {
-            direction.setParentDirectionName(
-                    directionMapper.selectDirectionByName(name).getParentDirectionName());
-            direction.setLevel(2);
-            direction.setPath(direction.getParentDirectionName()+"-"+direction.getDirectionName());
-            //插入新方向
-            directionMapper.insert(direction);
-            //换掉所有belong的directionName
-            belongMapper.updateDirection(name,direction.getDirectionName());
-            //删除旧方向
-            directionMapper.deleteDirectionByName(name);
-            return true;
+        else if (!direction.getParentDirectionName().equals(direction1.getParentDirectionName())) {
+            System.out.println("修改父方向");
+            if (this.getDirectionsByParent(direction.getParentDirectionName()).size() == 0) {
+                System.out.println("要修改的父方向不存在");
+                return false;
+            } else {
+                //directionMapper.updateParentByChild(direction.getDirectionName(), direction.getParentDirectionName());
+                direction.setLevel(2);
+                direction.setPath(direction.getParentDirectionName()+"-"+direction.getDirectionName());
+                directionMapper.updateById(direction);
+                System.out.println("修改成功");
+                return true;
+            }
         }
-
+        return false;
     }
 
 

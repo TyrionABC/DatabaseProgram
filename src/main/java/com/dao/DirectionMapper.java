@@ -32,4 +32,7 @@ public interface DirectionMapper extends BaseMapper<Direction> {
     @Update("update direction set parent_direction_name=#{newParent} where parent_direction_name=#{oldParent}")
     void updateParentDirection(String oldParent,String newParent);
 
+    @Update("update direction set parent_direction_name=#{parent} where direction_name=#{child}")
+    void updateParentByChild(String child,String parent);
+
 }

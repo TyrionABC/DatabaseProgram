@@ -269,12 +269,11 @@ class LabbbApplicationTests {
     }
     @Test
     void ttt(){
-        Note_and_extra_file note_and_extra_file = new Note_and_extra_file();
-//        note_and_extra_file.setNote("男儿当自强");
-//        note_and_extra_file.setFlag(1);
-//        note_and_extra_file.setPublisherId("1216776075@qq.com");
-        note_and_extra_file.setId("05a783b3-9");
-        noteAndFileService.delete(note_and_extra_file.getId());
+        Direction direction=new Direction();
+        direction.setDirectionName("ssm");
+        direction.setParentDirectionName("aaaaaaaaaaaa");
+        if (directionService.getDirectionsByParent("aaaaaaaaaaaa")==null)
+        System.out.println(1111111111);
     }
 
 

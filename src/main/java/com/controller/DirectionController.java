@@ -96,10 +96,12 @@ public class DirectionController {
         if (direction1==null){//要更改的对象不存在
             return "false";
         }
-        if (direction1.getDirectionName().equals(direction1.getParentDirectionName())&&direction1.getLevel()==1)
-            return ""+directionService.updateParent(directionName,direction);//修改父方向且要修改的方向确实是父方向
-        else if (!direction1.getDirectionName().equals(direction1.getParentDirectionName())&&direction1.getLevel()==2)
-            return ""+directionService.updateChildren(directionName,direction);//修改子方向且要修改的方向确实为子方向
+        if (direction.getDirectionName().equals(direction.getParentDirectionName())&&direction1.getLevel()==1){//修改父方向且要修改的方向确实是父方向
+            return ""+directionService.updateParent(directionName,direction);
+        }
+        else if (!direction.getDirectionName().equals(direction.getParentDirectionName())&&direction1.getLevel()==2){//修改子方向且要修改的方向确实为子方向
+            return ""+directionService.updateChildren(directionName,direction);
+        }
         else
             return "false";
     }
