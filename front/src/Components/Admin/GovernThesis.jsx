@@ -4,7 +4,7 @@ import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List, Skele
 import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
-import './Thesis.css';
+import '../Thesis/Thesis.css';
 import axios from 'axios';
 //import SeeThesis from "./SeeThesis";
 import {Link} from "react-router-dom";
