@@ -103,7 +103,7 @@ export class WriteThesis extends React.Component {
             console.log(res.data);
             if(res.data){
                 message.success("提交成功!");
-                setTimeout(window.location.reload(), 5000);
+                setTimeout(window.location.reload(), 10000);
             }
             else {message.error("提交失败! 请重试");}
         });
@@ -580,7 +580,7 @@ export class Update extends React.Component {
             console.log(res.data);
             if(res.data){
                 message.success("提交成功!");
-                setTimeout(window.location.reload(), 5000);
+                setTimeout(window.location.reload(), 10000);
             }
             else {message.error("提交失败! 请重试");}
         });

@@ -29,6 +29,7 @@ import {reset} from "mdb-ui-kit/src/js/mdb/util/scrollbar";
 export default function SeeThesis() {
     let { state } = useLocation();
     console.log(state.userid);
+    console.log(state.directions);
     const params = useParams();
     console.log(params);
     const config = {
@@ -221,7 +222,7 @@ class UserComment extends React.Component{
             console.log(res.data);
             if(res.data){
                 message.success("删除成功");
-                setTimeout(window.location.reload(), 5000);
+                setTimeout(window.location.reload(), 10000);
             }
         });
     }
@@ -256,7 +257,7 @@ class UserComment extends React.Component{
             console.log(res.data);
             if(res.data){
                 message.success("评论成功");
-                setTimeout(window.location.reload(), 5000);
+                setTimeout(window.location.reload(), 10000);
             }
             else {
                 message.error("评论失败");
@@ -277,7 +278,7 @@ class UserComment extends React.Component{
             console.log(res.data);
             if(res.data){
                 message.success("修改成功");
-                setTimeout(window.location.reload(), 5000);
+                setTimeout(window.location.reload(), 10000);
             }
         });
     }
@@ -439,6 +440,7 @@ export class UserNote extends React.Component{
         }).then(function(res) {
             if(res.data){
                 message.success("发表成功");
+                setTimeout(window.location.reload(), 10000);
             }
             else {
                 message.error("发表失败");
@@ -464,6 +466,7 @@ export class UserNote extends React.Component{
             }).then(function(res) {
                 if(res.data){
                     message.success("发表成功");
+                    setTimeout(window.location.reload(), 10000);
                 }
                 else {
                     message.error("发表失败");
@@ -478,6 +481,7 @@ export class UserNote extends React.Component{
             }).then(function(res) {
                 if(res.data){
                     message.success("发表成功");
+                    setTimeout(window.location.reload(), 10000);
                 }
                 else {
                     message.error("发表失败");
@@ -512,7 +516,8 @@ export class UserNote extends React.Component{
             }
             else {
                 return(
-                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,marginRight:100, wordWrap: 'break-word'}}/>
+                    <div dangerouslySetInnerHTML={{__html:this.state.publishedNote}} style={{marginLeft:100,
+                        marginRight:100, wordWrap: 'break-word', overflow: 'scroll'}}/>
                 )
             }
         }

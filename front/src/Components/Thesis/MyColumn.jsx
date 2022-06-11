@@ -11,14 +11,14 @@ export default class MyColumn extends React.Component {
         loaded_1: false,
         loaded_2: false,
         id: '',
-        isVisible: false,
         dirs: '',
-        location: 1,
+        location: "1",
     }
 
     constructor(props) {
         super(props);
-        this.state = { data_1: [], data_2: [], id: props.id }
+        this.state = { data_1: [], data_2: [], id: props.id, isVisible_1: false, isVisible_2: false,
+        location: "1"}
     }
 
     componentDidMount() {
@@ -54,26 +54,13 @@ export default class MyColumn extends React.Component {
                 console.log(res.data);
                 if(res.data) {
                     message.success("删除成功!");
-                    setTimeout(window.location.reload(), 5000);
+                    setTimeout(window.location.reload(), 10000);
                 }
                 else {
                     message.error("删除失败!");
                 }
             });
     }
-
-    showModal = () => {
-        this.setState({isVisible: true});
-    };
-
-    handleOk = () => {
-        this.setState({isVisible: false});
-    };
-
-    handleCancel = () => {
-        this.setState({isVisible: false});
-    };
-
     callback = (key) => {
         this.setState({location: key});
         console.log(key);
@@ -89,12 +76,13 @@ export default class MyColumn extends React.Component {
                 key: 'title',
                 width: '45%',
                 render: (_, record) => (
-                    this.state.location === '2' ?
+                    this.state.location === "2" ?
                         <>{ record.title }</>
                         :
                         <Button type="link">
                             <Link to={"/detail/"+record.id} state={{
                                 userid: this.state.id,
+                                directions: record.path,
                             }}>
                                 { record.title }
                             </Link>
@@ -107,13 +95,10 @@ export default class MyColumn extends React.Component {
                 key: 'note',
                 width: '45%',
                 render: (_, record) => (
-                    <>
-                        <Button onClick={this.showModal}>内容</Button>
-                        <Modal title={record.title+" 笔记"} visible={this.state.isVisible}
-                               onOk={this.handleOk} onCancel={this.handleCancel}>
-                            <div dangerouslySetInnerHTML={{__html: record.note}}/>
-                        </Modal>
-                    </>
+                    <div style={{maxHeight: '150px', maxWidth: '500px', overflow: 'scroll'}}>
+                        <div dangerouslySetInnerHTML={{__html: record.note}}/>
+                    </div>
+
                 )
             },
             {
