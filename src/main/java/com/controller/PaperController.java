@@ -319,7 +319,7 @@ public class PaperController {
         for (Direction direction:directions){
             str[i++]=direction.getDirectionName();
         }
-
+        System.out.println(paper);
         jsonObject.put("directions",str);
         jsonObject.put("title",paper.getTitle());
         jsonObject.put("thesisType",paper.getThesisType());
@@ -347,6 +347,7 @@ public class PaperController {
         }
         jsonObject.put("writers",str);
         ////
+        if(noteAndFileService.select(paperId)!=null)
         jsonObject.put("overview",noteAndFileService.select(paperId).getOverview());
         ////
         return jsonObject;
