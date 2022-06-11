@@ -457,7 +457,7 @@ export class WriteThesis extends React.Component {
 export function UpdateThesis(){
     const params = useParams();
     console.log(params);
-    return <Update id={params.id} />
+    return <Update id={params.id} publisher={params.publisher} />
 }
 export class Update extends React.Component {
 
@@ -467,7 +467,6 @@ export class Update extends React.Component {
         outputHTML: '',
         flag:0,
         isSee:false,
-        direction:[],
         directions:[],
         arr:[],
         ref:[],
@@ -475,12 +474,9 @@ export class Update extends React.Component {
         publisher: '',
         publisherId: '',
         visible: false,
-        type:'',
         writers:[],
-        publishMeeting:'',
-        publishTime:'',
         refers:[],
-        overview:'',
+        initialForm:{},
     }
 
     componentDidMount () {
@@ -503,18 +499,30 @@ export class Update extends React.Component {
             url:'http://localhost:8080/admin/getAllInfo/'+that.props.id,
         }).then(function(res){
             console.log(res.data);
+            let newShowRef=[];
+            let newRef=[];
+            for(var i=0;i<res.data.refers.length;i++){
+                newShowRef.push(res.data.refers[i].title);
+                newRef.push(res.data.refers[i].referenceId);
+            }
+            let newForm={
+                thesisType:res.data.thesisType,
+                direction:res.data.directions,
+                //writer:res.data.writers,
+                publishMeeting:res.data.publishMeeting,
+                publishTime:moment(res.data.publishTime,'YYYY-MM-DD'),
+                overview:res.data.overview,
+            }
             that.setState({
                 title:res.data.title,
                 editorState:BraftEditor.createEditorState(res.data.text),
-                type:res.data.thesisType,
-                direction:res.data.directions,
                 writers:res.data.writers,
-                publishMeeting:res.data.publishMeeting,
-                publishTime:res.data.publishTime,
-                refers:res.data.refers,
-                overview:res.data.overview,
                 publisherId:res.data.publisherId,
-                publisher:res.data.publisher,
+                publisher:that.props.publisher,
+                refers:res.data.refers,
+                ref:newRef,
+                showRef:newShowRef,
+                initialForm:newForm,
             })
         })
     }
@@ -557,7 +565,8 @@ export class Update extends React.Component {
             referIds:this.state.ref,
             flag:this.state.flag,
             publisherId:this.state.publisherId,
-            publisher:this.state.publisher
+            publisher:this.state.publisher,
+            overview:value.overview,
         };
         console.log(submitData);
         this.sendThesisSubmit(submitData)
@@ -565,7 +574,7 @@ export class Update extends React.Component {
     }
 
     sendThesisSubmit = async (data) => {
-        await axios({
+        /*await axios({
             method: 'post',
             url: 'http://localhost:8080/admin/insertPaper',
             data: data,
@@ -577,7 +586,8 @@ export class Update extends React.Component {
             }
             else {message.error("提交失败! 请重试");}
         });
-        return false;
+        return false;*/
+        console.log(data);
     }
 
     submitForm = async (value)=>{
@@ -628,6 +638,17 @@ export class Update extends React.Component {
         })
         message.success("已添加" + title);
     }
+    deleteRef = ( index )=>{
+        let newShowRef=[].concat(this.state.showRef);
+        console.log(this.state.showRef);
+        newShowRef.splice(index,1);
+        let newRef=[].concat(this.state.ref);
+        newRef.splice(index,1);
+        this.setState({
+            showRef:newShowRef,
+            ref:newRef,
+        })
+    }
     beforeUpload = ({fileList}) =>{
         return false;
     }
@@ -635,6 +656,7 @@ export class Update extends React.Component {
         this.setState({
             flag:0,
         })
+        console.log(this.state.type);
     }
     submitFlag = () => {
         this.setState({
@@ -672,25 +694,24 @@ export class Update extends React.Component {
             ]
         }];*/
         const { editorState } = this.state;
-        const {writers}=this.state;
-        console.log(this.state.publishMeeting);
         const form = (<div style={{marginTop:20}}>
             <Form
                 name="info"
                 layout='vertical'
                 //labelCol={{span:8,}}
                 //wrapperCol={{span:16,}}
-                initialValues={{remember:true,}}
+                //initialValues={{remember:true,}}
                 onFinish={this.onFinish}
                 //onFinishFailed={onFinishFailed}
-                autoComplete="off"
+                autoComplete="off" 
+                initialValues={this.state.initialForm}
             >
                 <Form.Item
                     label="论文类型"
                     name="thesisType"
-                    rules={[{required:true},]}
+                    rules={[{required:false},]}
                 >
-                    <Select allowClear defaultValue={this.state.type}>
+                    <Select allowClear >
                         <Option value="理论证明型">理论证明型</Option>
                         <Option value="综述性">综述性</Option>
                         <Option value="实验型">实验型</Option>
@@ -701,10 +722,10 @@ export class Update extends React.Component {
                 <Form.Item
                     label="研究方向"
                     name="direction"
-                    rules={[{required:true},]}>
-                    <Cascader allowClear options={this.state.directions} multiple defaultValue={this.state.direction}/>
+                    rules={[{required:false},]}>
+                    <Cascader allowClear options={this.state.directions} multiple />
                 </Form.Item>
-                <Form.List name="writer" >
+                <Form.List name="writer" initialValue={this.state.writers} >
                     {(fields,{add, remove})=>(
                         <>
                             {fields.map(({key, name,...restField})=>(
@@ -733,43 +754,38 @@ export class Update extends React.Component {
                 <Form.Item
                     label="会议"
                     name="publishMeeting"
-                    rules={[{required:true},]}>
+                    rules={[{required:false},]}>
                     <Input defaultValue={this.state.publishMeeting} maxLength={50}/>
                 </Form.Item>
                 <Form.Item
                     label="发表日期"
                     name="publishTime"
-                    rules={[{required:true},]}
+                    rules={[{required:false},]}
                 >
-                    <DatePicker defaultValue={moment(this.state.publishTime,"YYYY-MM-DD")}/>
+                    <DatePicker />
                 </Form.Item>
                 <Form.Item label={"添加引用"} rules={[{required:true},]}>
                     <Button type="dashed" onClick={this.addReference} block icon={<PlusOutlined/>}/>
-                </Form.Item>
+                </Form.Item>  
                 {
-                    this.state.refers.map((item,index)=>(
+                    this.state.showRef.map((item, index)=>(
+                        <>
                         <Space style={{display:'flex'}} align="baseline">
                             <Form.Item
                                 label={"引用"+(index+1)}>
-                                <Input value={item.title} readOnly/>
+                                <Input defaultValue={item} readOnly/>
+                            </Form.Item>
+                            <Form.Item>
+                            <MinusCircleOutlined onClick={()=>this.deleteRef(index)} />
                             </Form.Item>
                         </Space>
-                    ))
-                }  
-                {
-                    this.state.showRef.map((item, index)=>(
-                        <Space style={{display:'flex'}} align="baseline">
-                            <Form.Item
-                                label={"引用"+(index+1+this.state.refers.length)}>
-                                <Input value={item} readOnly/>
-                            </Form.Item>
-                        </Space>
+                        </>
                     ))
                 }
                 <Form.Item 
                 label="摘要"
                 name="overview">
-                    <TextArea allowClear showCount maxLength={100} value={this.state.overview}/>
+                    <TextArea allowClear showCount maxLength={100} />
                 </Form.Item>
                 <Form.Item
                 label="额外文件"
