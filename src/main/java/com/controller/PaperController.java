@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 // data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
@@ -326,7 +327,9 @@ public class PaperController {
         jsonObject.put("publisherId",paper.getPublisherId());
         jsonObject.put("text",paper.getText());
         jsonObject.put("publishMeeting",publish.getPublishMeeting());
-        jsonObject.put("publishTime",publish.getPublishTime().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  // 设置日期格式
+        String strTime = simpleDateFormat.format(publish.getPublishTime());
+        jsonObject.put("publishTime",strTime);
         List<Reference> references=referenceService.getAllById(paperId);
         JSONArray jsonArray=new JSONArray();
         for (Reference reference:references){
@@ -417,6 +420,7 @@ public class PaperController {
     @PostMapping("/deleteNotes")
     @ResponseBody
     public String deleteNotes(@RequestBody Note_and_extra_file note){
+        System.out.println(note);
         noteAndFileService.delete(note.getId());
         return "true";
     }
