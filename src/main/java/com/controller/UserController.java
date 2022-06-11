@@ -189,6 +189,7 @@ public class UserController {
     @GetMapping("/getPermission/{userId}")
     @ResponseBody
     public String getPermission(@PathVariable String userId){
+        System.out.println(userId);
         User user=userService.selectUserById(userId);
         if (user==null)
             return "false";
