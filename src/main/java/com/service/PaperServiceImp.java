@@ -323,7 +323,7 @@ public class PaperServiceImp implements PaperService{
 
     @Override
     public List<Paper> selectAllPapers() {
-        List<Paper_Basic_info> paper_basic_infos=paperMapper.selectList(null);
+        List<Paper_Basic_info> paper_basic_infos=paperMapper.selectAll();
         List<Paper> papers=new ArrayList<>();//???
         for (Paper_Basic_info paper_basic_info:paper_basic_infos){
             Paper paper=new Paper();
