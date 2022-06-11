@@ -135,7 +135,12 @@ public class DirectionServiceImp implements DirectionService{
     public boolean updateChildren(String name, Direction direction) {
         //方向名重复
         if (directionMapper.selectDirectionByName(direction.getDirectionName())!=null){
+            System.out.println("方向名重复");
             return false;
+        }
+        else if (directionMapper.selectDirectionByParent(direction.getParentDirectionName())==null){
+            System.out.println("父方向不存在");
+            return false;//父方向不存在
         }
         else {
             direction.setParentDirectionName(

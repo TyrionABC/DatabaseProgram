@@ -69,6 +69,7 @@ public class DirectionController {
     @PostMapping("/deleteDirection")
     @ResponseBody
     public String deleteDirection(@RequestBody Direction direction) {
+        System.out.println(direction);
         directionService.deleteDirectionByName(direction.getDirectionName());
         return "true";
     }
