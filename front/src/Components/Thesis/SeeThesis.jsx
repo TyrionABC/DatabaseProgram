@@ -398,8 +398,9 @@ export class UserNote extends React.Component{
     preserveNote=()=>{
         const note={
             id:this.props.id,
-            note:this.state.publishedNote,
+            note:this.state.currentNote,
             flag:1,
+            publisherId: this.props.publisherId,
         }
         axios({
             method: 'post',
@@ -415,7 +416,7 @@ export class UserNote extends React.Component{
         })
     }
     render(){
-        const {editorState}=this.state.editorState;
+        const {editorState}=this.state;
         const judge = () => {
             if(!this.state.publishedNote && this.props.userId === this.props.publisherId){
                 return(
