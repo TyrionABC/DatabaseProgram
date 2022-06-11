@@ -1,6 +1,21 @@
 import React, {useState} from 'react'
 import axios from "axios";
-import {Col, Row, Comment, Avatar, Button, Modal, Divider, Space, message, PageHeader, Empty, Tooltip} from 'antd'
+import {
+    Col,
+    Row,
+    Comment,
+    Avatar,
+    Button,
+    Modal,
+    Divider,
+    Space,
+    message,
+    PageHeader,
+    Empty,
+    Tooltip,
+    Descriptions,
+    Tag
+} from 'antd'
 import {useParams} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
@@ -32,7 +47,22 @@ export default function SeeThesis() {
                         message.info(config);
                     })
             }} type='text' danger icon={<HeartFilled />} /></Tooltip> ]}
-        />
+        >
+            <Descriptions size="small" column={3}>
+                <Descriptions.Item label="标题" style={{fontWeight: 'bold'}}>{ state.title }</Descriptions.Item>
+                <Descriptions.Item label="第一作者">
+                    { state.firstWriter }
+                </Descriptions.Item>
+                <Descriptions.Item label="论文类型">{ state.type }</Descriptions.Item>
+                <Descriptions.Item label="研究方向">{
+                    state.direction.map((dirValue) => (
+                        <Tag key={dirValue} color="blue">
+                            { dirValue }
+                        </Tag>
+                    ))
+                }</Descriptions.Item>
+            </Descriptions>
+        </PageHeader>
         <div className="site-layout">
             <Detail id={params.id} userId={state.userid}/>
         </div>
@@ -64,12 +94,10 @@ class Detail extends React.Component{
     render(){
         return(
             <>
+                <Divider> 内容 </Divider>
                 <Row>
                     <Col span={16}>
                         <div className="thesis-content">
-                            <div style={{textAlign:'center'}}>
-                                {this.state.title}
-                            </div>
                             <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,marginRight:100}} />
                         </div>
                     </Col>

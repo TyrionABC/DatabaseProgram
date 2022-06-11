@@ -165,7 +165,10 @@ function SearchResult(props) {
                 <Button type="link">
                   <Link to={"/detail/"+record.id} state={{
                     userid: userid,
-
+                    title: record.title,
+                    firstWriter: record.writers[0],
+                    type: record.thesisType,
+                    direction: record.path,
                   }}>查看</Link>
                 </Button>
               </Space>

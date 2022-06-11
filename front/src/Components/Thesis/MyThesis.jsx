@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message} from "antd";
+import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message, Tag, Collapse, List} from "antd";
 import React from "react";
 import {Link} from "react-router-dom";
 
@@ -66,6 +66,7 @@ export default class MyThesis extends React.Component {
 
     render() {
         const {TabPane} = Tabs;
+        const { Panel } = Collapse;
         console.log(this.state);
         const routes = [
             {
@@ -84,7 +85,13 @@ export default class MyThesis extends React.Component {
                 render: (_, record) => (
                     this.state.location === '2' ?
                         <Button type="link">
-                            <Link to={"/detail/"+record.id} state={{userid: this.state.id}}>
+                            <Link to={"/detail/"+record.id} state={{
+                                userid: this.state.id,
+                                title: record.title,
+                                firstWriter: record.writers,
+                                type: record.thesisType,
+                                direction: record.path,
+                            }}>
                                 { record.title }
                             </Link>
                         </Button> :
@@ -100,6 +107,17 @@ export default class MyThesis extends React.Component {
                 dataIndex: 'writers',
                 key: 'writers',
                 width: '10%',
+                render: (_, record) => (
+                    <Collapse ghost>
+                        <Panel header="作者列表" key='1'>
+                            <List
+                                size="small"
+                                dataSource={record.writers}
+                                renderItem={(item) => <List.Item>{item}</List.Item>}
+                            />
+                        </Panel>
+                    </Collapse>
+                )
             },
             {
                 title: '发布日期',
@@ -130,6 +148,13 @@ export default class MyThesis extends React.Component {
                 dataIndex: 'path',
                 key: 'path',
                 width: '10%',
+                render: (_, record) => (
+                    record.path.map((item, index)=>(
+                        <Tag key={item}>
+                            {item}
+                        </Tag>
+                    ))
+                )
             },
             {
                 title: '发布会议',

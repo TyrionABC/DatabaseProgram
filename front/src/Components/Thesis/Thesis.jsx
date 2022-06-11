@@ -122,11 +122,17 @@ export class Latest extends React.Component {
         title: '标题',
         dataIndex: 'title',
         key: 'title',
-        width: '8%',
+        width: '6%',
         ...this.getColumnSearchProps('title'),
         render: (_, record) => (
             <Button type="link">
-              <Link to={"/detail/"+record.id} state={{userid: this.state.id}}>
+              <Link to={"/detail/"+record.id} state={{
+                userid: this.state.id,
+                title: record.title,
+                firstWriter: record.writers[0],
+                type: record.thesisType,
+                direction: record.path,
+              }}>
                 { record.title }
               </Link>
             </Button>
@@ -202,7 +208,7 @@ export class Latest extends React.Component {
         title: '点赞数',
         dataIndex: 'like',
         key: 'like',
-        width: '8%',
+        width: '10%',
         ...this.getColumnSearchProps('like'),
         sorter: (a, b) => a.like - b.like,
         sortDirections: ['descend', 'ascend'],
