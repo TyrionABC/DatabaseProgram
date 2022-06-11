@@ -567,6 +567,7 @@ export class Update extends React.Component {
             publisherId:this.state.publisherId,
             publisher:this.state.publisher,
             overview:value.overview,
+            id:this.props.id,
         };
         console.log(submitData);
         this.sendThesisSubmit(submitData)
@@ -574,9 +575,9 @@ export class Update extends React.Component {
     }
 
     sendThesisSubmit = async (data) => {
-        /*await axios({
+        await axios({
             method: 'post',
-            url: 'http://localhost:8080/admin/insertPaper',
+            url: 'http://localhost:8080/admin/updatePaper/'+this.props.id,
             data: data,
         }).then(function(res) {
             console.log(res.data);
@@ -586,8 +587,7 @@ export class Update extends React.Component {
             }
             else {message.error("提交失败! 请重试");}
         });
-        return false;*/
-        console.log(data);
+        return false;
     }
 
     submitForm = async (value)=>{
