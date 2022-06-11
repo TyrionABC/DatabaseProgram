@@ -176,6 +176,7 @@ class UserComment extends React.Component{
         rootId:'',
         updateCommentId:'',
         isVis:false,
+        permission:'0',
     }
     componentDidMount () {
         let that=this;
@@ -184,9 +185,20 @@ class UserComment extends React.Component{
             url: 'http://localhost:8080/admin/selectAllComments/'+that.props.id,
         }).then(function(res) {
             let mid=res.data;
+            console.log(that.props.userId);
             mid.sort((a,b)=>a.date>b.date?1:-1);
             that.setState({
                 comment:mid,
+            })
+        });
+        console.log(that.props.userId);
+        axios({
+            method: 'get',
+            url: 'http://localhost:8080/admin/getPermission/'+that.props.userId,
+        }).then(function(res) {
+            console.log(res.data);
+            that.setState({
+                permission:res.data,
             })
         });
     }
@@ -285,13 +297,14 @@ class UserComment extends React.Component{
     }
     render(){
         let actions=[];
+        console.log(this.state.permission);
         this.state.comment.map((item,index)=>{
-            if(item.publisherId===this.props.userId){
+            if(item.publisherId===this.props.userId || this.state.permission===1){
                 actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,
                 <span onClick={()=>{this.deleteComment(item.commentId)}}>删除</span>,
                 <span onClick={()=>{this.updateComment(item.commentId)}}>修改</span>];
             }else{
-                actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>];
+                actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,]
             }
         });
         const commentArea = () => {
