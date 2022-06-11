@@ -335,7 +335,7 @@ public class PaperController {
         for (Reference reference:references){
             JSONObject jsonObject1=new JSONObject();
             jsonObject1.put("referenceId",reference.getReferPaperId());
-            jsonObject1.put("title",paperService.selectPaperById(reference.getId()).getTitle());
+            jsonObject1.put("title",paperService.selectPaperById(reference.getReferPaperId()).getTitle());
             jsonArray.add(jsonObject1);
         }
         jsonObject.put("refers",jsonArray);
