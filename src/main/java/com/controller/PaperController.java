@@ -283,6 +283,7 @@ public class PaperController {
         return jsonArray;
     }
     //获取文章内容
+    //模糊查询研究⽅向、论⽂标题、论⽂类型、论⽂摘要
     @CrossOrigin
     @GetMapping("getText/{paperId}")
     @ResponseBody

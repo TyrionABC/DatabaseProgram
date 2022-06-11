@@ -17,7 +17,9 @@ public class NoteAndFileServiceImp implements NoteAndFileService{
 //        publisherId,flag,note,id
         Note_and_extra_file note_and_extra_file=noteAndFileMapper.selectNoteAndExtraFile(note.getId());
         if (note_and_extra_file==null){
+            note.setOverview("");
             noteAndFileMapper.insert(note);//写论文时没有插入摘要，要创建笔记
+
         }
         else {
             noteAndFileMapper.updateById(note);//写论文时插入过overview，笔记已经存在
