@@ -490,6 +490,8 @@ public class PaperController {
     @ResponseBody
     public String updateNotes(@RequestBody Note_and_extra_file note){
         System.out.println("=========="+note+"==============");
+        //note初始值为0，注意
+        note.setFlag(1);
         noteAndFileService.update(note);
         return "true";
     }
