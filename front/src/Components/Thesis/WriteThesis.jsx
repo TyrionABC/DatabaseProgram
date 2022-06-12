@@ -127,8 +127,15 @@ export class WriteThesis extends React.Component {
             data: value
         }).then(function(res) {
             console.log(res.data);
+            let form=res.data;
+            form.map((item,index)=>{
+                for(var i=0;i<item.writers.length;i++){
+                    item.writers[i]=item.writers[i]+' ';
+                }
+            })
+            console.log(form);
             that.setState({
-                arr: res.data,
+                arr: form,
             })
         });
     }
@@ -360,7 +367,7 @@ export class WriteThesis extends React.Component {
                                 <ColumnGroup title="基本信息">
                                     <Column title="ID" dataIndex="id" key="id" />
                                     <Column title="标题" dataIndex="title" key="title" />
-                                    <Column title="作者" dataIndex="writerName" key="writerName" />
+                                    <Column title="作者" dataIndex="writers" key="writerName" />
                                     <Column
                                         title="研究方向"
                                         dataIndex="path"
@@ -605,8 +612,15 @@ export class Update extends React.Component {
             data: value
         }).then(function(res) {
             console.log(res.data);
+            let form=res.data;
+            form.map((item,index)=>{
+                for(var i=0;i<item.writers.length;i++){
+                    item.writers[i]=item.writers[i]+' ';
+                }
+            })
+            console.log(form);
             that.setState({
-                arr: res.data,
+                arr: form,
             })
         });
     }
@@ -871,7 +885,7 @@ export class Update extends React.Component {
                                 <ColumnGroup title="基本信息">
                                     <Column title="ID" dataIndex="id" key="id" />
                                     <Column title="标题" dataIndex="title" key="title" />
-                                    <Column title="作者" dataIndex="writerName" key="writerName" />
+                                    <Column title="作者" dataIndex="writers" key="writerName" />
                                     <Column
                                         title="研究方向"
                                         dataIndex="path"
