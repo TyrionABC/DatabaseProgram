@@ -217,7 +217,7 @@ export class WriteThesis extends React.Component {
             }
         };
         function UploadComponent() {
-            return <Upload {...uploadArmProps}>
+            return <Upload {...uploadArmProps} accept=".txt">
                 <Button type="text" onClick={()=>alert("目前仅支持.txt文件并且只有三次上传机会")}
                         icon={<UploadOutlined />}>从本地上传</Button>
             </Upload>
