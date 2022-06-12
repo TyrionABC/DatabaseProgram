@@ -489,6 +489,7 @@ public class PaperController {
     @PostMapping("/updateNotes")
     @ResponseBody
     public String updateNotes(@RequestBody Note_and_extra_file note){
+        System.out.println(note);
         noteAndFileService.update(note);
         return "true";
     }

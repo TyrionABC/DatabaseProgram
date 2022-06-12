@@ -269,7 +269,7 @@ class LabbbApplicationTests {
     }
     @Test
     void ttt(){
-        System.out.println(paperService.selectAllPapers().size());
+        paperService.deletePaperById("8a047e7c-6");
     }
 
 
