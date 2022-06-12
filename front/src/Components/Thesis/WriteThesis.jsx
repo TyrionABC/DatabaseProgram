@@ -187,8 +187,50 @@ export class WriteThesis extends React.Component {
     };
 
     render () {
+        const uploadArmProps = {
+            name: 'file',
+            //action: `上传文件的接口地址`,
+            headers: {
+            },// 请求头
+            showUploadList: true,
+            maxCount: 3,
+            onChange: info => {
+            if (info.file.status === 'done') {
+                console.log(info, "info")
+            }
+            else if (info.file.status === 'error') {
+                 console.log("上传失败")
+            }
+             },
+            beforeUpload:file=>{
+                const reader=new FileReader();
+                reader.readAsText(file);
+                reader.onload=(result)=>{
+                    let targetNum=result.target.result;
+                    targetNum = targetNum.replace(/\n/g,"<br/>");
+                    let tmp =  BraftEditor.createEditorState(targetNum);
+                    this.setState({editorState: tmp, outputHTML: tmp.toHTML()});
+                    console.log(this.state.outputHTML);
+                    // targetNum是文件内容 type为string
+                }
+                return false;
+            }
+        };
+        function UploadComponent() {
+            return <Upload {...uploadArmProps}>
+                <Button type="text" onClick={()=>alert("目前仅支持.txt文件并且只有三次上传机会")}
+                        icon={<UploadOutlined />}>从本地上传</Button>
+            </Upload>
+        }
         const { editorState } = this.state;
-
+        const extendControls = [
+            'separator',
+            {
+                key: 'uploadComponent',
+                type: 'component',
+                component: <UploadComponent />
+            }
+        ]
         const form = (<div style={{marginTop:20}}>
             <Form
                 name="info"
@@ -422,6 +464,9 @@ export class WriteThesis extends React.Component {
                         <BraftEditor
                             value={ editorState }
                             onChange={this.handleEditorChange}
+                            excludeControls={['emoji', 'link']}
+                            extendControls={extendControls}
+                            pasteMode={['text']}
                         />
                     </div>
                 </Space>
@@ -582,7 +627,7 @@ export class Update extends React.Component {
             console.log(res.data);
             if(res.data){
                 message.success("提交成功!");
-                setTimeout(window.location.reload(), 10000);
+                setTimeout(window.history.go(-1), 10000);
             }
             else {message.error("提交失败! 请重试");}
         });

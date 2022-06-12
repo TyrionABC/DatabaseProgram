@@ -226,7 +226,7 @@ export class GovernThesis extends React.Component {
     ];
     const routes = [
       {
-        breadcrumbName: '/首页',
+        breadcrumbName: '/论文&评论管理',
       },
     ];
 
@@ -275,7 +275,7 @@ export class GovernThesis extends React.Component {
       </>
     };
     return <>
-        <PageHeader style={{background: '#fff'}} title="最新文章" breadcrumb={{ routes }}>
+        <PageHeader style={{background: '#fff'}} title="所有文章" breadcrumb={{ routes }}>
           <Descriptions>
             <Descriptions.Item label="更新时间">{ CurentTime() }</Descriptions.Item>
           </Descriptions>
