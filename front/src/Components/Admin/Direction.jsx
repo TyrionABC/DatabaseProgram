@@ -82,6 +82,7 @@ export class Direction extends React.Component{
             isVis:true,
             label:label,
             initialValue:parentName,
+            updateParentName:parentName
         })
     }
     handleDirectionUpdate=(event)=>{
@@ -103,6 +104,7 @@ export class Direction extends React.Component{
             directionName:this.state.updateDirectionName,
             parentDirectionName:parentName,
         }
+        console.log(direction);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/updateDirection/'+this.state.label,
