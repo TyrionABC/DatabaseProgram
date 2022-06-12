@@ -158,8 +158,9 @@ class Detail extends React.Component{
                 <Divider> 内容 </Divider>
                 <Row>
                     <Col span={16}>
-                        <div className="thesis-content">
-                            <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,marginRight:100}} />
+                        <div className="thesis-content" style={{overflow: 'scroll'}}>
+                            <div dangerouslySetInnerHTML={{__html:this.state.text}} style={{marginLeft:100,
+                                marginRight:100}} />
                         </div>
                     </Col>
                     <Col span={8}>

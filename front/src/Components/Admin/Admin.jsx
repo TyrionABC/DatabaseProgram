@@ -94,7 +94,7 @@ function SearchThesis(props) {
   const { Column, ColumnGroup } = Table;
   const routes = [
     {
-      breadcrumbName: '文章搜索',
+      breadcrumbName: '搜索论文',
     },
     {
       breadcrumbName: '搜索结果',
