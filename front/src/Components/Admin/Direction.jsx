@@ -113,6 +113,8 @@ export class Direction extends React.Component{
             if(res.data){
                 message.success("修改成功");
                 setTimeout(window.location.reload(), 10000);
+            }else{
+                message.error("内容错误，无法修改，请检查您的内容");
             }
         });
     }
