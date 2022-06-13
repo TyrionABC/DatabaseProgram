@@ -1,38 +1,12 @@
 import React from "react";
-import { Input, 
-        Divider,
-        Table,
-        Button,
-        Space }from 'antd';
-import { BulbFilled, SearchOutlined } from '@ant-design/icons';
-import { arrayOf } from "prop-types";
+import {
+    Input,
+    Divider,
+    Table,
+    Space, Button
+} from 'antd';
 import axios from "axios";
 
-/*const user = [{
-    user_name:'Liu',
-    user_email:'111@qq.com',
-    user_belong:'ECNU',
-    user_permission:'user',
-    flag:'allowed',
-},{
-    user_name:'Cui',
-    user_email:'222@qq.com',
-    user_belong:'ECNU',
-    user_permission:'user',
-    flag:'allowed'
-},{
-    user_name:'Ma',
-    user_email:'333@qq.com',
-    user_belong:'ECNU',
-    user_permission:'user',
-    flag:'allowed'
-},{
-    user_name:'Kong',
-    user_email:'444@qq.com',
-    user_belong:'ZZU',
-    user_permission:'user',
-    flag:'not_allowed'
-}];*/
 const { Search } = Input;
 export class UserGovern extends React.Component{
     state = {
@@ -52,9 +26,8 @@ export class UserGovern extends React.Component{
             method: 'get',
             url: 'http://localhost:8080/admin/getAllUsers',
         }).then(function(res) {
-            console.log(res.data);
             let legal_user=[];
-            for(var i=0;i<res.data.length;i++){
+            for(let i=0;i<res.data.length;i++){
                 if(res.data[i].flag===0){
                     legal_user.push(res.data[i]);
                 }
@@ -68,13 +41,13 @@ export class UserGovern extends React.Component{
     onSearch=(value)=>{
         let mid=[];
         if(value===''){
-            for(var i=0;i<this.state.user.length;i++){
+            for(let i=0;i<this.state.user.length;i++){
                 if(this.state.user[i].flag===0){
                     mid.push(this.state.user[i]);
                 }
             }
         }else{
-            for(var i=0;i<this.state.user.length;i++){
+            for(let i=0;i<this.state.user.length;i++){
                 if((this.state.user[i].name===value||this.state.user[i].userId===value)&&this.state.user[i].flag===0){
                     mid.push(this.state.user[i]);
                 }
@@ -93,14 +66,14 @@ export class UserGovern extends React.Component{
             console.log(res.data);
         });
         let newuser=[];
-        for(var i=0;i<this.state.user.length;i++){
+        for(let i=0;i<this.state.user.length;i++){
             newuser.push(this.state.user[i]);
             if(newuser[i].userId===email){
                 newuser[i].flag=1;
             }
         }
         let mid=[];
-        for(var i=0;i<this.state.showuser.length;i++){
+        for(let i=0;i<this.state.showuser.length;i++){
             if(this.state.showuser[i].userId!==email){
                 mid.push(this.state.showuser[i]);
             }
@@ -119,14 +92,14 @@ export class UserGovern extends React.Component{
             console.log(res.data);
         });
         let newuser=[];
-        for(var i=0;i<this.state.user.length;i++){
+        for(let i=0;i<this.state.user.length;i++){
             newuser.push(this.state.user[i]);
             if(newuser[i].userId===email){
                 newuser[i].flag=1;
             }
         }
         let mid=[];
-        for(var i=0;i<this.state.showuser.length;i++){
+        for(let i=0;i<this.state.showuser.length;i++){
             if(this.state.showuser[i].userId!==email){
                 mid.push(this.state.showuser[i]);
             }
@@ -142,7 +115,7 @@ export class UserGovern extends React.Component{
                 title: '邮箱',
                 dataIndex: 'userId',
                 key: 'userId',
-                render: (text)=><a style={{color:'#3366FF'}}>{text}</a>,
+                render: (text)=><Button type="text" style={{color:'#3366FF'}}>{text}</Button>,
             },
             {
                 title: '用户名',
@@ -159,8 +132,8 @@ export class UserGovern extends React.Component{
                 key: 'action',
                 render: (_, record)=>(
                     <Space size="middle">
-                        <a style={{color:"green"}} onClick={()=>this.changeUserPermission(record.userId)}>修改用户权限</a>
-                        <a style={{color:"red"}} onClick={()=>this.lock(record.userId)}>封禁用户</a>
+                        <Button type="text" style={{color:"green"}} onClick={()=>this.changeUserPermission(record.userId)}>修改用户权限</Button>
+                        <Button type="text" style={{color:"red"}} onClick={()=>this.lock(record.userId)}>封禁用户</Button>
                     </Space>
                 )
             }
@@ -198,7 +171,7 @@ export class IllegalUser extends React.Component{
             url: 'http://localhost:8080/admin/getAllUsers',
         }).then(function(res) {
             let illegal_user=[];
-            for(var i=0;i<res.data.length;i++){
+            for(let i=0;i<res.data.length;i++){
                 if(res.data[i].flag===1){
                     illegal_user.push(res.data[i]);
                 }
@@ -212,13 +185,13 @@ export class IllegalUser extends React.Component{
     onSearch=(value)=>{
         let mid=[];
         if(value===''){
-            for(var i=0;i<this.state.user.length;i++){
+            for(let i=0;i<this.state.user.length;i++){
                 if(this.state.user[i].flag===1){
                     mid.push(this.state.user[i]);
                 }
             }
         }else{
-            for(var i=0;i<this.state.user.length;i++){
+            for(let i=0;i<this.state.user.length;i++){
                 if((this.state.user[i].name===value||this.state.user[i].userId===value)&&this.state.user[i].flag===1){
                     mid.push(this.state.user[i]);
                 }
@@ -237,14 +210,14 @@ export class IllegalUser extends React.Component{
             console.log(res.data);
         });
         let newuser=[];
-        for(var i=0;i<this.state.user.length;i++){
+        for(let i=0;i<this.state.user.length;i++){
             newuser.push(this.state.user[i]);
             if(newuser[i].userId===email){
                 newuser[i].flag=0;
             }
         }
         let mid=[];
-        for(var i=0;i<this.state.showuser.length;i++){
+        for(let i=0;i<this.state.showuser.length;i++){
             if(this.state.showuser[i].userId!==email){
                 mid.push(this.state.showuser[i]);
             }
@@ -260,7 +233,7 @@ export class IllegalUser extends React.Component{
                 title: '邮箱',
                 dataIndex: 'userId',
                 key: 'userId',
-                render: (text)=><a style={{color:'#3366FF'}}>{text}</a>,
+                render: (text)=><Button type="text" style={{color:'#3366FF'}}>{text}</Button>,
             },
             {
                 title: '用户名',
@@ -277,7 +250,7 @@ export class IllegalUser extends React.Component{
                 key: 'action',
                 render: (_, record)=>(
                     <Space size="middle">
-                        <a style={{color:"red"}} onClick={()=>this.unlock(record.userId)}>解除封禁</a>
+                        <Button type="text" style={{color:"red"}} onClick={()=>this.unlock(record.userId)}>解除封禁</Button>
                     </Space>
                 )
             }

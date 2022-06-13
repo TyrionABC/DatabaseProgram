@@ -5,8 +5,7 @@ import BraftEditor from 'braft-editor'
 // 引入编辑器样式
 import 'braft-editor/dist/index.css'
 import axios from "axios";
-import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { useLocation } from "react-router";
+import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import './Thesis.css';
 import TextArea from 'antd/lib/input/TextArea';
 import {useParams} from "react-router-dom";
@@ -39,13 +38,10 @@ export class WriteThesis extends React.Component {
             method: 'get',
             url: 'http://localhost:8080/admin/getAllDirections',
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 direction:res.data,
             })
         });
-        const htmlContent = [];
-        //await fetchEditorContent()
         // 使用BraftEditor.createEditorState将html字符串转换为编辑器需要的editorStat
         that.setState({
             flag:0,
@@ -55,7 +51,6 @@ export class WriteThesis extends React.Component {
         this.setState({
             title:event.target.value,
         });
-        console.log(this.state.title);
     }
     onFinish=(value)=>{
         if(this.state.title === null
@@ -65,7 +60,6 @@ export class WriteThesis extends React.Component {
             message.warning("标题和内容不能为空!");
             return;
         }
-        console.log(value.writer);
         if(value.writer === null || value.writer.length === 0) {
             message.warning("作者栏不能为空!");
             return;
@@ -74,6 +68,7 @@ export class WriteThesis extends React.Component {
         let fa = value.direction;
         fa.map((item)=>{
             directions.push(item[1]);
+            return '';
         })
         let xss = require('xss');
         xss(this.state.outputHTML);
@@ -91,7 +86,6 @@ export class WriteThesis extends React.Component {
             publisher:this.state.publisher,
             overview:value.overview,
         };
-        console.log(submitData);
         this.sendThesisSubmit(submitData)
             .then(function(res) { console.log(res) });
     }
@@ -102,7 +96,6 @@ export class WriteThesis extends React.Component {
             url: 'http://localhost:8080/admin/insertPaper',
             data: data,
         }).then(function(res) {
-            console.log(res.data);
             if(res.data){
                 message.success("提交成功!");
                 setTimeout(window.location.reload(), 10000);
@@ -119,21 +112,19 @@ export class WriteThesis extends React.Component {
             message.warning("搜索条件不能全为空!");
             return;
         }
-        console.log(value);
         let that=this;
         await axios({
             method: 'post',
             url: 'http://localhost:8080/admin/select',
             data: value
         }).then(function(res) {
-            console.log(res.data);
             let form=res.data;
             form.map((item,index)=>{
                 for(var i=0;i<item.writers.length;i++){
                     item.writers[i]=item.writers[i]+' ';
                 }
+                return '';
             })
-            console.log(form);
             that.setState({
                 arr: form,
             })
@@ -157,7 +148,7 @@ export class WriteThesis extends React.Component {
         }
         a.push(id);
         let b=[];
-        for(var i=0;i<this.state.showRef.length;i++){
+        for(i=0;i<this.state.showRef.length;i++){
             b.push(this.state.showRef[i]);
         }
         b.push(title);
@@ -202,11 +193,8 @@ export class WriteThesis extends React.Component {
             showUploadList: true,
             maxCount: 3,
             onChange: info => {
-            if (info.file.status === 'done') {
-                console.log(info, "info")
-            }
-            else if (info.file.status === 'error') {
-                 console.log("上传失败")
+            if (info.file.status === 'error') {
+                 message.error("上传失败");
             }
              },
             beforeUpload:file=>{
@@ -217,7 +205,6 @@ export class WriteThesis extends React.Component {
                     targetNum = targetNum.replace(/\n/g,"<br/>");
                     let tmp =  BraftEditor.createEditorState(targetNum);
                     this.setState({editorState: tmp, outputHTML: tmp.toHTML()});
-                    console.log(this.state.outputHTML);
                     // targetNum是文件内容 type为string
                 }
                 return false;
@@ -242,11 +229,8 @@ export class WriteThesis extends React.Component {
             <Form
                 name="info"
                 layout='vertical'
-                //labelCol={{span:8,}}
-                //wrapperCol={{span:16,}}
                 initialValues={{remember:true,}}
                 onFinish={this.onFinish}
-                //onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
                 <Form.Item
@@ -327,11 +311,11 @@ export class WriteThesis extends React.Component {
                 </Form.Item>
                 <Form.Item
                 label="额外文件"
-                name="upload"
-                action="118.195.171.21">
-                    <Upload name="logo" beforeUpload={this.beforeUpload}>
-                        <Button icon={<UploadOutlined />}> 点击上传 </Button>
-                    </Upload>
+                name="extra"
+                >
+                    <Button onClick={() => {
+                        message.info("功能暂未开放, 敬请期待~");
+                    }} icon={<UploadOutlined />}> 点击上传 </Button>
                 </Form.Item>
                 <Modal
                     title="引用查询"
@@ -432,8 +416,8 @@ export class WriteThesis extends React.Component {
                                     key="action"
                                     render={(_,record) => (
                                         <Space size="middle">
-                                            <a style={{color:'green'}} onClick={()=>{
-                                                this.addRef(record.id, record.title);}}>添加</a>
+                                            <Button style={{color:'green'}} onClick={()=>{
+                                                this.addRef(record.id, record.title);}}>添加</Button>
                                         </Space>
                                     )}
                                 />
@@ -471,7 +455,7 @@ export class WriteThesis extends React.Component {
                         <BraftEditor
                             value={ editorState }
                             onChange={this.handleEditorChange}
-                            excludeControls={['emoji', 'link']}
+                            excludeControls={['emoji', 'link', 'media']}
                             extendControls={extendControls}
                             pasteMode={['text']}
                         />
@@ -492,7 +476,6 @@ export class WriteThesis extends React.Component {
 
 export function UpdateThesis(){
     const params = useParams();
-    console.log(params);
     return <Update id={params.id} publisher={params.publisher} />
 }
 export class Update extends React.Component {
@@ -535,7 +518,6 @@ export class Update extends React.Component {
             method:'get',
             url:'http://localhost:8080/admin/getAllInfo/'+that.props.id,
         }).then(function(res){
-            console.log(res.data);
             let newShowRef=[];
             let newRef=[];
             for(let i=0;i<res.data.refers.length;i++){
@@ -556,13 +538,12 @@ export class Update extends React.Component {
                     if(childDirection.length!==0){
                         direction.push(childDirection);
                     }
+                    return '';
                 })
             }
-            //console.log(direction);
             let newForm={
                 thesisType:res.data.thesisType,
                 direction:direction,
-                //writer:res.data.writers,
                 publishMeeting:res.data.publishMeeting,
                 publishTime:moment(res.data.publishTime,'YYYY-MM-DD'),
                 overview:res.data.overview,
@@ -585,7 +566,6 @@ export class Update extends React.Component {
         this.setState({
             title:event.target.value,
         });
-        console.log(this.state.title);
     }
     onFinish=(value)=>{
         if(this.state.title === null
@@ -595,7 +575,6 @@ export class Update extends React.Component {
             message.warning("标题和内容不能为空!");
             return;
         }
-        console.log(value.writer);
         if(value.writer === null || value.writer.length === 0) {
             message.warning("作者栏不能为空!");
             return;
@@ -604,6 +583,7 @@ export class Update extends React.Component {
         let directions=[];
         direction.map((item)=>{
             directions.push(item[1]);
+            return '';
         })
         let submitData = {
             title:this.state.title,
@@ -620,7 +600,6 @@ export class Update extends React.Component {
             overview:value.overview,
             id:this.props.id,
         };
-        console.log(submitData);
         this.sendThesisSubmit(submitData)
             .then(function(res) { console.log(res) });
     }
@@ -631,7 +610,6 @@ export class Update extends React.Component {
             url: 'http://localhost:8080/admin/updatePaper/'+this.props.id,
             data: data,
         }).then(function(res) {
-            console.log(res.data);
             if(res.data){
                 message.success("提交成功!");
                 setTimeout(window.history.go(-1), 10000);
@@ -639,7 +617,6 @@ export class Update extends React.Component {
             else {message.error("提交失败! 请重试");}
         });
         return false;
-        //console.log(data);
     }
 
     submitForm = async (value)=>{
@@ -649,21 +626,19 @@ export class Update extends React.Component {
             message.warning("搜索条件不能全为空!");
             return;
         }
-        console.log(value);
         let that=this;
         await axios({
             method: 'post',
             url: 'http://localhost:8080/admin/select',
             data: value
         }).then(function(res) {
-            console.log(res.data);
             let form=res.data;
             form.map((item,index)=>{
                 for(var i=0;i<item.writers.length;i++){
                     item.writers[i]=item.writers[i]+' ';
                 }
+                return '';
             })
-            console.log(form);
             that.setState({
                 arr: form,
             })
@@ -682,7 +657,7 @@ export class Update extends React.Component {
             return;
         }
         let a=[];
-        for(var i=0;i<this.state.ref.length;i++){
+        for(let i=0;i<this.state.ref.length;i++){
             a.push(this.state.ref[i]);
         }
         a.push(id);
@@ -699,7 +674,6 @@ export class Update extends React.Component {
     }
     deleteRef = ( index )=>{
         let newShowRef=[].concat(this.state.showRef);
-        console.log(this.state.showRef);
         newShowRef.splice(index,1);
         let newRef=[].concat(this.state.ref);
         newRef.splice(index,1);
@@ -715,7 +689,6 @@ export class Update extends React.Component {
         this.setState({
             flag:0,
         })
-        console.log(this.state.type);
     }
     submitFlag = () => {
         this.setState({
@@ -736,33 +709,13 @@ export class Update extends React.Component {
     };
 
     render () {
-        /*const direction=[{
-            label:'人工智能',
-            value:'人工智能',
-            children:[
-                {label:'深度学习',value:'深度学习'},
-                {label:'人机对弈',value:'人机对弈'},
-                {label:'机器学习',value:'机器学习'}
-            ]
-        },{
-            label:'语言',
-            value:'语言',
-            children:[
-                {label:'中文',value:'中文'},
-                {label:'英文',value:'英文'}
-            ]
-        }];*/
         const { editorState } = this.state;
         const form = (<div style={{marginTop:20}}>
             <Form
                 name="info"
                 layout='vertical'
-                //labelCol={{span:8,}}
-                //wrapperCol={{span:16,}}
-                //initialValues={{remember:true,}}
                 onFinish={this.onFinish}
-                //onFinishFailed={onFinishFailed}
-                autoComplete="off" 
+                autoComplete="off"
                 initialValues={this.state.initialForm}
             >
                 <Form.Item
@@ -848,11 +801,11 @@ export class Update extends React.Component {
                 </Form.Item>
                 <Form.Item
                 label="额外文件"
-                name="upload"
-                action="118.195.171.21">
-                    <Upload name="logo" beforeUpload={this.beforeUpload}>
-                        <Button icon={<UploadOutlined />}> 点击上传 </Button>
-                    </Upload>
+                name="extra"
+                >
+                    <Button onClick={() => {
+                        message.info("功能暂未开放, 敬请期待~");
+                    }} icon={<UploadOutlined />}> 点击上传 </Button>
                 </Form.Item>
                 <Modal
                     title="引用查询"
@@ -953,8 +906,8 @@ export class Update extends React.Component {
                                     key="action"
                                     render={(_,record) => (
                                         <Space size="middle">
-                                            <a style={{color:'green'}} onClick={()=>{
-                                                this.addRef(record.id, record.title);}}>添加</a>
+                                            <Button style={{color:'green'}} onClick={()=>{
+                                                this.addRef(record.id, record.title);}}>添加</Button>
                                         </Space>
                                     )}
                                 />

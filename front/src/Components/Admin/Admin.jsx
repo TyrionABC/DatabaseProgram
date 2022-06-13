@@ -8,7 +8,6 @@ import {
     Form,
     Table,
     Tag,
-    Space,
     Modal,
     Descriptions,
     PageHeader,
@@ -20,7 +19,6 @@ import {
     UserOutlined,
     FileSearchOutlined,
     ReadOutlined,
-    CommentOutlined,
     SmileOutlined,
     MehOutlined,
     ZoomOutOutlined
@@ -35,7 +33,6 @@ import { useLocation } from "react-router";
 import {UserGovern,IllegalUser} from "./User";
 import { Direction } from "./Direction";
 import {GovernThesis} from "./GovernThesis"
-//import { SearchThesis } from "./SearchThesis";
 
 const useStore = create(set => ({
     id: 101010,
@@ -90,7 +87,6 @@ function deleteThesis(id){
 }
 function SearchThesis(props) {
   const data = props.lists;
-  const userid = useStore(state=>state.email);
   const { Column, ColumnGroup } = Table;
   const routes = [
     {
@@ -100,7 +96,6 @@ function SearchThesis(props) {
       breadcrumbName: '搜索结果',
     }
   ];
-  console.log(data);
   let arr = data;
   return <>
     <PageHeader style={{background: '#fff'}} title="搜索结果" breadcrumb={{ routes }}>
@@ -140,7 +135,7 @@ function SearchThesis(props) {
           title="操作"
           key="action"
           render={(_,record) => (
-              <a style={{color:'red'}} onClick={()=>deleteThesis(record.id)}>删除</a>
+              <Button type="text" style={{color:'red'}} onClick={()=>deleteThesis(record.id)}>删除</Button>
           )}
       />
     </Table>
@@ -192,7 +187,6 @@ class AdminMainContent extends React.Component {
     };
   
     onCollapse = (collapsed) => {
-      console.log(collapsed);
       let ele = document.getElementById('logInfo');
       if(collapsed) ele.style.display='none';
       else ele.style.removeProperty('display');
@@ -214,12 +208,10 @@ class AdminMainContent extends React.Component {
         message.warning("搜索条件不能全为空!");
         setTimeout(window.location.reload(), 10000);
       }
-      console.log('Success:', values);
       // 请求论文列表, 接收论文列表
       let that = this;
       await axios.post('http://localhost:8080/admin/select', values)
           .then(function (response) {
-            console.log(response);
             that.setState({ result: response.data, loaded: true });
           })
           .catch(err => console.log(err));

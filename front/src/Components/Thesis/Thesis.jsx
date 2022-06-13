@@ -1,14 +1,12 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List, Skeleton, Collapse, Tag} from 'antd';
+import {Space, Table, Input, Button, PageHeader, Descriptions, List, Skeleton, Collapse, Tag} from 'antd';
 import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import './Thesis.css';
 import axios from 'axios';
-import SeeThesis from "./SeeThesis";
 import {Link} from "react-router-dom";
-import {Panel} from "rsuite";
 
 export class Latest extends React.Component {
   state = {
@@ -188,7 +186,7 @@ export class Latest extends React.Component {
         ...this.getColumnSearchProps('path'),
         render: (_, record) => (
             record.path.map((item, index)=>(
-                <Tag key={item}>
+                <Tag key={item} style={{marginBottom: 2}}>
                   {item}
                 </Tag>
             ))
@@ -252,7 +250,6 @@ export class Latest extends React.Component {
       clock += ss;
       return(clock);
     }
-    console.log(this.state.data);
     let { loaded } = this.state;
     const MySkeleton = () => {
       return <>

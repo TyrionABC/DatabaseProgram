@@ -1,14 +1,12 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List, Skeleton, Collapse, Tag,message} from 'antd';
+import {Space, Table, Input, Button, PageHeader, Descriptions, List, Skeleton, Collapse, Tag,message} from 'antd';
 import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import '../Thesis/Thesis.css';
 import axios from 'axios';
-//import SeeThesis from "./SeeThesis";
 import {Link} from "react-router-dom";
-import {Panel} from "rsuite";
 
 export class GovernThesis extends React.Component {
   state = {
@@ -21,7 +19,6 @@ export class GovernThesis extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(props.id);
     this.state = { id: props.id };
   }
 
@@ -220,7 +217,7 @@ export class GovernThesis extends React.Component {
         key:'delete',
         width:'10%',
         render: (_, record) => (
-            <a style={{color:'red'}} onClick={()=>this.deleteThesis(record.id)}>删除</a>
+            <Button type="text" style={{color:'red'}} onClick={()=>this.deleteThesis(record.id)}>删除</Button>
         )
       }
     ];
@@ -265,7 +262,6 @@ export class GovernThesis extends React.Component {
       clock += ss;
       return(clock);
     }
-    console.log(this.state.data);
     let { loaded } = this.state;
     const MySkeleton = () => {
       return <>

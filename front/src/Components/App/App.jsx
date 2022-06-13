@@ -1,4 +1,4 @@
-import React, {lazy, useState, Suspense} from 'react';
+import React from 'react';
 import {
   Layout,
   Menu,
@@ -33,7 +33,7 @@ import MyColumn from "../Thesis/MyColumn";
 import { BasicInfoSet } from "./Info";
 import './App.css';
 import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import axios from "axios";
 import {WriteThesis} from "../Thesis/WriteThesis";
 
@@ -68,16 +68,6 @@ function App() {
 
 const { Content, Footer, Sider } = Layout;
 
-const BottomPart = () => {
-  return <Affix offsetBottom={10}>
-    <Tooltip title="新文章">
-      <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
-              size="large" style={{ position: "absolute", bottom: 80, right: 80}}
-              />
-    </Tooltip>
-  </Affix>
-}
-
 class Name extends React.Component {
   state = {
     id: this.props.id,
@@ -91,7 +81,6 @@ class Name extends React.Component {
       url: 'http://localhost:8080/admin/getUserDetails',
       data: { userId: this.state.id },
     }).then(function(res) {
-      console.log(res.data);
       that.setState({
         data: res.data,
       })
@@ -121,7 +110,6 @@ function SearchResult(props) {
       breadcrumbName: '搜索结果',
     }
   ];
-  console.log(data);
   let arr = data;
   return <>
     <PageHeader style={{background: '#fff'}} title="搜索结果" breadcrumb={{ routes }}>
@@ -226,7 +214,6 @@ class MainContent extends React.Component {
   };
 
   onCollapse = (collapsed) => {
-    console.log(collapsed);
     let ele = document.getElementById('logInfo');
     if(collapsed) ele.style.display='none';
     else ele.style.removeProperty('display');
@@ -236,7 +223,6 @@ class MainContent extends React.Component {
   };
 
   onClick = (key) => {
-    console.log(key);
     this.setState({num: key.key});
     if(key.key === '6') {
       this.setState({
@@ -270,12 +256,10 @@ class MainContent extends React.Component {
       message.warning("搜索条件不能全为空!");
       setTimeout(window.location.reload(), 10000);
     }
-    console.log('Success:', values);
     // 请求论文列表, 接收论文列表
     let that = this;
     await axios.post('http://localhost:8080/admin/select', values)
         .then(function (response) {
-          console.log(response);
           that.setState({ result: response.data, loaded: true });
         })
         .catch(err => console.log(err));

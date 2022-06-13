@@ -6,7 +6,6 @@ import { Input,
     Space,
     Modal,
     message}from 'antd';
-import { BulbFilled, SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 export class Direction extends React.Component{
     state={
@@ -28,7 +27,7 @@ export class Direction extends React.Component{
         }).then(function(res) {
             let directions=res.data;
             let newDirections=[];
-            for(var i=0;i<directions.length;i++){
+            for(let i=0;i<directions.length;i++){
                 let parent={
                     key:i,
                     label:directions[i].label,
@@ -40,10 +39,10 @@ export class Direction extends React.Component{
                         label:item.label,
                     }
                     parent.children.push(child);
+                    return '';
                 })
                 newDirections.push(parent);
             }
-            console.log(newDirections);
             that.setState({
                 allDirections:newDirections,
             })
@@ -71,11 +70,12 @@ export class Direction extends React.Component{
     }
     updateDirection=(label)=>{
         let parentName='';
-        for(var i=0;i<this.state.allDirections.length;i++){
+        for(let i=0;i<this.state.allDirections.length;i++){
             this.state.allDirections[i].children.map((item)=>{
                 if(item.label===label){
                     parentName=this.state.allDirections[i].label;
                 }
+                return '';
             })
         }
         this.setState({
@@ -104,7 +104,6 @@ export class Direction extends React.Component{
             directionName:this.state.updateDirectionName,
             parentDirectionName:parentName,
         }
-        console.log(direction);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/updateDirection/'+this.state.label,
@@ -127,7 +126,6 @@ export class Direction extends React.Component{
             directionName:this.state.directionName,
             parentDirectionName:parentName,
         }
-        console.log(direction);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/insertDirection',
@@ -159,8 +157,8 @@ export class Direction extends React.Component{
             key:'action',
             render:(_, record)=>(
                 <Space>
-                    <a style={{color:'red'}} onClick={()=>this.deleteDirection(record.label)}>删除方向</a>
-                    <a style={{color:'green'}} onClick={()=>this.updateDirection(record.label)}>修改方向</a>
+                    <Button type="text" style={{color:'red'}} onClick={()=>this.deleteDirection(record.label)}>删除方向</Button>
+                    <Button type="text" style={{color:'green'}} onClick={()=>this.updateDirection(record.label)}>修改方向</Button>
                 </Space>
             )
         }]

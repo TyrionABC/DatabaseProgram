@@ -25,7 +25,6 @@ export default class MyThesis extends React.Component {
             url: 'http://localhost:8080/admin/myPaper/true',
             data: { userId: this.state.id },
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 data_1: res.data,
                 loaded_1: true,
@@ -37,7 +36,6 @@ export default class MyThesis extends React.Component {
             url: 'http://localhost:8080/admin/myPaper/false',
             data: { userId: this.state.id },
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 data_2: res.data,
                 loaded_2: true,
@@ -47,13 +45,11 @@ export default class MyThesis extends React.Component {
 
     callback = (key) => {
         this.setState({ location: key });
-        console.log(key);
     }
 
     deleteThesis = (id) => {
         axios.post('http://localhost:8080/admin/deletePaper', { id: id })
             .then(function(res) {
-                console.log(res.data);
                 if(res.data) {
                     message.success("删除成功!");
                     setTimeout(window.location.reload(), 10000);
@@ -67,7 +63,6 @@ export default class MyThesis extends React.Component {
     render() {
         const {TabPane} = Tabs;
         const { Panel } = Collapse;
-        console.log(this.state);
         const routes = [
             {
                 breadcrumbName: '内容管理',
@@ -147,7 +142,7 @@ export default class MyThesis extends React.Component {
                 width: '10%',
                 render: (_, record) => (
                     record.path.map((item, index)=>(
-                        <Tag key={item}>
+                        <Tag key={item} style={{marginBottom: 2}}>
                             {item}
                         </Tag>
                     ))

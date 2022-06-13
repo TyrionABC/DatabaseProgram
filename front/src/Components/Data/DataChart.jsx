@@ -1,10 +1,8 @@
 import React from "react";
 import ReactECharts from 'echarts-for-react';
-import myChart from "echarts-for-react";
 import '../Thesis/Thesis.css'
 import {Descriptions, PageHeader} from "antd";
 import axios from "axios";
-import {CalculatorOutlined} from "@ant-design/icons";
 
 function CurentTime() {
   var now = new Date();
@@ -49,7 +47,6 @@ export class GetContentData extends React.Component {
       url: 'http://localhost:8080/admin/LikeAndDirection',
       data: { userId: this.state.id },
     }).then(function(res) {
-      console.log(res.data);
       that.setState({
         data: res.data,
       })
@@ -97,7 +94,6 @@ class Counting extends React.Component {
       url: 'http://localhost:8080/admin/DayAndPaper',
       data: { userId: this.state.id },
     }).then(function(res) {
-      console.log(res.data);
       that.setState({
         data: res.data,
       })
@@ -174,7 +170,6 @@ const Category = (props) => {
   let thesisCount = [];
   let likeCount = [];
   let directions = [];
-  console.log(dt[0]);
   for(let i = 0; i < dt.length; i++) {
     directions[i] = dt[i]['direction'];
     likeCount[i] = dt[i]['likes'];
@@ -228,7 +223,6 @@ export class GetUniversalData extends React.Component {
       url: 'http://localhost:8080/admin/MonthAndPaper',
       data: '',
     }).then(function(res) {
-      console.log(res.data);
       that.setState({
         data: res.data,
       })

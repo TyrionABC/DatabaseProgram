@@ -1,8 +1,8 @@
 import axios from "axios";
 import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message} from "antd";
 import React from "react";
-import Modal from "antd/es/modal/Modal";
 import {Link} from "react-router-dom";
+import "./Thesis.css";
 
 export default class MyColumn extends React.Component {
     state = {
@@ -28,7 +28,6 @@ export default class MyColumn extends React.Component {
             url: 'http://localhost:8080/admin/myNotes/true',
             data: { userId: this.state.id },
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 data_1: res.data,
                 loaded_1: true,
@@ -40,7 +39,6 @@ export default class MyColumn extends React.Component {
             url: 'http://localhost:8080/admin/myNotes/false',
             data: { userId: this.state.id },
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 data_2: res.data,
                 loaded_2: true,
@@ -51,7 +49,6 @@ export default class MyColumn extends React.Component {
     deleteNote = (id) => {
         axios.post('http://localhost:8080/admin/deleteNotes', { id: id })
             .then(function(res) {
-                console.log(res.data);
                 if(res.data) {
                     message.success("删除成功!");
                     setTimeout(window.location.reload(), 10000);
@@ -63,7 +60,6 @@ export default class MyColumn extends React.Component {
     }
     callback = (key) => {
         this.setState({location: key});
-        console.log(key);
     }
 
     render() {

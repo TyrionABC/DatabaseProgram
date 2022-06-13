@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const code = Math.random().toString().slice(-6);
 
-const { StringType, NumberType } = Schema.Types;
+const { StringType } = Schema.Types;
 
 const model = Schema.Model({
   name: StringType().isRequired('请填写此字段'),
@@ -80,7 +80,6 @@ const Reset = () => {
     }
     axios.post('http://localhost:8080/admin/register', value)
         .then(function (response) {
-          console.log('response: ', response);
           const success = response['data'];
           if (success) {
             message.success("操作成功!");
@@ -123,7 +122,6 @@ const Reset = () => {
     }
     emailjs.send("service_t6mvxxp", "template_kr1di1f", params)
         .then(function (response) {
-          console.log('success');
         }, function (error) {
           console.log('failed');
           message.error('发送失败');
@@ -138,6 +136,7 @@ const Reset = () => {
               ref={formRef}
               onChange={setFormValue}
               onCheck={setFormError}
+              formError={formError}
               formValue={formValue}
               model={model}
           >

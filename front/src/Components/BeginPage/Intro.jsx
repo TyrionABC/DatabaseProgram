@@ -60,7 +60,6 @@ function Navi() {
       };
     axios.post('http://localhost:8080/admin/login', value)
         .then(function (response) {
-          console.log("response: ", response);
           const correct = response['data'];
           if(correct===1) {
             navigate('/app', { replace: true, state: data });

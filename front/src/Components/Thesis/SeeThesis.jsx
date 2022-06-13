@@ -20,19 +20,15 @@ import {
 import {useParams, Link} from "react-router-dom";
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
-import {CommentOutlined, DownOutlined, HeartFilled, HeartTwoTone, SmileOutlined} from '@ant-design/icons';
+import {CommentOutlined, DownOutlined, HeartFilled, HeartTwoTone} from '@ant-design/icons';
 import {useLocation} from "react-router";
 import TextArea from 'antd/lib/input/TextArea';
 import './Thesis.css';
-import {reset} from "mdb-ui-kit/src/js/mdb/util/scrollbar";
 import xss from "xss";
 
 export default function SeeThesis() {
     let { state } = useLocation();
-    console.log(state.userid);
-    console.log(state.directions);
     const params = useParams();
-    console.log(params);
     const config = {
         content: ' + 1',
         icon: <HeartTwoTone twoToneColor="#D00"/>
@@ -48,10 +44,8 @@ export default function SeeThesis() {
             method: 'get',
             url: 'http://localhost:8080/admin/getAllInfo/'+params.id,
         }).then(function(res) {
-            console.log(res.data);
             changeData(res.data);
-            for(var i = 0; i < res.data.refers.length; i++) {
-                console.log("flag");
+            for(let i = 0; i < res.data.refers.length; i++) {
                 myItem.push({ label:
                         (<Button type="link" onClick={()=>window.location.reload()}>
                             <Link to={"/detail/" + res.data.refers[i].referenceId} state={{
@@ -64,14 +58,13 @@ export default function SeeThesis() {
             }
             if(myItem.length === 0) {
                 myItem.push({label: (
-                        <a>{'无引用'}</a>
+                        <Button type="text" disabled>{'无引用'}</Button>
                     )})
                 changeItem(myItem);
             }
             changeMenu(<Menu items={myItem}/>)
         }).catch(err=>console.log(err))
     }
-    console.log(myItem);
     let onOff = true;
     const sendLike = () => {
         axios.get('http://localhost:8080/admin/like/' + params.id)
@@ -88,7 +81,6 @@ export default function SeeThesis() {
             extra={[ <Tooltip title="点赞"><Button onClick={()=>{
                 if (onOff) {
                     onOff = false // 把onOff值改为false,点击间隔过短就无法运行函数
-                    console.log('输出')
                     sendLike();
                     setTimeout(function () {
                         onOff = true // 1秒钟后onOff等于true
@@ -106,19 +98,19 @@ export default function SeeThesis() {
                 <Descriptions.Item label="论文类型">{ data_.thesisType }</Descriptions.Item>
                 <Descriptions.Item label="研究方向">{
                     state.directions.map((value)=>(
-                        <Tag key={value} color="blue">
+                        <Tag key={value} color="blue" style={{marginBottom: 2}}>
                             { value }
                         </Tag>
                     ))
                 }</Descriptions.Item>
                 <Descriptions.Item>
                     <Dropdown overlay={menu}>
-                        <a onClick={(e) => e.preventDefault()}>
+                        <Button type="text" onClick={(e) => e.preventDefault()}>
                             <Space>
                                 论文引用
                                 <DownOutlined />
                             </Space>
-                        </a>
+                        </Button>
                     </Dropdown>
                 </Descriptions.Item>
             </Descriptions>
@@ -143,7 +135,6 @@ class Detail extends React.Component{
             method: 'get',
             url: 'http://localhost:8080/admin/getText/'+that.props.id,
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 publisherId: res.data.publisherId,
                 text:res.data.text,
@@ -199,18 +190,15 @@ class UserComment extends React.Component{
             url: 'http://localhost:8080/admin/selectAllComments/'+that.props.id,
         }).then(function(res) {
             let mid=res.data;
-            console.log(that.props.userId);
             mid.sort((a,b)=>a.date>b.date?1:-1);
             that.setState({
                 comment:mid,
             })
         });
-        console.log(that.props.userId);
         axios({
             method: 'get',
             url: 'http://localhost:8080/admin/getPermission/'+that.props.userId,
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 permission:res.data,
             })
@@ -230,7 +218,6 @@ class UserComment extends React.Component{
         })
     }
     addReply=(parentCommentId,root)=>{
-        console.log(parentCommentId);
         this.setState({
             parentCommentId:parentCommentId,
             isSee:true,
@@ -246,7 +233,6 @@ class UserComment extends React.Component{
             url: 'http://localhost:8080/admin/deleteComment/',
             data:newComment
         }).then(function(res) {
-            console.log(res.data);
             if(res.data){
                 message.success("删除成功");
                 setTimeout(window.location.reload(), 10000);
@@ -259,7 +245,6 @@ class UserComment extends React.Component{
             method: 'get',
             url: 'http://localhost:8080/admin/insertComment/'+commentId,
         }).then(function(res) {
-            console.log(res.data);
             that.setState({
                 oldContent:res.data,
                 isVis:true,
@@ -275,13 +260,11 @@ class UserComment extends React.Component{
             id:this.props.id,
             root:this.state.rootId
         };
-        console.log(newComment);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/insertComment/',
             data:newComment
         }).then(function(res) {
-            console.log(res.data);
             if(res.data){
                 message.success("评论成功");
                 setTimeout(window.location.reload(), 10000);
@@ -296,13 +279,11 @@ class UserComment extends React.Component{
             content:this.state.oldContent,
             commentId:this.state.updateCommentId,
         };
-        console.log(newComment);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/updateComment/',
             data:newComment
         }).then(function(res) {
-            console.log(res.data);
             if(res.data){
                 message.success("修改成功");
                 setTimeout(window.location.reload(), 10000);
@@ -311,7 +292,6 @@ class UserComment extends React.Component{
     }
     render(){
         let actions=[];
-        console.log(this.state.permission);
         this.state.comment.map((item,index)=>{
             if(item.publisherId===this.props.userId || this.state.permission===1){
                 actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,
@@ -320,37 +300,40 @@ class UserComment extends React.Component{
             }else{
                 actions[index]=[<span onClick={()=>{this.addReply(item.commentId,item.root)}}>回复</span>,]
             }
+            return '';
         });
         const commentArea = () => {
             if(this.state.comment.length === 0) return <Empty/>;
             return this.state.comment.map((item,item_index)=>{
-                    if(item.parentUserName==='')
-                        return(
-                            <Comment
-                                key={item_index}
-                                actions={actions[item_index]}
-                                author={item.userName}
-                                avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                content={item.content}
-                                datetime={item.date}
-                                style={{marginLeft:30}}>
-                                {
-                                    this.state.comment.map((ikey,key_index)=>{
-                                        if(ikey.root===item.root&&ikey.parentUserName!=='')
-                                            return(
-                                                <Comment
-                                                    key={key_index}
-                                                    actions={actions[key_index]}
-                                                    author={(ikey.userName)+" 回复 "+(ikey.parentUserName)}
-                                                    avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
-                                                    content={ikey.content}
-                                                    datetime={ikey.date} >
-                                                </Comment>
-                                            )
-                                    })
-                                }
-                            </Comment>
-                        )
+                if(item.parentUserName==='')
+                    return(
+                        <Comment
+                            key={item_index}
+                            actions={actions[item_index]}
+                            author={item.userName}
+                            avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
+                            content={item.content}
+                            datetime={item.date}
+                            style={{marginLeft:30}}>
+                            {
+                                this.state.comment.map((ikey,key_index)=>{
+                                    if(ikey.root===item.root&&ikey.parentUserName!=='')
+                                        return(
+                                            <Comment
+                                                key={key_index}
+                                                actions={actions[key_index]}
+                                                author={(ikey.userName)+" 回复 "+(ikey.parentUserName)}
+                                                avatar={<Avatar src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />}
+                                                content={ikey.content}
+                                                datetime={ikey.date} >
+                                            </Comment>
+                                        )
+                                    return '';
+                                })
+                            }
+                        </Comment>
+                    )
+                    return '';
                 }
             )
         }
@@ -360,7 +343,7 @@ class UserComment extends React.Component{
                     { commentArea() }
                 </div>
                 <div style={{textAlign:'center'}}>
-                    <Button type="text" ghost block onClick={this.addComment} icon={<CommentOutlined/> } style={{marginBottom:50}}>发表评论</Button>
+                    <Button type="text" block onClick={this.addComment} icon={<CommentOutlined/> } style={{marginBottom:50}}>发表评论</Button>
                     <Modal 
                     title='评论编辑器'
                     centered 
@@ -421,7 +404,7 @@ export class UserNote extends React.Component{
             const notes=res.data;
             let note={};
             let judge=0;
-            for(var i=0;i<notes.length;i++){
+            for(let i=0;i<notes.length;i++){
                 if(notes[i].id===that.props.id){
                     note=notes[i];
                     judge=1;
@@ -440,7 +423,7 @@ export class UserNote extends React.Component{
         }).then(function(res) {
             const notes=res.data;
             let note={};
-            for(var i=0;i<notes.length;i++){
+            for(let i=0;i<notes.length;i++){
                 if(notes[i].id===that.props.id){
                     note=notes[i];
                 }
@@ -462,7 +445,6 @@ export class UserNote extends React.Component{
         }
         let xss = require('xss');
         xss(this.state.currentNote);
-        console.log(note);
         axios({
             method: 'post',
             url: 'http://localhost:8080/admin/insertNotes/',
@@ -489,7 +471,6 @@ export class UserNote extends React.Component{
             note:this.state.currentNote
        }
         xss(this.state.currentNote);
-        console.log(note);
         if(this.state.judge===0){
             axios({
                 method: 'post',
@@ -530,7 +511,9 @@ export class UserNote extends React.Component{
                         <Col span={20}>
                             <BraftEditor
                                 value={editorState}
-                                onChange={this.handleEditorChange}/>
+                                onChange={this.handleEditorChange}
+                                excludeControls={['emoji', 'link', 'media']}
+                                pasteMode={['text']}/>
                         </Col>
                         <Col span={4}>
                             <Space>

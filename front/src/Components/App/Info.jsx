@@ -12,10 +12,8 @@ const { TabPane } = Tabs;
 function BasicSet(props) {
   const onFinish = (values) => {
     values.userId = props.id;
-    console.log('Success:', values);
     axios.post('http://localhost:8080/admin/updateUser', values)
         .then(function (response) {
-          console.log(response);
           if(response.data) {
             message.success("修改成功!");
             setTimeout(window.location.reload(), 5000);
@@ -106,14 +104,12 @@ function PrivacySet(props) {
       message.warning("原密码输入错误!");
       return;
     }
-    console.log('Success:', values);
     let jsonVal = {
       userId: props.id,
       password: CryptoJS.MD5(values['newPassword']).toString(),
     }
     axios.post('http://localhost:8080/admin/updateUser', jsonVal)
         .then(function (response) {
-          console.log(response);
           if(response.data) {
             message.success("修改成功!");
             setTimeout(window.location.reload(), 5000);
@@ -235,7 +231,6 @@ export class BasicInfoSet extends React.Component {
       url: 'http://localhost:8080/admin/getUserDetails',
       data: { userId: this.state.id },
     }).then(function(res) {
-      console.log(res.data);
       that.setState({
         data: res.data,
       })
