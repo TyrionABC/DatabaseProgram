@@ -3,9 +3,12 @@ import {
     Input,
     Divider,
     Table,
-    Space, Button
+    Space,
+    Button,
+    Modal,
 } from 'antd';
 import axios from "axios";
+import { GetContentData } from "../Data/DataChart"
 
 const { Search } = Input;
 export class UserGovern extends React.Component{
@@ -110,6 +113,15 @@ export class UserGovern extends React.Component{
         })
     }
     render(){
+        const dataInfo = (userId) => {
+            Modal.info({
+                title: userId+"的统计数据",
+                width: 1000,
+                content: (
+                    <GetContentData id={userId}/>
+                )
+            })
+        }
         const columns=[
             {
                 title: '邮箱',
@@ -134,6 +146,7 @@ export class UserGovern extends React.Component{
                     <Space size="middle">
                         <Button type="text" style={{color:"green"}} onClick={()=>this.changeUserPermission(record.userId)}>修改用户权限</Button>
                         <Button type="text" style={{color:"red"}} onClick={()=>this.lock(record.userId)}>封禁用户</Button>
+                        <Button type="text" style={{color: "blue"}} onClick={()=>dataInfo(record.userId)}>查看数据</Button>
                     </Space>
                 )
             }
