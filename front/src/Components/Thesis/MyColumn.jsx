@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message} from "antd";
+import {Button, Descriptions, PageHeader, Skeleton, Table, Tabs, message, Modal} from "antd";
 import React from "react";
 import {Link} from "react-router-dom";
 import "./Thesis.css";
@@ -91,10 +91,13 @@ export default class MyColumn extends React.Component {
                 key: 'note',
                 width: '45%',
                 render: (_, record) => (
-                    <div style={{maxHeight: '150px', maxWidth: '500px', overflow: 'scroll'}}>
-                        <div dangerouslySetInnerHTML={{__html: record.note}}/>
-                    </div>
-
+                    <Button type="text" onClick={()=>{{ Modal.info({
+                        title: '笔记内容',
+                        width: 800,
+                        content: (<div style={{maxHeight: '150px', maxWidth: '500px', overflow: 'scroll'}}>
+                            <div dangerouslySetInnerHTML={{__html: record.note}}/>
+                        </div>)
+                    }) }}}>点击查看</Button>
                 )
             },
             {
