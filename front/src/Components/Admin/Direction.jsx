@@ -27,6 +27,7 @@ export class Direction extends React.Component{
         }).then(function(res) {
             let directions=res.data;
             let newDirections=[];
+            let j=0;
             for(let i=0;i<directions.length;i++){
                 let parent={
                     key:i,
@@ -35,14 +36,16 @@ export class Direction extends React.Component{
                 }
                 directions[i].children.map((item,index)=>{
                     let child={
-                        key:i+directions.length+index,
+                        key:directions.length+j,
                         label:item.label,
                     }
+                    j=j+1;
                     parent.children.push(child);
                     return '';
                 })
                 newDirections.push(parent);
             }
+            console.log(newDirections);
             that.setState({
                 allDirections:newDirections,
             })
