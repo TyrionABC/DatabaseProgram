@@ -93,7 +93,7 @@ export default function SeeThesis() {
             <Descriptions size="small" column={3}>
                 <Descriptions.Item label="标题" style={{fontWeight: 'bold'}}>{ data_.title }</Descriptions.Item>
                 <Descriptions.Item label="第一作者">
-                    { data_.writers[0] }
+                    { data_.writers?.at(0) }
                 </Descriptions.Item>
                 <Descriptions.Item label="论文类型">{ data_.thesisType }</Descriptions.Item>
                 <Descriptions.Item label="研究方向">{
