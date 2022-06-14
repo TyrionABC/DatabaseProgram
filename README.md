@@ -28,6 +28,8 @@
 
 * 使用 IDEA 时, 会自动识别 Spring Boot 项目依赖, 并且配置好运行环境
 
+* 推荐使用 Chrome 浏览器
+
 ## 使用到的框架 
 
 * React 以及 React 第三方工具库
