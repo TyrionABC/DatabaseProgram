@@ -109,7 +109,7 @@ export class GovernThesis extends React.Component {
         data:paper
     }).then(function(res) {
         if(res.data){
-            message.success("添加成功");
+            message.success("删除成功");
             setTimeout(window.location.reload(), 10000);
         }
     });
