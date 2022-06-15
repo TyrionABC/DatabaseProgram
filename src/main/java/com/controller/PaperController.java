@@ -55,7 +55,7 @@ public class PaperController {
         System.out.println(allNotes);
         JSONArray json = new JSONArray();
         for(Note_and_extra_file note : allNotes){
-            if (note.getFlag()==1)
+            if (note.getFlag()==1||note.getNote()==null)
                 continue;
             JSONObject jo = new JSONObject();
             jo.put("note", note.getNote());
@@ -87,7 +87,7 @@ public class PaperController {
         List<Note_and_extra_file> allNotes=noteAndFileService.selectMyNotes(userId.getUserId());//所有数据
         JSONArray json = new JSONArray();
         for(Note_and_extra_file note : allNotes){
-            if (note.getFlag()==0)
+            if (note.getFlag()==0||note.getNote()==null)
                 continue;
             JSONObject jo = new JSONObject();
             jo.put("note", note.getNote());
