@@ -88,7 +88,7 @@ function Navi() {
             </h4>
           </FlexboxGrid.Item>
           <FlexboxGrid.Item colspan={6}>
-            <Panel header={<h3>登陆</h3>} bordered>
+            <Panel header={<h3>登录</h3>} bordered>
               <Form fluid model={model} ref={formRef} onChange={setValue} formValue={formValue}>
                 <Form.Group>
                   <Form.ControlLabel>用户名</Form.ControlLabel>
